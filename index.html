@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Múltipla e Proteção (5 Dias)</title>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --bg: #f5f5f5;
+            --card: #ffffff;
+            --text: #333333;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 15px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h2 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        .card {
+            background: var(--card);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+        .card h3 {
+            margin-top: 0;
+            color: var(--primary);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        .row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .result-box {
+            background: #e8f5e9;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 5px;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        .btn-calc {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .btn-calc:hover {
+            background: #1b5e20;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Painel de Proteção 5 Dias</h2>
+
+    <!-- BLOCO DA MÚLTIPLA -->
+    <div class="card">
+        <h3>1. Configuração da Múltipla Geral</h3>
+        <div class="row">
+            <div class="col">
+                <label>Valor da Múltipla (R$)</label>
+                <input type="number" id="valMultipla" step="0.01" value="1.00">
+            </div>
+            <div class="col">
+                <label>Odd Total da Múltipla</label>
+                <input type="number" id="oddMultipla" step="0.01" value="79.62">
+            </div>
+        </div>
+        <div class="result-box" id="retornoMultipla">Retorno Estimado: R$ 79,62</div>
+    </div>
+
+    <!-- JOGOS DIÁRIOS -->
+    <div id="jogos-container">
+        <!-- Gerado via JavaScript para manter o código limpo -->
+    </div>
+
+    <button class="btn-calc" onclick="calcularSistema()">Calcular Entradas Diárias</button>
+</div>
+
+<script>
+    // Configuração base do Martingale do Empate para cada dia
+    const baseEmpates = [1.00, 2.00, 4.00, 8.00, 16.00];
+    // Odds padrão iniciais para preenchimento
+    const defaultOddsE = [3.00, 3.00, 3.00, 3.00, 3.00];
+    const defaultOddsV = [2.80, 2.80, 2.80, 2.80, 2.80];
+
+    // Renderiza os 5 blocos de jogos na tela
+    const container = document.getElementById('jogos-container');
+    for (let i = 1; i <= 5; i++) {
+        container.innerHTML += `
+            <div class="card">
+                <h3>Jogo ${i}</h3>
+                <div class="row">
+                    <div class="col">
+                        <label>Odd Empate</label>
+                        <input type="number" id="oddE_${i}" step="0.01" value="${defaultOddsE[i-1]}">
+                    </div>
+                    <div class="col">
+                        <label>Odd Visitante</label>
+                        <input type="number" id="oddV_${i}" step="0.01" value="${defaultOddsV[i-1]}">
+                    </div>
+                </div>
+                <div class="result-box" style="background: #fff3e0;" id="res_${i}">
+                    Aguardando cálculo...
+                </div>
+            </div>
+        `;
+    }
+
+    function calcularSistema() {
+        let valM = parseFloat(document.getElementById('valMultipla').value) || 0;
+        let oddM = parseFloat(document.getElementById('oddMultipla').value) || 0;
+        
+        // Atualiza display do retorno da múltipla
+        let retM = valM * oddM;
+        document.getElementById('retornoMultipla').innerText = `Retorno Estimado: R$ ${retM.toFixed(2)}`;
+
+        let prejuizoAcumulado = valM; // O projeto começa devendo o custo da múltipla
+
+        for (let i = 1; i <= 5; i++) {
+            let oddE = parseFloat(document.getElementById(`oddE_${i}`).value) || 1;
+            let oddV = parseFloat(document.getElementById(`oddV_${i}`).value) || 1;
+            
+            // Valor do Empate segue a escada fixa de Martingale
+            let valEmpate = baseEmpates[i-1];
+            
+            // Fórmula da Trava do Visitante em tempo real:
+            // (Prejuízo acumulado de trás + custo do empate de hoje) / (Odd Visitante - 1)
+            let valVisitante = (prejuizoAcumulado + valEmpate) / (oddV - 1);
+            if (valVisitante < 0) valVisitante = 0;
+
+            // Atualiza o painel do dia correspondente
+            document.getElementById(`res_${i}`).innerHTML = `
+                🤝 <b>Aposta no Empate:</b> R$ ${valEmpate.toFixed(2)}<br>
+                ✈️ <b>Aposta no Visitante:</b> R$ ${valVisitante.toFixed(2)}<br>
+                <span style="font-size:0.8rem; color:#666;">Custo acumulado até aqui: R$ ${(prejuizoAcumulado + valEmpate + valVisitante).toFixed(2)}</span>
+            `;
+
+            // O prejuízo acumula para o próximo dia caso dê "Casa"
+            prejuizoAcumulado += (valEmpate + valVisitante);
+        }
+    }
+
+    // Executa uma vez ao abrir a página
+    window.onload = calcularSistema;
+</script>
+
+</body>
+</html>
