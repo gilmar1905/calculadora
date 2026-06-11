@@ -63,11 +63,12 @@
         }
         .result-box {
             background: #e8f5e9;
-            padding: 10px;
+            padding: 12px;
             border-radius: 4px;
             margin-top: 5px;
             font-weight: 500;
             font-size: 0.95rem;
+            line-height: 1.5;
         }
         .btn-calc {
             width: 100%;
@@ -84,6 +85,9 @@
         .btn-calc:hover {
             background: #1b5e20;
         }
+        .lucro-pos { color: #2e7d32; font-weight: bold; }
+        .lucro-neg { color: #c62828; font-weight: bold; }
+        .divider { margin: 8px 0; border-top: 1px dashed #ccc; }
     </style>
 </head>
 <body>
@@ -91,38 +95,31 @@
 <div class="container">
     <h2>Painel de Proteção 5 Dias</h2>
 
-    <!-- BLOCO DA MÚLTIPLA -->
     <div class="card">
         <h3>1. Configuração da Múltipla Geral</h3>
         <div class="row">
             <div class="col">
                 <label>Valor da Múltipla (R$)</label>
-                <input type="number" id="valMultipla" step="0.01" value="1.00">
+                <input type="number" id="valMultipla" step="0.01" value="0.83">
             </div>
             <div class="col">
                 <label>Odd Total da Múltipla</label>
-                <input type="number" id="oddMultipla" step="0.01" value="79.62">
+                <input type="number" id="oddMultipla" step="0.01" value="99.30">
             </div>
         </div>
-        <div class="result-box" id="retornoMultipla">Retorno Estimado: R$ 79,62</div>
+        <div class="result-box" id="retornoMultipla">Retorno Estimado: R$ 82,42</div>
     </div>
 
-    <!-- JOGOS DIÁRIOS -->
-    <div id="jogos-container">
-        <!-- Gerado via JavaScript para manter o código limpo -->
-    </div>
+    <div id="jogos-container"></div>
 
     <button class="btn-calc" onclick="calcularSistema()">Calcular Entradas Diárias</button>
 </div>
 
 <script>
-    // Configuração base do Martingale do Empate para cada dia
     const baseEmpates = [1.00, 2.00, 4.00, 8.00, 16.00];
-    // Odds padrão iniciais para preenchimento
-    const defaultOddsE = [3.00, 3.00, 3.00, 3.00, 3.00];
-    const defaultOddsV = [2.80, 2.80, 2.80, 2.80, 2.80];
+    const defaultOddsE = [3.25, 3.70, 3.55, 3.30, 3.00];
+    const defaultOddsV = [3.00, 2.82, 2.628, 2.72, 3.65];
 
-    // Renderiza os 5 blocos de jogos na tela
     const container = document.getElementById('jogos-container');
     for (let i = 1; i <= 5; i++) {
         container.innerHTML += `
@@ -131,11 +128,11 @@
                 <div class="row">
                     <div class="col">
                         <label>Odd Empate</label>
-                        <input type="number" id="oddE_${i}" step="0.01" value="${defaultOddsE[i-1]}">
+                        <input type="number" id="oddE_${i}" step="0.001" value="${defaultOddsE[i-1]}">
                     </div>
                     <div class="col">
                         <label>Odd Visitante</label>
-                        <input type="number" id="oddV_${i}" step="0.01" value="${defaultOddsV[i-1]}">
+                        <input type="number" id="oddV_${i}" step="0.001" value="${defaultOddsV[i-1]}">
                     </div>
                 </div>
                 <div class="result-box" style="background: #fff3e0;" id="res_${i}">
@@ -149,37 +146,43 @@
         let valM = parseFloat(document.getElementById('valMultipla').value) || 0;
         let oddM = parseFloat(document.getElementById('oddMultipla').value) || 0;
         
-        // Atualiza display do retorno da múltipla
         let retM = valM * oddM;
         document.getElementById('retornoMultipla').innerText = `Retorno Estimado: R$ ${retM.toFixed(2)}`;
 
-        let prejuizoAcumulado = valM; // O projeto começa devendo o custo da múltipla
+        let prejuizoAcumulado = valM; 
 
         for (let i = 1; i <= 5; i++) {
             let oddE = parseFloat(document.getElementById(`oddE_${i}`).value) || 1;
             let oddV = parseFloat(document.getElementById(`oddV_${i}`).value) || 1;
             
-            // Valor do Empate segue a escada fixa de Martingale
             let valEmpate = baseEmpates[i-1];
-            
-            // Fórmula da Trava do Visitante em tempo real:
-            // (Prejuízo acumulado de trás + custo do empate de hoje) / (Odd Visitante - 1)
             let valVisitante = (prejuizoAcumulado + valEmpate) / (oddV - 1);
             if (valVisitante < 0) valVisitante = 0;
 
-            // Atualiza o painel do dia correspondente
+            // Custo total considerando a aposta deste dia + o que já foi gasto para trás
+            let custoTotalAteAqui = prejuizoAcumulado + valEmpate + valVisitante;
+
+            // Cálculos de Lucro Líquido Real
+            let lucroEmpate = (valEmpate * oddE) - custoTotalAteAqui;
+            let lucroVisitante = (valVisitante * oddV) - custoTotalAteAqui;
+
+            // Formatação de cor para os lucros (verde se positivo, vermelho se negativo)
+            let classeE = lucroEmpate >= 0 ? "lucro-pos" : "lucro-neg";
+            let classeV = lucroVisitante >= 0 ? "lucro-pos" : "lucro-neg";
+
             document.getElementById(`res_${i}`).innerHTML = `
                 🤝 <b>Aposta no Empate:</b> R$ ${valEmpate.toFixed(2)}<br>
                 ✈️ <b>Aposta no Visitante:</b> R$ ${valVisitante.toFixed(2)}<br>
-                <span style="font-size:0.8rem; color:#666;">Custo acumulado até aqui: R$ ${(prejuizoAcumulado + valEmpate + valVisitante).toFixed(2)}</span>
+                💰 <b>Custo acumulado atual:</b> R$ ${custoTotalAteAqui.toFixed(2)}<br>
+                <div class="divider"></div>
+                📈 <b>Se der Empate hoje:</b> <span class="${classeE}">R$ ${lucroEmpate.toFixed(2)}</span> líquido<br>
+                📉 <b>Se der Visitante hoje:</b> <span class="${classeV}">R$ ${lucroVisitante.toFixed(2)}</span> líquido
             `;
 
-            // O prejuízo acumula para o próximo dia caso dê "Casa"
             prejuizoAcumulado += (valEmpate + valVisitante);
         }
     }
 
-    // Executa uma vez ao abrir a página
     window.onload = calcularSistema;
 </script>
 
