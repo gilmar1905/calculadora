@@ -7,9 +7,11 @@
     <style>
         :root {
             --primary: #2e7d32;
+            --primary-dark: #1b5e20;
             --bg: #f5f5f5;
             --card: #ffffff;
             --text: #333333;
+            --accent: #0288d1;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -70,30 +72,50 @@
             font-size: 0.95rem;
             line-height: 1.5;
         }
-        .btn-calc {
-            width: 100%;
-            padding: 12px;
-            background: var(--primary);
-            color: white;
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            margin-bottom: 25px;
+        }
+        .btn {
+            flex: 1;
+            padding: 14px;
             border: none;
             border-radius: 4px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             cursor: pointer;
             font-weight: bold;
-            margin-top: 10px;
+            text-align: center;
         }
-        .btn-calc:hover {
-            background: #1b5e20;
+        .btn-calc {
+            background: var(--primary);
+            color: white;
         }
+        .btn-calc:hover { background: var(--primary-dark); }
+        .btn-save {
+            background: var(--accent);
+            color: white;
+        }
+        .btn-save:hover { background: #01579b; }
         .lucro-pos { color: #2e7d32; font-weight: bold; }
         .lucro-neg { color: #c62828; font-weight: bold; }
         .divider { margin: 8px 0; border-top: 1px dashed #ccc; }
+        .status-msg {
+            text-align: center;
+            font-weight: bold;
+            color: var(--accent);
+            margin-top: -10px;
+            margin-bottom: 15px;
+            display: none;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>Painel de Proteção 5 Dias</h2>
+    <div id="status-storage" class="status-msg">Projeto salvo com sucesso!</div>
 
     <div class="card">
         <h3>1. Configuração da Múltipla Geral</h3>
@@ -112,14 +134,20 @@
 
     <div id="jogos-container"></div>
 
-    <button class="btn-calc" onclick="calcularSistema()">Calcular Entradas Diárias</button>
+    <div class="btn-group">
+        <button class="btn btn-calc" onclick="calcularSistema()">Calcular</button>
+        <button class="btn btn-save" onclick="salvarDados()">Salvar Projeto</button>
+    </div>
 </div>
 
 <script>
     const baseEmpates = [1.00, 2.00, 4.00, 8.00, 16.00];
+    
+    // Valores padrão caso não exista nada salvo na memória
     const defaultOddsE = [3.25, 3.70, 3.55, 3.30, 3.00];
     const defaultOddsV = [3.00, 2.82, 2.628, 2.72, 3.65];
 
+    // Renderiza os 5 blocos de jogos na tela
     const container = document.getElementById('jogos-container');
     for (let i = 1; i <= 5; i++) {
         container.innerHTML += `
@@ -159,14 +187,11 @@
             let valVisitante = (prejuizoAcumulado + valEmpate) / (oddV - 1);
             if (valVisitante < 0) valVisitante = 0;
 
-            // Custo total considerando a aposta deste dia + o que já foi gasto para trás
             let custoTotalAteAqui = prejuizoAcumulado + valEmpate + valVisitante;
 
-            // Cálculos de Lucro Líquido Real
             let lucroEmpate = (valEmpate * oddE) - custoTotalAteAqui;
             let lucroVisitante = (valVisitante * oddV) - custoTotalAteAqui;
 
-            // Formatação de cor para os lucros (verde se positivo, vermelho se negativo)
             let classeE = lucroEmpate >= 0 ? "lucro-pos" : "lucro-neg";
             let classeV = lucroVisitante >= 0 ? "lucro-pos" : "lucro-neg";
 
@@ -183,7 +208,47 @@
         }
     }
 
-    window.onload = calcularSistema;
+    // FUNÇÃO PARA SALVAR OS DADOS NO NAVEGADOR
+    function salvarDados() {
+        const dadosProjeto = {
+            valMultipla: document.getElementById('valMultipla').value,
+            oddMultipla: document.getElementById('oddMultipla').value,
+            oddsE: [],
+            oddsV: []
+        };
+
+        for (let i = 1; i <= 5; i++) {
+            dadosProjeto.oddsE.push(document.getElementById(`oddE_${i}`).value);
+            dadosProjeto.oddsV.push(document.getElementById(`oddV_${i}`).value);
+        }
+
+        localStorage.setItem('projetoApostas5Dias', JSON.stringify(dadosProjeto));
+        
+        // Exibe mensagem de confirmação na tela
+        const statusMsg = document.getElementById('status-storage');
+        statusMsg.style.display = 'block';
+        setTimeout(() => { statusMsg.style.display = 'none'; }, 3000);
+    }
+
+    // FUNÇÃO PARA CARREGAR OS DADOS AUTOMATICAMENTE AO ABRIR
+    function carregarDados() {
+        const dadosSalvos = localStorage.getItem('projetoApostas5Dias');
+        if (dadosSalvos) {
+            const dados = JSON.parse(dadosSalvos);
+            document.getElementById('valMultipla').value = dados.valMultipla;
+            document.getElementById('oddMultipla').value = dados.oddMultipla;
+
+            for (let i = 1; i <= 5; i++) {
+                if(dados.oddsE[i-1]) document.getElementById(`oddE_${i}`).value = dados.oddsE[i-1];
+                if(dados.oddsV[i-1]) document.getElementById(`oddV_${i}`).value = dados.oddsV[i-1];
+            }
+        }
+        // Executa o cálculo com os dados carregados
+        calcularSistema();
+    }
+
+    // Inicializa carregando os dados da memória
+    window.onload = carregarDados;
 </script>
 
 </body>
