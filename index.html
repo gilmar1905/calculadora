@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Proteção Proporcional - 3 Jogos</title>
+    <title>Painel Proteção Proporcional - Meta Variável</title>
     <style>
         :root {
             --primary: #2e7d32;
@@ -22,7 +22,6 @@
             overflow-x: hidden;
         }
         
-        /* BARRA TOPO */
         .header {
             background: var(--primary);
             color: white;
@@ -45,7 +44,6 @@
         }
         .header h2 { margin: 0; font-size: 1.2rem; flex: 1; text-align: center; margin-right: 30px; }
 
-        /* ABA LATERAL (HISTÓRICO) */
         .sidebar {
             position: fixed;
             top: 0;
@@ -87,7 +85,6 @@
         .project-name { flex: 1; font-weight: 500; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .delete-btn { background: none; border: none; color: #ff5252; font-size: 1.1rem; cursor: pointer; padding-left: 10px; }
 
-        /* LAYER DE FUNDO */
         .overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -97,7 +94,6 @@
         }
         .overlay.show { display: block; }
 
-        /* CONTEÚDO PRINCIPAL */
         .container {
             max-width: 600px;
             margin: 0 auto;
@@ -136,7 +132,7 @@
 
 <div class="header">
     <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-    <h2>Painel Proteção Proporcional (3 Jogos)</h2>
+    <h2>Painel Proteção Proporcional (2 Jogos)</h2>
 </div>
 
 <div class="sidebar" id="sidebar">
@@ -153,7 +149,7 @@
     <div id="status-storage" class="status-msg">Salvo com sucesso!</div>
 
     <div class="card">
-        <h3>1. Configuração da Múltipla Geral</h3>
+        <h3>1. Configuração de Custo e Margem</h3>
         <div class="row">
             <div class="col">
                 <label>Valor Múltipla (R$)</label>
@@ -161,10 +157,16 @@
             </div>
             <div class="col">
                 <label>Odd Múltipla</label>
-                <input type="number" id="oddMultipla" step="0.01" value="99.30">
+                <input type="number" id="oddMultipla" step="0.01" value="12.50">
             </div>
         </div>
-        <div class="result-box" id="retornoMultipla">Retorno Estimado: R$ 82,42</div>
+        <div class="row">
+            <div class="col">
+                <label>Margem Lucro Empate (% do custo)</label>
+                <input type="number" id="margemEmpate" step="1" value="20" placeholder="Ex: 20">
+            </div>
+        </div>
+        <div class="result-box" id="retornoMultipla">Retorno Estimado: R$ 10,38</div>
     </div>
 
     <div id="jogos-container"></div>
@@ -173,7 +175,7 @@
         <h3>Ações do Projeto</h3>
         <div class="col" style="margin-bottom: 12px;">
             <label>Nome do Projeto para Salvar</label>
-            <input type="text" id="nomeProjeto" placeholder="Ex: Rodada Reduzida - 3 Jogos">
+            <input type="text" id="nomeProjeto" placeholder="Ex: Simulação - Margem Variável">
         </div>
         <div class="btn-group">
             <button class="btn btn-calc" onclick="calcularSistema()">Calcular Cenários</button>
@@ -183,12 +185,11 @@
 </div>
 
 <script>
-    // Quantidade total de jogos reduzida para 3
-    const TOTAL_JOGOS = 3;
+    const TOTAL_JOGOS = 2; // Mantido em 2 conforme seu teste
     
-    const defaultConfrontos = ["Jogo 1", "Jogo 2", "Jogo 3"];
-    const defaultOddsE = [3.25, 3.70, 3.55];
-    const defaultOddsV = [3.00, 2.82, 2.628];
+    const defaultConfrontos = ["Jogo 1", "Jogo 2"];
+    const defaultOddsE = [3.25, 3.70];
+    const defaultOddsV = [3.00, 2.82];
 
     const container = document.getElementById('jogos-container');
     for (let i = 1; i <= TOTAL_JOGOS; i++) {
@@ -224,10 +225,10 @@
     function calcularSistema() {
         let valM = parseFloat(document.getElementById('valMultipla').value) || 0;
         let oddM = parseFloat(document.getElementById('oddMultipla').value) || 0;
+        let pMargem = parseFloat(document.getElementById('margemEmpate').value) || 0;
         
-        let metaProporcional = valM * 2;
         let retM = valM * oddM;
-        document.getElementById('retornoMultipla').innerText = `Retorno Estimado: R$ ${retM.toFixed(2)} (Meta por Jogo: R$ ${metaProporcional.toFixed(2)})`;
+        document.getElementById('retornoMultipla').innerText = `Retorno Estimado da Múltipla: R$ ${retM.toFixed(2)}`;
 
         let prejuizoAcumulado = valM; 
 
@@ -237,18 +238,23 @@
             let oddE = parseFloat(document.getElementById(`oddE_${i}`).value) || 1;
             let oddV = parseFloat(document.getElementById(`oddV_${i}`).value) || 1;
             
-            // Sistema interligado exato corrigido
+            // LÓGICA DINÂMICA: A meta do dia agora é uma porcentagem baseada no prejuízo acumulado real
+            let metaDoDia = prejuizoAcumulado * (pMargem / 100);
+            
+            // Garante um lucro mínimo simbólico caso o prejuízo inicial seja muito baixo
+            if (metaDoDia < 0.20) metaDoDia = 0.20;
+
             let divisor = (oddE * oddV) - oddE - oddV;
             
             let valVisitante = 0;
             let valEmpate = 0;
 
             if (divisor > 0) {
-                valVisitante = ((prejuizoAcumulado * oddE) + metaProporcional) / divisor;
-                valEmpate = (prejuizoAcumulado + valVisitante + metaProporcional) / (oddE - 1);
+                valVisitante = ((prejuizoAcumulado * oddE) + metaDoDia) / divisor;
+                valEmpate = (prejuizoAcumulado + valVisitante + metaDoDia) / (oddE - 1);
             } else {
                 valVisitante = prejuizoAcumulado / (oddV - 1);
-                valEmpate = (prejuizoAcumulado + valVisitante + metaProporcional) / (oddE - 1);
+                valEmpate = (prejuizoAcumulado + valVisitante + metaDoDia) / (oddE - 1);
             }
             
             let custoTotalAteAqui = prejuizoAcumulado + valEmpate + valVisitante;
@@ -262,11 +268,11 @@
 
             resBox.className = "result-box";
             resBox.innerHTML = `
-                🤝 <b>Aposta no Empate (Lucro):</b> R$ ${valEmpate.toFixed(2)}<br>
+                🤝 <b>Aposta no Empate (Lucro Variável):</b> R$ ${valEmpate.toFixed(2)}<br>
                 ✈️ <b>Aposta no Visitante (Reembolso Real):</b> R$ ${valVisitante.toFixed(2)}<br>
-                💰 <b>Custo acumulado total:</b> R$ ${custoTotalAteAqui.toFixed(2)}<br>
+                💰 <b>Custo acumulado total até hoje:</b> R$ ${custoTotalAteAqui.toFixed(2)}<br>
                 <div class="divider"></div>
-                📈 <b>Se der Empate hoje:</b> <span class="lucro-pos">R$ ${lucroEmpate.toFixed(2)}</span> líquido<br>
+                📈 <b>Se der Empate hoje:</b> <span class="lucro-pos">+ R$ ${lucroEmpate.toFixed(2)}</span> líquido<br>
                 📉 <b>Se der Visitante hoje:</b> <span class="lucro-neutro">R$ ${lucroVisitante.toFixed(2)}</span> (0x0 Reembolsado)
             `;
             
@@ -286,6 +292,7 @@
             nome: nome,
             valMultipla: document.getElementById('valMultipla').value,
             oddMultipla: document.getElementById('oddMultipla').value,
+            margemEmpate: document.getElementById('margemEmpate').value,
             confrontos: [], oddsE: [], oddsV: []
         };
 
@@ -335,6 +342,7 @@
             document.getElementById('nomeProjeto').value = p.nome;
             document.getElementById('valMultipla').value = p.valMultipla;
             document.getElementById('oddMultipla').value = p.oddMultipla;
+            if(p.margemEmpate) document.getElementById('margemEmpate').value = p.margemEmpate;
 
             for (let i = 1; i <= TOTAL_JOGOS; i++) {
                 document.getElementById(`conf_${i}`).value = p.confrontos && p.confrontos[i-1] ? p.confrontos[i-1] : `Jogo ${i}`;
