@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Proteção Proporcional</title>
+    <title>Painel de Proteção Proporcional com Confrontos</title>
     <style>
         :root {
             --primary: #2e7d32;
@@ -18,16 +18,91 @@
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
-            padding: 15px;
+            padding: 0;
+            overflow-x: hidden;
         }
+        
+        /* BARRA TOPO */
+        .header {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .menu-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0 5px;
+        }
+        .header h2 { margin: 0; font-size: 1.2rem; flex: 1; text-align: center; margin-right: 30px; }
+
+        /* ABA LATERAL (SIDEBAR) */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background: #263238;
+            color: white;
+            z-index: 200;
+            transition: 0.3s ease;
+            box-shadow: 3px 0 10px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar.open { left: 0; }
+        .sidebar-header {
+            padding: 20px 15px;
+            background: #1c272b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #37474f;
+        }
+        .sidebar-header h3 { margin: 0; font-size: 1.1rem; }
+        .close-btn { background: none; border: none; color: white; font-size: 1.3rem; cursor: pointer; }
+        .projects-list { padding: 10px; flex: 1; overflow-y: auto; }
+        .project-item {
+            background: #37474f;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.2s;
+        }
+        .project-item:hover { background: #455a64; }
+        .project-name { flex: 1; font-weight: 500; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .delete-btn { background: none; border: none; color: #ff5252; font-size: 1.1rem; cursor: pointer; padding-left: 10px; }
+
+        /* LAYER DE FUNDO */
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 150;
+            display: none;
+        }
+        .overlay.show { display: block; }
+
+        /* CONTEÚDO PRINCIPAL */
         .container {
             max-width: 600px;
             margin: 0 auto;
-        }
-        h2 {
-            text-align: center;
-            color: var(--primary);
-            margin-bottom: 20px;
+            padding: 15px;
+            box-sizing: border-box;
         }
         .card {
             background: var(--card);
@@ -36,79 +111,43 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             margin-bottom: 15px;
         }
-        .card h3 {
-            margin-top: 0;
-            color: var(--primary);
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-        }
-        .row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        .col {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        label {
-            font-size: 0.85rem;
-            font-weight: bold;
-            margin-bottom: 4px;
-        }
-        input {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 1rem;
-        }
-        .result-box {
-            background: #e8f5e9;
-            padding: 12px;
-            border-radius: 4px;
-            margin-top: 5px;
-            font-weight: 500;
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            margin-bottom: 25px;
-        }
-        .btn {
-            flex: 1;
-            padding: 14px;
-            border: none;
-            border-radius: 4px;
-            font-size: 1rem;
-            cursor: pointer;
-            font-weight: bold;
-            text-align: center;
-        }
+        .card h3 { margin: 0 0 10px 0; color: var(--primary); border-bottom: 1px solid #eee; padding-bottom: 5px; font-size: 1.05rem; }
+        .row { display: flex; gap: 10px; margin-bottom: 10px; }
+        .col { flex: 1; display: flex; flex-direction: column; }
+        label { font-size: 0.85rem; font-weight: bold; margin-bottom: 4px; }
+        input { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; }
+        .input-confronto { background-color: #fafafa; font-weight: 500; border-color: #b0bec5; }
+        .result-box { background: #e8f5e9; padding: 12px; border-radius: 4px; margin-top: 5px; font-weight: 500; font-size: 0.95rem; line-height: 1.5; }
+        
+        .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; margin-bottom: 25px; }
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; font-weight: bold; text-align: center; box-sizing: border-box; }
         .btn-calc { background: var(--primary); color: white; }
-        .btn-calc:hover { background: var(--primary-dark); }
         .btn-save { background: var(--accent); color: white; }
-        .btn-save:hover { background: #01579b; }
+        
         .lucro-pos { color: #2e7d32; font-weight: bold; }
         .divider { margin: 8px 0; border-top: 1px dashed #ccc; }
-        .status-msg {
-            text-align: center;
-            font-weight: bold;
-            color: var(--accent);
-            margin-top: -10px;
-            margin-bottom: 15px;
-            display: none;
-        }
+        .status-msg { text-align: center; font-weight: bold; color: var(--primary); margin: 10px 0; display: none; }
     </style>
 </head>
 <body>
 
+<div class="header">
+    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+    <h2>Painel Proteção Proporcional</h2>
+</div>
+
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <h3>Projetos Salvos</h3>
+        <button class="close-btn" onclick="toggleSidebar()">✕</button>
+    </div>
+    <div class="projects-list" id="projects-list"></div>
+</div>
+
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
 <div class="container">
-    <h2>Painel de Proteção Proporcional</h2>
-    <div id="status-storage" class="status-msg">Projeto salvo com sucesso!</div>
+    <div id="status-storage" class="status-msg">Salvo com sucesso!</div>
 
     <div class="card">
         <h3>1. Configuração da Múltipla Geral</h3>
@@ -127,21 +166,35 @@
 
     <div id="jogos-container"></div>
 
-    <div class="btn-group">
-        <button class="btn btn-calc" onclick="calcularSistema()">Calcular</button>
-        <button class="btn btn-save" onclick="salvarDados()">Salvar Projeto</button>
+    <div class="card">
+        <h3>Ações do Projeto</h3>
+        <div class="col" style="margin-bottom: 12px;">
+            <label>Nome do Projeto para Salvar</label>
+            <input type="text" id="nomeProjeto" placeholder="Ex: Rodada 1 - Junho">
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-calc" onclick="calcularSistema()">Calcular Cenários</button>
+            <button class="btn btn-save" onclick="salvarDados()">Salvar no Histórico</button>
+        </div>
     </div>
 </div>
 
 <script>
+    // Dicas padrão de confrontos fictícios para a inicialização limpa
+    const defaultConfrontos = ["Jogo 1", "Jogo 2", "Jogo 3", "Jogo 4", "Jogo 5"];
     const defaultOddsE = [3.25, 3.70, 3.55, 3.30, 3.00];
     const defaultOddsV = [3.00, 2.82, 2.628, 2.72, 3.65];
 
+    // Monta os cards dinâmicos dos 5 dias incluindo o campo de nome do confronto
     const container = document.getElementById('jogos-container');
     for (let i = 1; i <= 5; i++) {
         container.innerHTML += `
             <div class="card">
-                <h3>Jogo ${i}</h3>
+                <h3>Dia ${i}</h3>
+                <div class="col" style="margin-bottom: 10px;">
+                    <label>Confronto / Times</label>
+                    <input type="text" id="conf_${i}" class="input-confronto" placeholder="Ex: Time A x Time B" value="${defaultConfrontos[i-1]}">
+                </div>
                 <div class="row">
                     <div class="col">
                         <label>Odd Empate</label>
@@ -159,14 +212,16 @@
         `;
     }
 
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('open');
+        document.getElementById('overlay').classList.toggle('show');
+    }
+
     function calcularSistema() {
         let valM = parseFloat(document.getElementById('valMultipla').value) || 0;
         let oddM = parseFloat(document.getElementById('oddMultipla').value) || 0;
         
-        // CORREÇÃO: Meta de lucro líquida baseada estritamente no valor investido na múltipla
-        // Definido como 2x o valor da múltipla para garantir um retorno financeiro excelente e proporcional
         let metaProporcional = valM * 2;
-        
         let retM = valM * oddM;
         document.getElementById('retornoMultipla').innerText = `Retorno Estimado: R$ ${retM.toFixed(2)} (Meta por Jogo: R$ ${metaProporcional.toFixed(2)})`;
 
@@ -176,11 +231,8 @@
             let oddE = parseFloat(document.getElementById(`oddE_${i}`).value) || 1;
             let oddV = parseFloat(document.getElementById(`oddV_${i}`).value) || 1;
             
-            // Cálculo de Arbitragem Cruzada Inteligente
             let denominador = 1 - (1 / oddE) - (1 / oddV);
-            
-            let valEmpate = 0;
-            let valVisitante = 0;
+            let valEmpate = 0, valVisitante = 0;
 
             if (denominador > 0) {
                 let fatorComum = (prejuizoAcumulado + metaProporcional) / denominador;
@@ -189,7 +241,6 @@
             }
 
             let custoTotalAteAqui = prejuizoAcumulado + valEmpate + valVisitante;
-
             let lucroEmpate = (valEmpate * oddE) - custoTotalAteAqui;
             let lucroVisitante = (valVisitante * oddV) - custoTotalAteAqui;
 
@@ -201,43 +252,96 @@
                 📈 <b>Se der Empate hoje:</b> <span class="lucro-pos">R$ ${lucroEmpate.toFixed(2)}</span> líquido<br>
                 📉 <b>Se der Visitante hoje:</b> <span class="lucro-pos">R$ ${lucroVisitante.toFixed(2)}</span> líquido
             `;
-
             prejuizoAcumulado += (valEmpate + valVisitante);
         }
     }
 
+    // SALVAR DADOS INCLUINDO OS NOMES DOS CONFRONTOS
     function salvarDados() {
+        let nome = document.getElementById('nomeProjeto').value.trim();
+        if (!nome) {
+            alert("Por favor, digite um nome para salvar o seu projeto!");
+            return;
+        }
+
         const dadosProjeto = {
+            id: Date.now(),
+            nome: nome,
             valMultipla: document.getElementById('valMultipla').value,
             oddMultipla: document.getElementById('oddMultipla').value,
-            oddsE: [],
-            oddsV: []
+            confrontos: [], oddsE: [], oddsV: []
         };
+
         for (let i = 1; i <= 5; i++) {
+            dadosProjeto.confrontos.push(document.getElementById(`conf_${i}`).value);
             dadosProjeto.oddsE.push(document.getElementById(`oddE_${i}`).value);
             dadosProjeto.oddsV.push(document.getElementById(`oddV_${i}`).value);
         }
-        localStorage.setItem('projetoApostasProporcional', JSON.stringify(dadosProjeto));
-        const statusMsg = document.getElementById('status-storage');
-        statusMsg.style.display = 'block';
-        setTimeout(() => { statusMsg.style.display = 'none'; }, 3000);
+
+        let historico = JSON.parse(localStorage.getItem('historicoApostasConfrontos')) || [];
+        
+        let indexExistente = historico.findIndex(p => p.nome === nome);
+        if (indexExistente >= 0) historico[indexExistente] = dadosProjeto;
+        else historico.push(dadosProjeto);
+
+        localStorage.setItem('historicoApostasConfrontos', JSON.stringify(historico));
+        
+        document.getElementById('status-storage').style.display = 'block';
+        setTimeout(() => { document.getElementById('status-storage').style.display = 'none'; }, 2000);
+        
+        atualizarListaSidebar();
     }
 
-    function carregarDados() {
-        const dadosSalvos = localStorage.getItem('projetoApostasProporcional');
-        if (dadosSalvos) {
-            const dados = JSON.parse(dadosSalvos);
-            document.getElementById('valMultipla').value = dados.valMultipla;
-            document.getElementById('oddMultipla').value = dados.oddMultipla;
-            for (let i = 1; i <= 5; i++) {
-                if(dados.oddsE[i-1]) document.getElementById(`oddE_${i}`).value = dados.oddsE[i-1];
-                if(dados.oddsV[i-1]) document.getElementById(`oddV_${i}`).value = dados.oddsV[i-1];
-            }
+    function atualizarListaSidebar() {
+        let historico = JSON.parse(localStorage.getItem('historicoApostasConfrontos')) || [];
+        const listContainer = document.getElementById('projects-list');
+        listContainer.innerHTML = '';
+
+        if (historico.length === 0) {
+            listContainer.innerHTML = '<p style="color:#aaa; text-align:center; font-size:0.9rem;">Nenhum projeto salvo.</p>';
+            return;
         }
-        calcularSistema();
+
+        historico.forEach(p => {
+            listContainer.innerHTML += `
+                <div class="project-item">
+                    <span class="project-name" onclick="carregarProjeto(${p.id})">${p.nome}</span>
+                    <button class="delete-btn" onclick="deletarProjeto(${p.id})">🗑️</button>
+                </div>
+            `;
+        });
     }
 
-    window.onload = carregarDados;
+    // CARREGA INCLUINDO OS CONFRONTOS SALVOS
+    window.carregarProjeto = function(id) {
+        let historico = JSON.parse(localStorage.getItem('historicoApostasConfrontos')) || [];
+        let p = historico.find(proj => proj.id === id);
+        if (p) {
+            document.getElementById('nomeProjeto').value = p.nome;
+            document.getElementById('valMultipla').value = p.valMultipla;
+            document.getElementById('oddMultipla').value = p.oddMultipla;
+
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`conf_${i}`).value = p.confrontos && p.confrontos[i-1] ? p.confrontos[i-1] : `Jogo ${i}`;
+                document.getElementById(`oddE_${i}`).value = p.oddsE[i-1];
+                document.getElementById(`oddV_${i}`).value = p.oddsV[i-1];
+            }
+            calcularSistema();
+            toggleSidebar();
+        }
+    }
+
+    window.deletarProjeto = function(id) {
+        let historico = JSON.parse(localStorage.getItem('historicoApostasConfrontos')) || [];
+        historico = historico.filter(proj => proj.id !== id);
+        localStorage.setItem('historicoApostasConfrontos', JSON.stringify(historico));
+        atualizarListaSidebar();
+    }
+
+    window.onload = function() {
+        atualizarListaSidebar();
+        calcularSistema();
+    };
 </script>
 
 </body>
