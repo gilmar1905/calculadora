@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Proteção Proporcional com Confrontos</title>
+    <title>Painel de Proteção com Trava de Retorno</title>
     <style>
         :root {
             --primary: #2e7d32;
@@ -12,6 +12,8 @@
             --card: #ffffff;
             --text: #333333;
             --accent: #0288d1;
+            --danger: #c62828;
+            --danger-bg: #ffebee;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -112,12 +114,17 @@
             margin-bottom: 15px;
         }
         .card h3 { margin: 0 0 10px 0; color: var(--primary); border-bottom: 1px solid #eee; padding-bottom: 5px; font-size: 1.05rem; }
+        .card.card-error { border: 2px solid var(--danger); }
         .row { display: flex; gap: 10px; margin-bottom: 10px; }
         .col { flex: 1; display: flex; flex-direction: column; }
         label { font-size: 0.85rem; font-weight: bold; margin-bottom: 4px; }
         input { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; }
         .input-confronto { background-color: #fafafa; font-weight: 500; border-color: #b0bec5; }
-        .result-box { background: #e8f5e9; padding: 12px; border-radius: 4px; margin-top: 5px; font-weight: 500; font-size: 0.95rem; line-height: 1.5; }
+        
+        .result-box { padding: 12px; border-radius: 4px; margin-top: 5px; font-weight: 500; font-size: 0.95rem; line-height: 1.5; }
+        .box-normal { background: #e8f5e9; }
+        .box-wait { background: #fff3e0; }
+        .box-alert { background: var(--danger-bg); color: var(--danger); border: 1px solid #ffcdd2; }
         
         .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; margin-bottom: 25px; }
         .btn { width: 100%; padding: 14px; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; font-weight: bold; text-align: center; box-sizing: border-box; }
@@ -161,7 +168,7 @@
                 <input type="number" id="oddMultipla" step="0.01" value="99.30">
             </div>
         </div>
-        <div class="result-box" id="retornoMultipla">Retorno Estimado: R$ 82,42</div>
+        <div class="result-box box-normal" id="retornoMultipla">Retorno Estimado: R$ 82,42</div>
     </div>
 
     <div id="jogos-container"></div>
@@ -180,16 +187,14 @@
 </div>
 
 <script>
-    // Dicas padrão de confrontos fictícios para a inicialização limpa
     const defaultConfrontos = ["Jogo 1", "Jogo 2", "Jogo 3", "Jogo 4", "Jogo 5"];
     const defaultOddsE = [3.25, 3.70, 3.55, 3.30, 3.00];
     const defaultOddsV = [3.00, 2.82, 2.628, 2.72, 3.65];
 
-    // Monta os cards dinâmicos dos 5 dias incluindo o campo de nome do confronto
     const container = document.getElementById('jogos-container');
     for (let i = 1; i <= 5; i++) {
         container.innerHTML += `
-            <div class="card">
+            <div class="card" id="card_dia_${i}">
                 <h3>Dia ${i}</h3>
                 <div class="col" style="margin-bottom: 10px;">
                     <label>Confronto / Times</label>
@@ -205,7 +210,7 @@
                         <input type="number" id="oddV_${i}" step="0.001" value="${defaultOddsV[i-1]}">
                     </div>
                 </div>
-                <div class="result-box" style="background: #fff3e0;" id="res_${i}">
+                <div class="result-box box-wait" id="res_${i}">
                     Aguardando cálculo...
                 </div>
             </div>
@@ -222,12 +227,26 @@
         let oddM = parseFloat(document.getElementById('oddMultipla').value) || 0;
         
         let metaProporcional = valM * 2;
-        let retM = valM * oddM;
+        let retM = valM * oddM; // Esse é o teto máximo absoluto tolerável
         document.getElementById('retornoMultipla').innerText = `Retorno Estimado: R$ ${retM.toFixed(2)} (Meta por Jogo: R$ ${metaProporcional.toFixed(2)})`;
 
         let prejuizoAcumulado = valM; 
+        let travado por estouro = false;
 
         for (let i = 1; i <= 5; i++) {
+            const cardDia = document.getElementById(`card_dia_${i}`);
+            const resBox = document.getElementById(`res_${i}`);
+            
+            // Remove estilos de erro anteriores antes de recalcular
+            cardDia.classList.remove('card-error');
+            resBox.className = "result-box box-normal";
+
+            if (travado_por_estouro) {
+                resBox.className = "result-box box-alert";
+                resBox.innerHTML = `⚠️ <b>Cálculo suspenso:</b> Bloqueado devido ao estouro de custo no dia anterior.`;
+                continue;
+            }
+
             let oddE = parseFloat(document.getElementById(`oddE_${i}`).value) || 1;
             let oddV = parseFloat(document.getElementById(`oddV_${i}`).value) || 1;
             
@@ -241,10 +260,25 @@
             }
 
             let custoTotalAteAqui = prejuizoAcumulado + valEmpate + valVisitante;
+
+            // NOVA TRAVA INTELIGENTE: Se o custo total ultrapassar o retorno da Múltipla, o app barra!
+            if (custoTotalAteAqui >= retM) {
+                cardDia.classList.add('card-error');
+                resBox.className = "result-box box-alert";
+                resBox.innerHTML = `
+                    🛑 <b>ESTOURO DE CUSTO BLOQUEADO!</b><br>
+                    O custo acumulado para proteger este jogo atingiria <b>R$ ${custoTotalAteAqui.toFixed(2)}</b>, o que é MAIOR ou IGUAL ao prêmio total da sua múltipla (R$ ${retM.toFixed(2)}).<br>
+                    <div class="divider"></div>
+                    💡 <b>Solução:</b> Modifique as odds deste confronto pegando cotações mais altas para viabilizar a proteção!
+                `;
+                travado_por_estouro = true; // Ativa o freio para os próximos dias
+                continue;
+            }
+
             let lucroEmpate = (valEmpate * oddE) - custoTotalAteAqui;
             let lucroVisitante = (valVisitante * oddV) - custoTotalAteAqui;
 
-            document.getElementById(`res_${i}`).innerHTML = `
+            resBox.innerHTML = `
                 🤝 <b>Aposta no Empate:</b> R$ ${valEmpate.toFixed(2)}<br>
                 ✈️ <b>Aposta no Visitante:</b> R$ ${valVisitante.toFixed(2)}<br>
                 💰 <b>Custo acumulado total:</b> R$ ${custoTotalAteAqui.toFixed(2)}<br>
@@ -256,7 +290,6 @@
         }
     }
 
-    // SALVAR DADOS INCLUINDO OS NOMES DOS CONFRONTOS
     function salvarDados() {
         let nome = document.getElementById('nomeProjeto').value.trim();
         if (!nome) {
@@ -279,7 +312,6 @@
         }
 
         let historico = JSON.parse(localStorage.getItem('historicoApostasConfrontos')) || [];
-        
         let indexExistente = historico.findIndex(p => p.nome === nome);
         if (indexExistente >= 0) historico[indexExistente] = dadosProjeto;
         else historico.push(dadosProjeto);
@@ -312,7 +344,6 @@
         });
     }
 
-    // CARREGA INCLUINDO OS CONFRONTOS SALVOS
     window.carregarProjeto = function(id) {
         let historico = JSON.parse(localStorage.getItem('historicoApostasConfrontos')) || [];
         let p = historico.find(proj => proj.id === id);
