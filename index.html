@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Proteção com Trava de Retorno</title>
+    <title>Painel de Proteção Proporcional</title>
     <style>
         :root {
             --primary: #2e7d32;
@@ -227,17 +227,16 @@
         let oddM = parseFloat(document.getElementById('oddMultipla').value) || 0;
         
         let metaProporcional = valM * 2;
-        let retM = valM * oddM; // Esse é o teto máximo absoluto tolerável
+        let retM = valM * oddM;
         document.getElementById('retornoMultipla').innerText = `Retorno Estimado: R$ ${retM.toFixed(2)} (Meta por Jogo: R$ ${metaProporcional.toFixed(2)})`;
 
         let prejuizoAcumulado = valM; 
-        let travado por estouro = false;
+        let travado_por_estouro = false;
 
         for (let i = 1; i <= 5; i++) {
             const cardDia = document.getElementById(`card_dia_${i}`);
             const resBox = document.getElementById(`res_${i}`);
             
-            // Remove estilos de erro anteriores antes de recalcular
             cardDia.classList.remove('card-error');
             resBox.className = "result-box box-normal";
 
@@ -261,7 +260,7 @@
 
             let custoTotalAteAqui = prejuizoAcumulado + valEmpate + valVisitante;
 
-            // NOVA TRAVA INTELIGENTE: Se o custo total ultrapassar o retorno da Múltipla, o app barra!
+            // Trava de retorno baseada no prêmio estimado da Múltipla
             if (custoTotalAteAqui >= retM) {
                 cardDia.classList.add('card-error');
                 resBox.className = "result-box box-alert";
@@ -271,7 +270,7 @@
                     <div class="divider"></div>
                     💡 <b>Solução:</b> Modifique as odds deste confronto pegando cotações mais altas para viabilizar a proteção!
                 `;
-                travado_por_estouro = true; // Ativa o freio para os próximos dias
+                travado_por_estouro = true;
                 continue;
             }
 
