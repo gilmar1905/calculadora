@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Proteção Proporcional - Reembolso Visitante</title>
+    <title>Painel Proteção Proporcional - 3 Jogos</title>
     <style>
         :root {
             --primary: #2e7d32;
@@ -12,7 +12,6 @@
             --card: #ffffff;
             --text: #333333;
             --accent: #0288d1;
-            --reembolso: #0288d1;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -46,7 +45,7 @@
         }
         .header h2 { margin: 0; font-size: 1.2rem; flex: 1; text-align: center; margin-right: 30px; }
 
-        /* ABA LATERAL (SIDEBAR) */
+        /* ABA LATERAL (HISTÓRICO) */
         .sidebar {
             position: fixed;
             top: 0;
@@ -128,7 +127,7 @@
         .btn-save { background: var(--accent); color: white; }
         
         .lucro-pos { color: #2e7d32; font-weight: bold; }
-        .lucro-neutro { color: #0288d1; font-weight: bold; }
+        .lucro-neutro { color: #f57c00; font-weight: bold; }
         .divider { margin: 8px 0; border-top: 1px dashed #ccc; }
         .status-msg { text-align: center; font-weight: bold; color: var(--primary); margin: 10px 0; display: none; }
     </style>
@@ -137,7 +136,7 @@
 
 <div class="header">
     <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-    <h2>Painel Proteção Proporcional</h2>
+    <h2>Painel Proteção Proporcional (3 Jogos)</h2>
 </div>
 
 <div class="sidebar" id="sidebar">
@@ -174,7 +173,7 @@
         <h3>Ações do Projeto</h3>
         <div class="col" style="margin-bottom: 12px;">
             <label>Nome do Projeto para Salvar</label>
-            <input type="text" id="nomeProjeto" placeholder="Ex: Rodada 1 - Junho">
+            <input type="text" id="nomeProjeto" placeholder="Ex: Rodada Reduzida - 3 Jogos">
         </div>
         <div class="btn-group">
             <button class="btn btn-calc" onclick="calcularSistema()">Calcular Cenários</button>
@@ -184,12 +183,15 @@
 </div>
 
 <script>
-    const defaultConfrontos = ["Jogo 1", "Jogo 2", "Jogo 3", "Jogo 4", "Jogo 5"];
-    const defaultOddsE = [3.25, 3.70, 3.55, 3.30, 3.00];
-    const defaultOddsV = [3.00, 2.82, 2.628, 2.72, 3.65];
+    // Quantidade total de jogos reduzida para 3
+    const TOTAL_JOGOS = 3;
+    
+    const defaultConfrontos = ["Jogo 1", "Jogo 2", "Jogo 3"];
+    const defaultOddsE = [3.25, 3.70, 3.55];
+    const defaultOddsV = [3.00, 2.82, 2.628];
 
     const container = document.getElementById('jogos-container');
-    for (let i = 1; i <= 5; i++) {
+    for (let i = 1; i <= TOTAL_JOGOS; i++) {
         container.innerHTML += `
             <div class="card" id="card_dia_${i}">
                 <h3>Dia ${i}</h3>
@@ -229,36 +231,39 @@
 
         let prejuizoAcumulado = valM; 
 
-        for (let i = 1; i <= 5; i++) {
+        for (let i = 1; i <= TOTAL_JOGOS; i++) {
             const resBox = document.getElementById(`res_${i}`);
             
             let oddE = parseFloat(document.getElementById(`oddE_${i}`).value) || 1;
             let oddV = parseFloat(document.getElementById(`oddV_${i}`).value) || 1;
             
-            // 1. Calcula o valor exato para colocar no Visitante para cobrir o prejuízo acumulado das rodadas passadas
-            let valVisitante = prejuizoAcumulado / (oddV - 1);
+            // Sistema interligado exato corrigido
+            let divisor = (oddE * oddV) - oddE - oddV;
             
-            // 2. Soma o acumulado anterior com o custo da aposta do Visitante feita hoje
-            let custoParcial = prejuizoAcumulado + valVisitante;
+            let valVisitante = 0;
+            let valEmpate = 0;
+
+            if (divisor > 0) {
+                valVisitante = ((prejuizoAcumulado * oddE) + metaProporcional) / divisor;
+                valEmpate = (prejuizoAcumulado + valVisitante + metaProporcional) / (oddE - 1);
+            } else {
+                valVisitante = prejuizoAcumulado / (oddV - 1);
+                valEmpate = (prejuizoAcumulado + valVisitante + metaProporcional) / (oddE - 1);
+            }
             
-            // 3. O Empate calcula cobrindo o custo parcial e somando a meta de lucro estipulada
-            let valEmpate = (custoParcial + metaProporcional) / (oddE - 1);
-            
-            // Custo final real acumulado que inclui as duas proteções do dia
-            let custoTotalAteAqui = custoParcial + valEmpate;
+            let custoTotalAteAqui = prejuizoAcumulado + valEmpate + valVisitante;
 
             let lucroEmpate = (valEmpate * oddE) - custoTotalAteAqui;
             let lucroVisitante = (valVisitante * oddV) - custoTotalAteAqui;
 
-            // Zera variações mínimas de centavos causadas por dízimas do JavaScript
-            if (Math.abs(lucroVisitante) < 0.02) {
+            if (Math.abs(lucroVisitante) < 0.05) {
                 lucroVisitante = 0.00;
             }
 
             resBox.className = "result-box";
             resBox.innerHTML = `
                 🤝 <b>Aposta no Empate (Lucro):</b> R$ ${valEmpate.toFixed(2)}<br>
-                ✈️ <b>Aposta no Visitante (Reembolso):</b> R$ ${valVisitante.toFixed(2)}<br>
+                ✈️ <b>Aposta no Visitante (Reembolso Real):</b> R$ ${valVisitante.toFixed(2)}<br>
                 💰 <b>Custo acumulado total:</b> R$ ${custoTotalAteAqui.toFixed(2)}<br>
                 <div class="divider"></div>
                 📈 <b>Se der Empate hoje:</b> <span class="lucro-pos">R$ ${lucroEmpate.toFixed(2)}</span> líquido<br>
@@ -284,7 +289,7 @@
             confrontos: [], oddsE: [], oddsV: []
         };
 
-        for (let i = 1; i <= 5; i++) {
+        for (let i = 1; i <= TOTAL_JOGOS; i++) {
             dadosProjeto.confrontos.push(document.getElementById(`conf_${i}`).value);
             dadosProjeto.oddsE.push(document.getElementById(`oddE_${i}`).value);
             dadosProjeto.oddsV.push(document.getElementById(`oddV_${i}`).value);
@@ -331,7 +336,7 @@
             document.getElementById('valMultipla').value = p.valMultipla;
             document.getElementById('oddMultipla').value = p.oddMultipla;
 
-            for (let i = 1; i <= 5; i++) {
+            for (let i = 1; i <= TOTAL_JOGOS; i++) {
                 document.getElementById(`conf_${i}`).value = p.confrontos && p.confrontos[i-1] ? p.confrontos[i-1] : `Jogo ${i}`;
                 document.getElementById(`oddE_${i}`).value = p.oddsE[i-1];
                 document.getElementById(`oddV_${i}`).value = p.oddsV[i-1];
