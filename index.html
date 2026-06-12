@@ -218,7 +218,7 @@
         document.getElementById('overlay').classList.toggle('show');
     }
 
-    function calcularSistema() {
+function calcularSistema() {
         let valM = parseFloat(document.getElementById('valMultipla').value) || 0;
         let oddM = parseFloat(document.getElementById('oddMultipla').value) || 0;
         
@@ -234,21 +234,26 @@
             let oddE = parseFloat(document.getElementById(`oddE_${i}`).value) || 1;
             let oddV = parseFloat(document.getElementById(`oddV_${i}`).value) || 1;
             
-            // MATEMÁTICA DE RETORNO DE CUSTO NO VISITANTE (Sem o estol de valores)
-            // 1. Primeiro calcula quanto precisa colocar no visitante para salvar o prejuízo acumulado caso ele vença
+            // 1. Calcula o valor exato no visitante para empatar com o prejuízo acumulado para trás
             let valVisitante = prejuizoAcumulado / (oddV - 1);
             
-            // 2. O custo temporário agora inclui a múltipla, perdas passadas e a proteção do visitante de hoje
+            // 2. Custo parcial considerando o acumulado + a aposta do visitante de hoje
             let custoParcial = prejuizoAcumulado + valVisitante;
             
-            // 3. O empate calcula em cima desse custo parcial para garantir o lucro alvo
+            // 3. O empate cobre todo o custo parcial e ainda busca a meta de lucro
             let valEmpate = (custoParcial + metaProporcional) / (oddE - 1);
             
-            // Ajuste final do custo real do dia
+            // Custo total real após incluir a aposta do empate de hoje
             let custoTotalAteAqui = custoParcial + valEmpate;
 
+            // CORREÇÃO DOS CÁLCULOS DE RETORNO LÍQUIDO PARA EXIBIÇÃO:
             let lucroEmpate = (valEmpate * oddE) - custoTotalAteAqui;
-            let lucroVisitante = (valVisitante * oddV) - custoTotalAteAqui; // Fica cravado próximo a R$ 0.00 (0x0)
+            let lucroVisitante = (valVisitante * oddV) - custoTotalAteAqui;
+
+            // Força o valor do visitante a mostrar 0.00 caso fique uma dízima negativa por centavos
+            if (Math.abs(lucroVisitante) < 0.02) {
+                lucroVisitante = 0.00;
+            }
 
             resBox.className = "result-box";
             resBox.innerHTML = `
