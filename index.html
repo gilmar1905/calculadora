@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Múltipla e Proteção Absoluta (5 Dias)</title>
+    <title>Calculadora de Proteção Proporcional</title>
     <style>
         :root {
             --primary: #2e7d32;
@@ -93,7 +93,6 @@
         .btn-save { background: var(--accent); color: white; }
         .btn-save:hover { background: #01579b; }
         .lucro-pos { color: #2e7d32; font-weight: bold; }
-        .lucro-neg { color: #c62828; font-weight: bold; }
         .divider { margin: 8px 0; border-top: 1px dashed #ccc; }
         .status-msg {
             text-align: center;
@@ -108,11 +107,11 @@
 <body>
 
 <div class="container">
-    <h2>Painel de Proteção 5 Dias</h2>
+    <h2>Painel de Proteção Proporcional</h2>
     <div id="status-storage" class="status-msg">Projeto salvo com sucesso!</div>
 
     <div class="card">
-        <h3>1. Configuração e Meta de Lucro</h3>
+        <h3>1. Configuração da Múltipla Geral</h3>
         <div class="row">
             <div class="col">
                 <label>Valor Múltipla (R$)</label>
@@ -121,10 +120,6 @@
             <div class="col">
                 <label>Odd Múltipla</label>
                 <input type="number" id="oddMultipla" step="0.01" value="99.30">
-            </div>
-            <div class="col">
-                <label>Meta Lucro Desejado (R$)</label>
-                <input type="number" id="metaLucro" step="0.50" value="2.00">
             </div>
         </div>
         <div class="result-box" id="retornoMultipla">Retorno Estimado: R$ 82,42</div>
@@ -167,28 +162,31 @@
     function calcularSistema() {
         let valM = parseFloat(document.getElementById('valMultipla').value) || 0;
         let oddM = parseFloat(document.getElementById('oddMultipla').value) || 0;
-        let meta = parseFloat(document.getElementById('metaLucro').value) || 0;
+        
+        // CORREÇÃO: Meta de lucro líquida baseada estritamente no valor investido na múltipla
+        // Definido como 2x o valor da múltipla para garantir um retorno financeiro excelente e proporcional
+        let metaProporcional = valM * 2;
         
         let retM = valM * oddM;
-        document.getElementById('retornoMultipla').innerText = `Retorno Estimado: R$ ${retM.toFixed(2)}`;
+        document.getElementById('retornoMultipla').innerText = `Retorno Estimado: R$ ${retM.toFixed(2)} (Meta por Jogo: R$ ${metaProporcional.toFixed(2)})`;
 
-        let prejuizoAcumulado = valM; // Começa devendo o valor gasto na múltipla
+        let prejuizoAcumulado = valM; 
 
         for (let i = 1; i <= 5; i++) {
             let oddE = parseFloat(document.getElementById(`oddE_${i}`).value) || 1;
             let oddV = parseFloat(document.getElementById(`oddV_${i}`).value) || 1;
             
-            // FÓRMULA SISTÊMICA ALGEBRICA SIMULTÂNEA:
-            // Calcula os valores exatos de Empate e Visitante que cobrem o prejuízo antigo + o custo mútuo do dia + a meta de lucro líquido.
-            let denominador = 1 - (1 / (oddE - 1)) - (1 / (oddV - 1));
+            // Cálculo de Arbitragem Cruzada Inteligente
+            let denominador = 1 - (1 / oddE) - (1 / oddV);
             
-            let valEmpate = (prejuizoAcumulado + meta) / (oddE - 1);
-            let valVisitante = (prejuizoAcumulado + meta) / (oddV - 1);
-            
-            // Ajuste matemático de arbitragem cruzada pura
-            let fatorComum = (prejuizoAcumulado + meta) / (1 - (1/oddE) - (1/oddV));
-            valEmpate = fatorComum / oddE;
-            valVisitante = fatorComum / oddV;
+            let valEmpate = 0;
+            let valVisitante = 0;
+
+            if (denominador > 0) {
+                let fatorComum = (prejuizoAcumulado + metaProporcional) / denominador;
+                valEmpate = fatorComum / oddE;
+                valVisitante = fatorComum / oddV;
+            }
 
             let custoTotalAteAqui = prejuizoAcumulado + valEmpate + valVisitante;
 
@@ -198,10 +196,10 @@
             document.getElementById(`res_${i}`).innerHTML = `
                 🤝 <b>Aposta no Empate:</b> R$ ${valEmpate.toFixed(2)}<br>
                 ✈️ <b>Aposta no Visitante:</b> R$ ${valVisitante.toFixed(2)}<br>
-                💰 <b>Custo acumulado atual:</b> R$ ${custoTotalAteAqui.toFixed(2)}<br>
+                💰 <b>Custo acumulado total:</b> R$ ${custoTotalAteAqui.toFixed(2)}<br>
                 <div class="divider"></div>
                 📈 <b>Se der Empate hoje:</b> <span class="lucro-pos">R$ ${lucroEmpate.toFixed(2)}</span> líquido<br>
-                降低 <b>Se der Visitante hoje:</b> <span class="lucro-pos">R$ ${lucroVisitante.toFixed(2)}</span> líquido
+                📉 <b>Se der Visitante hoje:</b> <span class="lucro-pos">R$ ${lucroVisitante.toFixed(2)}</span> líquido
             `;
 
             prejuizoAcumulado += (valEmpate + valVisitante);
@@ -212,7 +210,6 @@
         const dadosProjeto = {
             valMultipla: document.getElementById('valMultipla').value,
             oddMultipla: document.getElementById('oddMultipla').value,
-            metaLucro: document.getElementById('metaLucro').value,
             oddsE: [],
             oddsV: []
         };
@@ -220,19 +217,18 @@
             dadosProjeto.oddsE.push(document.getElementById(`oddE_${i}`).value);
             dadosProjeto.oddsV.push(document.getElementById(`oddV_${i}`).value);
         }
-        localStorage.setItem('projetoApostas5Dias_v2', JSON.stringify(dadosProjeto));
+        localStorage.setItem('projetoApostasProporcional', JSON.stringify(dadosProjeto));
         const statusMsg = document.getElementById('status-storage');
         statusMsg.style.display = 'block';
         setTimeout(() => { statusMsg.style.display = 'none'; }, 3000);
     }
 
     function carregarDados() {
-        const dadosSalvos = localStorage.getItem('projetoApostas5Dias_v2');
+        const dadosSalvos = localStorage.getItem('projetoApostasProporcional');
         if (dadosSalvos) {
             const dados = JSON.parse(dadosSalvos);
             document.getElementById('valMultipla').value = dados.valMultipla;
             document.getElementById('oddMultipla').value = dados.oddMultipla;
-            if(dados.metaLucro) document.getElementById('metaLucro').value = dados.metaLucro;
             for (let i = 1; i <= 5; i++) {
                 if(dados.oddsE[i-1]) document.getElementById(`oddE_${i}`).value = dados.oddsE[i-1];
                 if(dados.oddsV[i-1]) document.getElementById(`oddV_${i}`).value = dados.oddsV[i-1];
