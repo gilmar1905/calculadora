@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Proteção Sequencial - 3 Jogos (1X2)</title>
+    <title>Painel Proteção Sequencial - 3 Jogos (1X2) com Salvar</title>
     <style>
         :root {
             --primary: #2e7d32;
@@ -42,6 +42,10 @@
         }
         body.dark-mode .divider {
             border-top: 1px dashed #555;
+        }
+        body.dark-mode .saved-item {
+            background-color: #2a2a2a;
+            border-color: #444;
         }
 
         body {
@@ -101,6 +105,7 @@
         body.dark-mode .box-wait { background: #3d2600; }
         
         .btn { width: 100%; padding: 14px; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; font-weight: bold; background: var(--primary); color: white; text-align: center; margin-top: 15px; }
+        .btn-sec { background: var(--accent); margin-top: 5px; }
         
         .lucro-pos { color: #2e7d32; font-weight: bold; }
         body.dark-mode .lucro-pos { color: #81c784; }
@@ -111,6 +116,12 @@
         
         .divider { margin: 8px 0; border-top: 1px dashed #ccc; }
         .badge { background: #e3f2fd; color: #0d47a1; padding: 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; margin-bottom: 10px; text-align: center; border: 1px solid #bbdefb; }
+        
+        .saved-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+        .saved-item { background: #fafafa; border: 1px solid #ddd; padding: 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .saved-name { font-weight: bold; cursor: pointer; color: var(--accent); }
+        .saved-name:hover { text-decoration: underline; }
+        .btn-del { background: #c62828; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
     </style>
 </head>
 <body>
@@ -121,6 +132,22 @@
 </div>
 
 <div class="container">
+    <div class="card">
+        <h3>💾 Gerenciador de Cenários Salvos</h3>
+        <div class="row">
+            <div class="col">
+                <label>Nome do Cenário / Jogo</label>
+                <input type="text" id="nomeSalvar" placeholder="Ex: Champions - Rodada 1" style="flex:1;">
+            </div>
+            <div class="col" style="justify-content: flex-end;">
+                <button class="btn btn-sec" onclick="salvarConfiguracao()" style="margin-top:0; padding: 10px;">Salvar Cenário Atual</button>
+            </div>
+        </div>
+        <div class="divider"></div>
+        <label>Seus Cenários Salvos (Clique para carregar):</label>
+        <div class="saved-list" id="listaSalvos">Nenhum cenário salvo.</div>
+    </div>
+
     <div class="card">
         <h3>1. Configuração da Múltipla Principal (3 Jogos)</h3>
         <div class="badge">Escolha o mercado da sua múltipla e a margem de lucro (%) desejada para as coberturas diárias.</div>
@@ -203,6 +230,89 @@
         } else {
             btn.innerText = '🌒';
         }
+    }
+
+    // Funções de Salvar e Carregar Cenários (LocalStorage)
+    function salvarConfiguracao() {
+        let nome = document.getElementById('nomeSalvar').value.trim();
+        if (!nome) {
+            alert("Digite um nome para o cenário antes de salvar.");
+            return;
+        }
+
+        // Coleta todos os estados dos campos
+        let config = {
+            valMultipla: document.getElementById('valMultipla').value,
+            mercadoMultipla: document.getElementById('mercadoMultipla').value,
+            margemLucro: document.getElementById('margemLucro').value,
+            jogos: []
+        };
+
+        for (let i = 1; i <= TOTAL_JOGOS; i++) {
+            config.jogos.push({
+                conf: document.getElementById(`conf_${i}`).value,
+                oddC: document.getElementById(`oddC_${i}`).value,
+                oddE: document.getElementById(`oddE_${i}`).value,
+                oddV: document.getElementById(`oddV_${i}`).value
+            });
+        }
+
+        let salvos = JSON.parse(localStorage.getItem('cenariosAposta') || '{}');
+        salvos[nome] = config;
+        localStorage.setItem('cenariosAposta', JSON.stringify(salvos));
+        
+        alert(`Cenário "${nome}" salvo com sucesso!`);
+        carregarListaSalvos();
+        document.getElementById('nomeSalvar').value = '';
+    }
+
+    function carregarListaSalvos() {
+        let salvos = JSON.parse(localStorage.getItem('cenariosAposta') || '{}');
+        let listaDiv = document.getElementById('listaSalvos');
+        listaDiv.innerHTML = '';
+
+        let chaves = Object.keys(salvos);
+        if (chaves.length === 0) {
+            listaDiv.innerHTML = 'Nenhum cenário salvo.';
+            return;
+        }
+
+        chaves.forEach(nome => {
+            listaDiv.innerHTML += `
+                <div class="saved-item">
+                    <span class="saved-name" onclick="carregarCenario('${nome}')">📁 ${nome}</span>
+                    <button class="btn-del" onclick="deletarCenario('${nome}'); event.stopPropagation();">Excluir</button>
+                </div>
+            `;
+        });
+    }
+
+    function carregarCenario(nome) {
+        let salvos = JSON.parse(localStorage.getItem('cenariosAposta') || '{}');
+        if (!salvos[nome]) return;
+
+        let config = salvos[nome];
+        document.getElementById('valMultipla').value = config.valMultipla;
+        document.getElementById('mercadoMultipla').value = config.mercadoMultipla;
+        document.getElementById('margemLucro').value = config.margemLucro;
+
+        config.jogos.forEach((j, index) => {
+            let i = index + 1;
+            document.getElementById(`conf_${i}`).value = j.conf;
+            document.getElementById(`oddC_${i}`).value = j.oddC;
+            document.getElementById(`oddE_${i}`).value = j.oddE;
+            document.getElementById(`oddV_${i}`).value = j.oddV;
+        });
+
+        calcularSistema();
+    }
+
+    function deletarCenario(nome) {
+        if (!confirm(`Tem certeza que deseja excluir o cenário "${nome}"?`)) return;
+        let salvos = JSON.parse(localStorage.getItem('cenariosAposta') || '{}');
+        delete salvos[nome];
+        localStorage.setItem('cenariosAposta', JSON.stringify(salvos));
+        carregarListaSalvos();
     }
 
     function calcularSistema() {
@@ -290,7 +400,10 @@
         }
     }
 
-    window.onload = calcularSistema;
+    window.onload = () => {
+        calcularSistema();
+        carregarListaSalvos();
+    };
 </script>
 
 </body>
