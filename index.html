@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Proteção Sequencial - 3 Jogos (1X2) com Salvar</title>
+    <title>Painel Proteção - 3 Times (Cores + Lucro Distribuído)</title>
     <style>
         :root {
             --primary: #2e7d32;
@@ -11,7 +11,14 @@
             --card: #ffffff;
             --text: #333333;
             --accent: #0288d1;
-            --box-bg: #e8f5e9;
+            
+            /* Cores individuais para os 3 cards (Tema Claro) */
+            --card-1: #e8f5e9; /* Verde Suave */
+            --card-2: #e3f2fd; /* Azul Suave */
+            --card-3: #fff9c4; /* Amarelo Suave */
+            --border-1: #a5d6a7;
+            --border-2: #90caf9;
+            --border-3: #fff59d;
         }
 
         /* Tema Escuro */
@@ -21,7 +28,14 @@
             --card: #1e1e1e;
             --text: #e0e0e0;
             --accent: #0277bd;
-            --box-bg: #1b2a1b;
+            
+            /* Cores individuais (Tema Escuro) */
+            --card-1: #1b2a1b;
+            --card-2: #0d203a;
+            --card-3: #2a2815;
+            --border-1: #2e7d32;
+            --border-2: #1565c0;
+            --border-3: #fbc02d;
         }
         body.dark-mode input, body.dark-mode select {
             background-color: #2a2a2a;
@@ -32,7 +46,6 @@
             background-color: #333;
         }
         body.dark-mode .result-box {
-            background-color: #1a2f1a;
             color: #e0e0e0;
         }
         body.dark-mode .badge {
@@ -93,6 +106,11 @@
         }
         .card h3 { margin: 0 0 10px 0; color: var(--primary); border-bottom: 1px solid #eee; padding-bottom: 5px; font-size: 1.05rem; }
         body.dark-mode .card h3 { border-bottom-color: #333; }
+
+        /* Classes dinâmicas para os 3 times */
+        .card-time-1 { background-color: var(--card-1); border: 1px solid var(--border-1); }
+        .card-time-2 { background-color: var(--card-2); border: 1px solid var(--border-2); }
+        .card-time-3 { background-color: var(--card-3); border: 1px solid var(--border-3); }
         
         .row { display: flex; gap: 10px; margin-bottom: 10px; }
         .col { flex: 1; display: flex; flex-direction: column; }
@@ -100,9 +118,8 @@
         input, select { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; }
         .input-confronto { background-color: #fafafa; font-weight: 500; border-color: #b0bec5; }
         
-        .result-box { padding: 12px; border-radius: 4px; margin-top: 5px; font-weight: 500; font-size: 0.95rem; line-height: 1.5; background: var(--box-bg); }
-        .box-wait { background: #fff3e0; }
-        body.dark-mode .box-wait { background: #3d2600; }
+        .result-box { padding: 12px; border-radius: 4px; margin-top: 5px; font-weight: 500; font-size: 0.95rem; line-height: 1.5; background: rgba(255,255,255,0.5); }
+        body.dark-mode .result-box { background: rgba(0,0,0,0.2); }
         
         .btn { width: 100%; padding: 14px; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; font-weight: bold; background: var(--primary); color: white; text-align: center; margin-top: 15px; }
         .btn-sec { background: var(--accent); margin-top: 5px; }
@@ -114,7 +131,7 @@
         .lucro-neg { color: #c62828; font-weight: bold; }
         body.dark-mode .lucro-neg { color: #e57373; }
         
-        .divider { margin: 8px 0; border-top: 1px dashed #ccc; }
+        .divider { margin: 8px 0; border-top: 1px dashed #999; }
         .badge { background: #e3f2fd; color: #0d47a1; padding: 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; margin-bottom: 10px; text-align: center; border: 1px solid #bbdefb; }
         
         .saved-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
@@ -127,7 +144,7 @@
 <body>
 
 <div class="header">
-    <h2>Painel Proteção - Ciclo de 3 Jogos (1X2)</h2>
+    <h2>Painel Proteção Sequencial - 3 Times</h2>
     <button class="theme-toggle" onclick="toggleTheme()">🌒</button>
 </div>
 
@@ -136,8 +153,8 @@
         <h3>💾 Gerenciador de Cenários Salvos</h3>
         <div class="row">
             <div class="col">
-                <label>Nome do Cenário / Jogo</label>
-                <input type="text" id="nomeSalvar" placeholder="Ex: Champions - Rodada 1" style="flex:1;">
+                <label>Nome do Cenário</label>
+                <input type="text" id="nomeSalvar" placeholder="Ex: Ciclo Final de Semana" style="flex:1;">
             </div>
             <div class="col" style="justify-content: flex-end;">
                 <button class="btn btn-sec" onclick="salvarConfiguracao()" style="margin-top:0; padding: 10px;">Salvar Cenário Atual</button>
@@ -149,30 +166,26 @@
     </div>
 
     <div class="card">
-        <h3>1. Configuração da Múltipla Principal (3 Jogos)</h3>
-        <div class="badge">Escolha o mercado da sua múltipla e a margem de lucro (%) desejada para as coberturas diárias.</div>
+        <h3>1. Dados da Múltipla / Aposta Principal</h3>
+        <div class="badge">Insira manualmente o valor apostado e a odd total acumulada da sua múltipla.</div>
         <div class="row">
             <div class="col">
                 <label>Montante Apostado Múltipla (R$)</label>
-                <input type="number" id="valMultipla" step="0.01" value="1.00" oninput="calcularSistema()">
+                <input type="number" id="valMultipla" step="0.01" value="22.97" oninput="calcularSistema()">
             </div>
             <div class="col">
-                <label>Focar Múltipla no Mercado:</label>
-                <select id="mercadoMultipla" onchange="calcularSistema()">
-                    <option value="CASA">Vitória Casa (1)</option>
-                    <option value="EMPATE" selected>Empate (X)</option>
-                    <option value="VISITANTE">Vitória Visitante (2)</option>
-                </select>
+                <label>Odd Total Acumulada</label>
+                <input type="number" id="oddMultipla" step="0.01" value="75.73" oninput="calcularSistema()">
             </div>
         </div>
-        <div class="row">
+        <div class="result-box" style="background-color: rgba(255,255,255,0.7); color: #0d47a1; border: 1px solid #90caf9;" id="retornoMultiplaInfo">
+            Retorno Bruto Múltipla: R$ 1739.51
+        </div>
+        <div class="row" style="margin-top: 15px;">
             <div class="col">
                 <label>Margem de Lucro Cobertura (%)</label>
-                <input type="number" id="margemLucro" step="1" value="0" placeholder="0 para reembolso puro" oninput="calcularSistema()">
+                <input type="number" id="margemLucro" step="1" value="10" oninput="calcularSistema()">
             </div>
-        </div>
-        <div class="result-box" style="background-color: #e3f2fd; color: #0d47a1;" id="retornoMultipla">
-            Múltipla Odd: 1.00 | Retorno Bruto Estimado: R$ 1.00
         </div>
     </div>
 
@@ -180,32 +193,28 @@
 
     <div class="card">
         <h3>Ação</h3>
-        <button class="btn" onclick="calcularSistema()">Calcular Cenários</button>
+        <button class="btn" onclick="calcularSistema()">Calcular Proteções</button>
     </div>
 </div>
 
 <script>
     const TOTAL_JOGOS = 3;
 
-    const defC = [1.85, 2.10, 1.95];
-    const defE = [3.30, 3.20, 3.50];
-    const defV = [4.20, 3.60, 3.90];
+    const defTimes = ["Time 1 (Jogo A)", "Time 2 (Jogo B)", "Time 3 (Jogo C)"];
+    const defE = [3.55, 3.20, 3.50];
+    const defV = [3.80, 3.60, 3.90];
 
     const container = document.getElementById('jogos-container');
     container.innerHTML = '';
     for (let i = 1; i <= TOTAL_JOGOS; i++) {
         container.innerHTML += `
-            <div class="card">
-                <h3>Jogo / Dia ${i}</h3>
+            <div class="card card-time-${i}">
+                <h3>Proteção ${i}º Time / Jogo:</h3>
                 <div class="col" style="margin-bottom: 10px;">
-                    <label>Confronto</label>
-                    <input type="text" id="conf_${i}" class="input-confronto" value="Confronto ${i}">
+                    <label>Confronto / Time</label>
+                    <input type="text" id="conf_${i}" class="input-confronto" value="${defTimes[i-1]}">
                 </div>
                 <div class="row">
-                    <div class="col">
-                        <label>Odd Casa (1)</label>
-                        <input type="number" id="oddC_${i}" step="0.01" value="${defC[i-1]}" oninput="calcularSistema()">
-                    </div>
                     <div class="col">
                         <label>Odd Empate (X)</label>
                         <input type="number" id="oddE_${i}" step="0.01" value="${defE[i-1]}" oninput="calcularSistema()">
@@ -215,7 +224,7 @@
                         <input type="number" id="oddV_${i}" step="0.01" value="${defV[i-1]}" oninput="calcularSistema()">
                     </div>
                 </div>
-                <div class="result-box box-wait" id="res_${i}">
+                <div class="result-box" id="res_${i}">
                     Aguardando cálculo...
                 </div>
             </div>
@@ -240,10 +249,9 @@
             return;
         }
 
-        // Coleta todos os estados dos campos
         let config = {
             valMultipla: document.getElementById('valMultipla').value,
-            mercadoMultipla: document.getElementById('mercadoMultipla').value,
+            oddMultipla: document.getElementById('oddMultipla').value,
             margemLucro: document.getElementById('margemLucro').value,
             jogos: []
         };
@@ -251,15 +259,14 @@
         for (let i = 1; i <= TOTAL_JOGOS; i++) {
             config.jogos.push({
                 conf: document.getElementById(`conf_${i}`).value,
-                oddC: document.getElementById(`oddC_${i}`).value,
                 oddE: document.getElementById(`oddE_${i}`).value,
                 oddV: document.getElementById(`oddV_${i}`).value
             });
         }
 
-        let salvos = JSON.parse(localStorage.getItem('cenariosAposta') || '{}');
+        let salvos = JSON.parse(localStorage.getItem('cenariosAposta3Times') || '{}');
         salvos[nome] = config;
-        localStorage.setItem('cenariosAposta', JSON.stringify(salvos));
+        localStorage.setItem('cenariosAposta3Times', JSON.stringify(salvos));
         
         alert(`Cenário "${nome}" salvo com sucesso!`);
         carregarListaSalvos();
@@ -267,7 +274,7 @@
     }
 
     function carregarListaSalvos() {
-        let salvos = JSON.parse(localStorage.getItem('cenariosAposta') || '{}');
+        let salvos = JSON.parse(localStorage.getItem('cenariosAposta3Times') || '{}');
         let listaDiv = document.getElementById('listaSalvos');
         listaDiv.innerHTML = '';
 
@@ -288,18 +295,17 @@
     }
 
     function carregarCenario(nome) {
-        let salvos = JSON.parse(localStorage.getItem('cenariosAposta') || '{}');
+        let salvos = JSON.parse(localStorage.getItem('cenariosAposta3Times') || '{}');
         if (!salvos[nome]) return;
 
         let config = salvos[nome];
         document.getElementById('valMultipla').value = config.valMultipla;
-        document.getElementById('mercadoMultipla').value = config.mercadoMultipla;
+        document.getElementById('oddMultipla').value = config.oddMultipla;
         document.getElementById('margemLucro').value = config.margemLucro;
 
         config.jogos.forEach((j, index) => {
             let i = index + 1;
             document.getElementById(`conf_${i}`).value = j.conf;
-            document.getElementById(`oddC_${i}`).value = j.oddC;
             document.getElementById(`oddE_${i}`).value = j.oddE;
             document.getElementById(`oddV_${i}`).value = j.oddV;
         });
@@ -308,94 +314,72 @@
     }
 
     function deletarCenario(nome) {
-        if (!confirm(`Tem certeza que deseja excluir o cenário "${nome}"?`)) return;
-        let salvos = JSON.parse(localStorage.getItem('cenariosAposta') || '{}');
+        let salvos = JSON.parse(localStorage.getItem('cenariosAposta3Times') || '{}');
+        if (!salvos[nome]) return;
         delete salvos[nome];
-        localStorage.setItem('cenariosAposta', JSON.stringify(salvos));
+        localStorage.setItem('cenariosAposta3Times', JSON.stringify(salvos));
         carregarListaSalvos();
     }
 
     function calcularSistema() {
         let valM = parseFloat(document.getElementById('valMultipla').value) || 0;
-        let mercadoAlvo = document.getElementById('mercadoMultipla').value;
+        let oddM = parseFloat(document.getElementById('oddMultipla').value) || 1;
         let percLucro = parseFloat(document.getElementById('margemLucro').value) || 0;
         
-        let oddM = 1;
-        for (let i = 1; i <= TOTAL_JOGOS; i++) {
-            let o = 1;
-            if (mercadoAlvo === "CASA") o = parseFloat(document.getElementById(`oddC_${i}`).value) || 1;
-            if (mercadoAlvo === "EMPATE") o = parseFloat(document.getElementById(`oddE_${i}`).value) || 1;
-            if (mercadoAlvo === "VISITANTE") o = parseFloat(document.getElementById(`oddV_${i}`).value) || 1;
-            oddM *= o;
-        }
+        let retBrutoM = valM * oddM;
+        document.getElementById('retornoMultiplaInfo').innerText = `Retorno Bruto Múltipla: R$ ${retBrutoM.toFixed(2)}`;
 
-        let retM = valM * oddM;
-        document.getElementById('retornoMultipla').innerText = `Múltipla Odd: ${oddM.toFixed(2)} | Retorno Bruto Estimado: R$ ${retM.toFixed(2)}`;
-
+        // O prejuízo acumulado inicial considera o valor investido na múltipla
         let prejuizoAcumulado = valM; 
 
         for (let i = 1; i <= TOTAL_JOGOS; i++) {
             const resBox = document.getElementById(`res_${i}`);
             
-            let oddCasa = parseFloat(document.getElementById(`oddC_${i}`).value) || 1;
             let oddEmpate = parseFloat(document.getElementById(`oddE_${i}`).value) || 1;
             let oddVis = parseFloat(document.getElementById(`oddV_${i}`).value) || 1;
 
-            let oddCobertura1 = 1;
-            let oddCobertura2 = 1;
-            let nomeCob1 = "";
-            let nomeCob2 = "";
+            // Para que ambas as apostas tenham lucro, distribuímos o lucro de cobertura igualmente em proporção.
+            // Aqui calculamos as apostas de modo que o Retorno de ambas garanta o custo acumulado + a % de lucro definida.
+            let divisor = (oddEmpate * oddVis) - oddEmpate - oddVis;
 
-            if (mercadoAlvo === "CASA") {
-                oddCobertura1 = oddEmpate; nomeCob1 = "Empate";
-                oddCobertura2 = oddVis; nomeCob2 = "Visitante";
-            } else if (mercadoAlvo === "EMPATE") {
-                oddCobertura1 = oddCasa; nomeCob1 = "Casa";
-                oddCobertura2 = oddVis; nomeCob2 = "Visitante";
-            } else {
-                oddCobertura1 = oddCasa; nomeCob1 = "Casa";
-                oddCobertura2 = oddEmpate; nomeCob2 = "Empate";
-            }
-            
-            let metaLucro = prejuizoAcumulado * (percLucro / 100);
-
-            let divisor = (oddCobertura1 * oddCobertura2) - oddCobertura1 - oddCobertura2;
-            
-            let valCob2 = 0;
-            let valCob1 = 0;
+            let valEmpate = 0;
+            let valVis = 0;
 
             if (divisor > 0) {
-                valCob2 = ((prejuizoAcumulado * oddCobertura1) + metaLucro) / divisor;
-                valCob1 = (prejuizoAcumulado + valCob2 + metaLucro) / (oddCobertura1 - 1);
+                // Nova modelagem de cálculo que divide a margem proporcionalmente para dar lucro em ambos os lados cobertos
+                let fatorLucro = 1 + (percLucro / 100);
+                valEmpate = (prejuizoAcumulado * fatorLucro * oddVis) / divisor;
+                valVis = (prejuizoAcumulado * fatorLucro * oddEmpate) / divisor;
             } else {
-                valCob2 = prejuizoAcumulado / (oddCobertura2 - 1);
-                valCob1 = (prejuizoAcumulado + valCob2 + metaLucro) / (oddCobertura1 - 1);
+                // Caso limite onde as odds são muito baixas, garante o reembolso puro
+                valEmpate = prejuizoAcumulado / (oddEmpate - 1);
+                valVis = prejuizoAcumulado / (oddVis - 1);
             }
-            
-            let andamentoCustoTotal = prejuizoAcumulado + valCob1 + valCob2;
 
-            let lucro1 = (valCob1 * oddCobertura1) - andamentoCustoTotal;
-            let lucro2 = (valCob2 * oddCobertura2) - andamentoCustoTotal;
+            let andamentoCustoTotal = prejuizoAcumulado + valEmpate + valVis;
 
-            if (Math.abs(lucro1) < 0.05) { lucro1 = 0.00; }
-            if (Math.abs(lucro2) < 0.05) { lucro2 = 0.00; }
+            let lucroEmpate = (valEmpate * oddEmpate) - andamentoCustoTotal;
+            let lucroVis = (valVis * oddVis) - andamentoCustoTotal;
 
-            let retBruto1 = valCob1 * oddCobertura1;
-            let retBruto2 = valCob2 * oddCobertura2;
+            if (Math.abs(lucroEmpate) < 0.05) { lucroEmpate = 0.00; }
+            if (Math.abs(lucroVis) < 0.05) { lucroVis = 0.00; }
 
-            let msg1 = lucro1 > 0.05 ? `<span class="lucro-pos">+ R$ ${lucro1.toFixed(2)}</span>` : (lucro1 >= -0.05 ? `<span class="lucro-neutro">R$ 0.00</span>` : `<span class="lucro-neg">R$ ${lucro1.toFixed(2)}</span>`);
-            let msg2 = lucro2 > 0.05 ? `<span class="lucro-pos">+ R$ ${lucro2.toFixed(2)}</span>` : (lucro2 >= -0.05 ? `<span class="lucro-neutro">R$ 0.00</span>` : `<span class="lucro-neg">R$ ${lucro2.toFixed(2)}</span>`);
+            let retBrutoEmpate = valEmpate * oddEmpate;
+            let retBrutoVis = valVis * oddVis;
 
-            resBox.className = "result-box";
+            let msgEmpate = lucroEmpate > 0.05 ? `<span class="lucro-pos">+ R$ ${lucroEmpate.toFixed(2)}</span>` : (lucroEmpate >= -0.05 ? `<span class="lucro-neutro">R$ 0.00</span>` : `<span class="lucro-neg">R$ ${lucroEmpate.toFixed(2)}</span>`);
+            let msgVis = lucroVis > 0.05 ? `<span class="lucro-pos">+ R$ ${lucroVis.toFixed(2)}</span>` : (lucroVis >= -0.05 ? `<span class="lucro-neutro">R$ 0.00</span>` : `<span class="lucro-neg">R$ ${lucroVis.toFixed(2)}</span>`);
+
             resBox.innerHTML = `
-                📌 <b>Aposta em ${nomeCob1}:</b> R$ ${valCob1.toFixed(2)} (Odd: ${oddCobertura1.toFixed(2)}) → <i>Retorno Bruto: R$ ${retBruto1.toFixed(2)}</i><br>
-                📌 <b>Aposta em ${nomeCob2}:</b> R$ ${valCob2.toFixed(2)} (Odd: ${oddCobertura2.toFixed(2)}) → <i>Retorno Bruto: R$ ${retBruto2.toFixed(2)}</i><br>
-                💰 <b>Custo Acumulado Total:</b> R$ ${andamentoCustoTotal.toFixed(2)}<br>
+                📌 <b>Aposta no EMPATE:</b> R$ ${valEmpate.toFixed(2)} (Odd: ${oddEmpate.toFixed(2)}) → <i>Retorno Bruto: R$ ${retBrutoEmpate.toFixed(2)}</i><br>
+                📌 <b>Aposta no VISITANTE:</b> R$ ${valVis.toFixed(2)} (Odd: ${oddVis.toFixed(2)}) → <i>Retorno Bruto: R$ ${retBrutoVis.toFixed(2)}</i><br>
+                💰 <b>Custo Acumulado Total (Risco até este jogo):</b> R$ ${andamentoCustoTotal.toFixed(2)}<br>
                 <div class="divider"></div>
-                📈 <b>Se der ${nomeCob1}:</b> ${msg1} líquido<br>
-                📉 <b>Se der ${nomeCob2}:</b> ${msg2} líquido
+                📈 <b>Se der Empate:</b> ${msgEmpate} líquido<br>
+                📉 <b>Se der Visitante:</b> ${msgVis} líquido
             `;
             
+            // O custo total gerado nesta etapa é o prejuízo que a múltipla/etapa seguinte precisa cobrir
             prejuizoAcumulado = andamentoCustoTotal;
         }
     }
