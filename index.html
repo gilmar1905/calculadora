@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Proteção Sequencial - 5 Jogos Proporcional</title>
+    <title>Painel Proteção Sequencial - 3 Jogos (1X2)</title>
     <style>
         :root {
             --primary: #2e7d32;
-            --primary-dark: #1b5e20;
             --bg: #f5f5f5;
             --card: #ffffff;
             --text: #333333;
@@ -18,60 +17,16 @@
             background-color: var(--bg);
             color: var(--text);
             margin: 0; padding: 0;
-            overflow-x: hidden;
         }
-        
         .header {
             background: var(--primary);
             color: white;
             padding: 15px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            position: sticky;
-            top: 0; z-index: 100;
+            text-align: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .menu-btn {
-            background: none; border: none;
-            color: white; font-size: 1.5rem;
-            cursor: pointer; padding: 0 5px;
-        }
-        .header h2 { margin: 0; font-size: 1.2rem; flex: 1; text-align: center; margin-right: 30px; }
-
-        .sidebar {
-            position: fixed; top: 0; left: -280px;
-            width: 280px; height: 100%;
-            background: #263238; color: white;
-            z-index: 200; transition: 0.3s ease;
-            box-shadow: 3px 0 10px rgba(0,0,0,0.3);
-            display: flex; flex-direction: column;
-        }
-        .sidebar.open { left: 0; }
-        .sidebar-header {
-            padding: 20px 15px; background: #1c272b;
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid #37474f;
-        }
-        .sidebar-header h3 { margin: 0; font-size: 1.1rem; }
-        .close-btn { background: none; border: none; color: white; font-size: 1.3rem; cursor: pointer; }
-        .projects-list { padding: 10px; flex: 1; overflow-y: auto; }
-        .project-item {
-            background: #37474f; padding: 12px; border-radius: 4px;
-            margin-bottom: 8px; cursor: pointer;
-            display: flex; justify-content: space-between; align-items: center;
-            transition: 0.2s;
-        }
-        .project-item:hover { background: #455a64; }
-        .project-name { flex: 1; font-weight: 500; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .delete-btn { background: none; border: none; color: #ff5252; font-size: 1.1rem; cursor: pointer; padding-left: 10px; }
-
-        .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); z-index: 150; display: none;
-        }
-        .overlay.show { display: block; }
-
+        .header h2 { margin: 0; font-size: 1.2rem; }
+        
         .container {
             max-width: 600px; margin: 0 auto; padding: 15px; box-sizing: border-box;
         }
@@ -83,106 +38,94 @@
         .row { display: flex; gap: 10px; margin-bottom: 10px; }
         .col { flex: 1; display: flex; flex-direction: column; }
         label { font-size: 0.85rem; font-weight: bold; margin-bottom: 4px; }
-        input { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; }
+        input, select { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; background: #fff; }
         .input-confronto { background-color: #fafafa; font-weight: 500; border-color: #b0bec5; }
         
         .result-box { padding: 12px; border-radius: 4px; margin-top: 5px; font-weight: 500; font-size: 0.95rem; line-height: 1.5; background: #e8f5e9; }
         .box-wait { background: #fff3e0; }
         
-        .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; margin-bottom: 25px; }
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; font-weight: bold; text-align: center; box-sizing: border-box; }
-        .btn-calc { background: var(--primary); color: white; }
-        .btn-save { background: var(--accent); color: white; }
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; font-weight: bold; background: var(--primary); color: white; text-align: center; margin-top: 15px; }
         
         .lucro-pos { color: #2e7d32; font-weight: bold; }
         .lucro-neutro { color: #f57c00; font-weight: bold; }
+        .lucro-neg { color: #c62828; font-weight: bold; }
         .divider { margin: 8px 0; border-top: 1px dashed #ccc; }
-        .status-msg { text-align: center; font-weight: bold; color: var(--primary); margin: 10px 0; display: none; }
+        .badge { background: #e3f2fd; color: #0d47a1; padding: 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; margin-bottom: 10px; text-align: center; border: 1px solid #bbdefb; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-    <h2>Painel Proteção Sequencial (5 Jogos)</h2>
+    <h2>Painel Proteção - Ciclo de 3 Jogos (1X2)</h2>
 </div>
-
-<div class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-        <h3>Projetos Salvos</h3>
-        <button class="close-btn" onclick="toggleSidebar()">✕</button>
-    </div>
-    <div class="projects-list" id="projects-list"></div>
-</div>
-
-<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
 <div class="container">
-    <div id="status-storage" class="status-msg">Salvo com sucesso!</div>
-
     <div class="card">
-        <h3>1. Configuração de Custo e Margem Flexível</h3>
+        <h3>1. Configuração da Múltipla Principal (3 Jogos)</h3>
+        <div class="badge">Escolha o mercado da sua múltipla e a margem de lucro (%) desejada para as coberturas diárias.</div>
         <div class="row">
             <div class="col">
-                <label>Valor Múltipla Principal (R$)</label>
+                <label>Montante Apostado Múltipla (R$)</label>
                 <input type="number" id="valMultipla" step="0.01" value="1.00" oninput="calcularSistema()">
             </div>
             <div class="col">
-                <label>Odd Total da Múltipla</label>
-                <input type="number" id="oddMultipla" step="0.01" value="45.00" oninput="calcularSistema()">
+                <label>Focar Múltipla no Mercado:</label>
+                <select id="mercadoMultipla" onchange="calcularSistema()">
+                    <option value="CASA">Vitória Casa (1)</option>
+                    <option value="EMPATE" selected>Empate (X)</option>
+                    <option value="VISITANTE">Vitória Visitante (2)</option>
+                </select>
             </div>
         </div>
         <div class="row">
             <div class="col">
-                <label>Margem de Lucro no Empate (% sobre o custo acumulado)</label>
-                <input type="number" id="margemEmpate" step="1" value="15" placeholder="Ex: 0 para reembolso puro, 15 para lucro" oninput="calcularSistema()">
+                <label>Margem de Lucro Cobertura (%)</label>
+                <input type="number" id="margemLucro" step="1" value="0" placeholder="0 para reembolso puro" oninput="calcularSistema()">
             </div>
         </div>
-        <div class="result-box" id="retornoMultipla" style="background-color: #e3f2fd; color: #0d47a1;">
-            Retorno Estimado se a Múltipla bater: R$ 45.00
+        <div class="result-box" style="background-color: #e3f2fd; color: #0d47a1;" id="retornoMultipla">
+            Múltipla Odd: 1.00 | Retorno Bruto Estimado: R$ 1.00
         </div>
     </div>
 
     <div id="jogos-container"></div>
 
     <div class="card">
-        <h3>Ações do Projeto</h3>
-        <div class="col" style="margin-bottom: 12px;">
-            <label>Nome do Projeto para Salvar</label>
-            <input type="text" id="nomeProjeto" placeholder="Ex: Estratégia Sequencial - 5 Rodadas">
-        </div>
-        <div class="btn-group">
-            <button class="btn btn-calc" onclick="calcularSistema()">Calcular Todos os Cenários</button>
-            <button class="btn btn-save" onclick="salvarDados()">Salvar no Histórico</button>
-        </div>
+        <h3>Ação</h3>
+        <button class="btn" onclick="calcularSistema()">Calcular Cenários</button>
     </div>
 </div>
 
 <script>
-    const TOTAL_JOGOS = 5; // Retornado e fixado para 5 times conforme solicitado
-    
-    // Valores padrão iniciais para facilitar a simulação
-    const defaultConfrontos = ["Jogo 1", "Jogo 2", "Jogo 3", "Jogo 4", "Jogo 5"];
-    const defaultOddsE = [3.30, 3.40, 3.50, 3.30, 3.60];
-    const defaultOddsV = [3.00, 3.10, 2.90, 3.20, 3.00];
+    const TOTAL_JOGOS = 3; // Ajustado estritamente para 3 jogos
+
+    // Valores padrão para simulação rápida (3 jogos)
+    const defC = [1.85, 2.10, 1.95];
+    const defE = [3.30, 3.20, 3.50];
+    const defV = [4.20, 3.60, 3.90];
 
     const container = document.getElementById('jogos-container');
+    container.innerHTML = ''; // Limpa para reconstruir
     for (let i = 1; i <= TOTAL_JOGOS; i++) {
         container.innerHTML += `
-            <div class="card" id="card_dia_${i}">
-                <h3>Dia ${i}</h3>
+            <div class="card">
+                <h3>Jogo / Dia ${i}</h3>
                 <div class="col" style="margin-bottom: 10px;">
-                    <label>Confronto / Times</label>
-                    <input type="text" id="conf_${i}" class="input-confronto" placeholder="Ex: Time A x Time B" value="${defaultConfrontos[i-1]}">
+                    <label>Confronto</label>
+                    <input type="text" id="conf_${i}" class="input-confronto" value="Confronto ${i}">
                 </div>
                 <div class="row">
                     <div class="col">
-                        <label>Odd Empate</label>
-                        <input type="number" id="oddE_${i}" step="0.01" value="${defaultOddsE[i-1]}" oninput="calcularSistema()">
+                        <label>Odd Casa (1)</label>
+                        <input type="number" id="oddC_${i}" step="0.01" value="${defC[i-1]}" oninput="calcularSistema()">
                     </div>
                     <div class="col">
-                        <label>Odd Visitante</label>
-                        <input type="number" id="oddV_${i}" step="0.01" value="${defaultOddsV[i-1]}" oninput="calcularSistema()">
+                        <label>Odd Empate (X)</label>
+                        <input type="number" id="oddE_${i}" step="0.01" value="${defE[i-1]}" oninput="calcularSistema()">
+                    </div>
+                    <div class="col">
+                        <label>Odd Visitante (2)</label>
+                        <input type="number" id="oddV_${i}" step="0.01" value="${defV[i-1]}" oninput="calcularSistema()">
                     </div>
                 </div>
                 <div class="result-box box-wait" id="res_${i}">
@@ -192,156 +135,93 @@
         `;
     }
 
-    function toggleSidebar() {
-        document.getElementById('sidebar').classList.toggle('open');
-        document.getElementById('overlay').classList.toggle('show');
-    }
-
     function calcularSistema() {
         let valM = parseFloat(document.getElementById('valMultipla').value) || 0;
-        let oddM = parseFloat(document.getElementById('oddMultipla').value) || 0;
-        let pMargem = parseFloat(document.getElementById('margemEmpate').value) || 0;
+        let mercadoAlvo = document.getElementById('mercadoMultipla').value;
+        let percLucro = parseFloat(document.getElementById('margemLucro').value) || 0;
         
+        // Acumula as odds dos 3 dias do mercado escolhido para a múltipla
+        let oddM = 1;
+        for (let i = 1; i <= TOTAL_JOGOS; i++) {
+            let o = 1;
+            if (mercadoAlvo === "CASA") o = parseFloat(document.getElementById(`oddC_${i}`).value) || 1;
+            if (mercadoAlvo === "EMPATE") o = parseFloat(document.getElementById(`oddE_${i}`).value) || 1;
+            if (mercadoAlvo === "VISITANTE") o = parseFloat(document.getElementById(`oddV_${i}`).value) || 1;
+            oddM *= o;
+        }
+
         let retM = valM * oddM;
-        document.getElementById('retornoMultipla').innerText = `Retorno Estimado se a Múltipla bater: R$ ${retM.toFixed(2)}`;
+        document.getElementById('retornoMultipla').innerText = `Múltipla Odd: ${oddM.toFixed(2)} | Retorno Bruto Estimado: R$ ${retM.toFixed(2)}`;
 
         let prejuizoAcumulado = valM; 
 
         for (let i = 1; i <= TOTAL_JOGOS; i++) {
             const resBox = document.getElementById(`res_${i}`);
             
-            let oddE = parseFloat(document.getElementById(`oddE_${i}`).value) || 1;
-            let oddV = parseFloat(document.getElementById(`oddV_${i}`).value) || 1;
-            
-            // LÓGICA DA META PORCENTUAL FLEXÍVEL
-            // Calcula o lucro desejado com base no prejuízo acumulado real até aquele dia
-            let metaDoDia = prejuizoAcumulado * (pMargem / 100);
-            
-            // Se o usuário colocar uma margem mas o valor inicial for centavos, garante uma base mínima de 10 centavos
-            if (pMargem > 0 && metaDoDia < 0.10) metaDoDia = 0.10;
+            let oddCasa = parseFloat(document.getElementById(`oddC_${i}`).value) || 1;
+            let oddEmpate = parseFloat(document.getElementById(`oddE_${i}`).value) || 1;
+            let oddVis = parseFloat(document.getElementById(`oddV_${i}`).value) || 1;
 
-            let divisor = (oddE * oddV) - oddE - oddV;
-            
-            let valVisitante = 0;
-            let valEmpate = 0;
+            // Identifica as odds de cobertura (as duas que NÃO formam a múltipla do dia)
+            let oddCobertura1 = 1;
+            let oddCobertura2 = 1;
+            let nomeCob1 = "";
+            let nomeCob2 = "";
 
-            if (divisor > 0) {
-                valVisitante = ((prejuizoAcumulado * oddE) + metaDoDia) / divisor;
-                valEmpate = (prejuizoAcumulado + valVisitante + metaDoDia) / (oddE - 1);
+            if (mercadoAlvo === "CASA") {
+                oddCobertura1 = oddEmpate; nomeCob1 = "Empate";
+                oddCobertura2 = oddVis; nomeCob2 = "Visitante";
+            } else if (mercadoAlvo === "EMPATE") {
+                oddCobertura1 = oddCasa; nomeCob1 = "Casa";
+                oddCobertura2 = oddVis; nomeCob2 = "Visitante";
             } else {
-                valVisitante = prejuizoAcumulado / (oddV - 1);
-                valEmpate = (prejuizoAcumulado + valVisitante + metaDoDia) / (oddE - 1);
+                oddCobertura1 = oddCasa; nomeCob1 = "Casa";
+                oddCobertura2 = oddEmpate; nomeCob2 = "Empate";
             }
             
-            let custoTotalAteAqui = prejuizoAcumulado + valEmpate + valVisitante;
+            // Meta de lucro baseada na porcentagem sobre o custo acumulado
+            let metaLucro = prejuizoAcumulado * (percLucro / 100);
 
-            let lucroEmpate = (valEmpate * oddE) - custoTotalAteAqui;
-            let lucroVisitante = (valVisitante * oddV) - custoTotalAteAqui;
+            let divisor = (oddCobertura1 * oddCobertura2) - oddCobertura1 - oddCobertura2;
+            
+            let valCob2 = 0;
+            let valCob1 = 0;
 
-            // Limpa micro centavos estruturais
-            if (Math.abs(lucroVisitante) < 0.05) { lucroVisitante = 0.00; }
-            if (Math.abs(lucroEmpate) < 0.05 && pMargem === 0) { lucroEmpate = 0.00; }
+            if (divisor > 0) {
+                valCob2 = ((prejuizoAcumulado * oddCobertura1) + metaLucro) / divisor;
+                valCob1 = (prejuizoAcumulado + valCob2 + metaLucro) / (oddCobertura1 - 1);
+            } else {
+                valCob2 = prejuizoAcumulado / (oddCobertura2 - 1);
+                valCob1 = (prejuizoAcumulado + valCob2 + metaLucro) / (oddCobertura1 - 1);
+            }
+            
+            let andamentoCustoTotal = prejuizoAcumulado + valCob1 + valCob2;
+
+            let lucro1 = (valCob1 * oddCobertura1) - andamentoCustoTotal;
+            let lucro2 = (valCob2 * oddCobertura2) - andamentoCustoTotal;
+
+            // Zera micro centavos decorrentes de dízimas matemáticas
+            if (Math.abs(lucro1) < 0.05) { lucro1 = 0.00; }
+            if (Math.abs(lucro2) < 0.05) { lucro2 = 0.00; }
+
+            let msg1 = lucro1 > 0.05 ? `<span class="lucro-pos">+ R$ ${lucro1.toFixed(2)}</span>` : (lucro1 >= -0.05 ? `<span class="lucro-neutro">R$ 0.00</span>` : `<span class="lucro-neg">R$ ${lucro1.toFixed(2)}</span>`);
+            let msg2 = lucro2 > 0.05 ? `<span class="lucro-pos">+ R$ ${lucro2.toFixed(2)}</span>` : (lucro2 >= -0.05 ? `<span class="lucro-neutro">R$ 0.00</span>` : `<span class="lucro-neg">R$ ${lucro2.toFixed(2)}</span>`);
 
             resBox.className = "result-box";
             resBox.innerHTML = `
-                🤝 <b>Aposta no Empate:</b> R$ ${valEmpate.toFixed(2)}<br>
-                ✈️ <b>Aposta no Visitante:</b> R$ ${valVisitante.toFixed(2)}<br>
-                💰 <b>Custo acumulado total até o Dia ${i}:</b> R$ ${custoTotalAteAqui.toFixed(2)}<br>
+                📌 <b>Aposta em ${nomeCob1}:</b> R$ ${valCob1.toFixed(2)} (Odd: ${oddCobertura1.toFixed(2)})<br>
+                📌 <b>Aposta em ${nomeCob2}:</b> R$ ${valCob2.toFixed(2)} (Odd: ${oddCobertura2.toFixed(2)})<br>
+                💰 <b>Custo Acumulado Total:</b> R$ ${andamentoCustoTotal.toFixed(2)}<br>
                 <div class="divider"></div>
-                📈 <b>Se der Empate hoje:</b> <span class="${lucroEmpate > 0.05 ? 'lucro-pos' : 'lucro-neutro'}">R$ ${lucroEmpate.toFixed(2)}</span> líquido ${pMargem === 0 ? '(0x0 Reembolsado)' : ''}<br>
-                📉 <b>Se der Visitante hoje:</b> <span class="lucro-neutro">R$ ${lucroVisitante.toFixed(2)}</span> (0x0 Reembolsado)
+                📈 <b>Se der ${nomeCob1}:</b> ${msg1} líquido<br>
+                📉 <b>Se der ${nomeCob2}:</b> ${msg2} líquido
             `;
             
-            prejuizoAcumulado = custoTotalAteAqui;
+            prejuizoAcumulado = andamentoCustoTotal;
         }
     }
 
-    // SISTEMA DE SALVAMENTO EM LOCALSTORAGE (HISTÓRICO)
-    function salvarDados() {
-        let nome = document.getElementById('nomeProjeto').value.trim();
-        if (!nome) {
-            alert("Por favor, digite um nome para salvar o seu projeto de 5 jogos!");
-            return;
-        }
-
-        const dadosProjeto = {
-            id: Date.now(),
-            nome: nome,
-            valMultipla: document.getElementById('valMultipla').value,
-            oddMultipla: document.getElementById('oddMultipla').value,
-            margemEmpate: document.getElementById('margemEmpate').value,
-            confrontos: [], oddsE: [], oddsV: []
-        };
-
-        for (let i = 1; i <= TOTAL_JOGOS; i++) {
-            dadosProjeto.confrontos.push(document.getElementById(`conf_${i}`).value);
-            dadosProjeto.oddsE.push(document.getElementById(`oddE_${i}`).value);
-            dadosProjeto.oddsV.push(document.getElementById(`oddV_${i}`).value);
-        }
-
-        let historico = JSON.parse(localStorage.getItem('historico5JogosProporcional')) || [];
-        let indexExistente = historico.findIndex(p => p.nome === nome);
-        if (indexExistente >= 0) historico[indexExistente] = dadosProjeto;
-        else historico.push(dadosProjeto);
-
-        localStorage.setItem('historico5JogosProporcional', JSON.stringify(historico));
-        
-        document.getElementById('status-storage').style.display = 'block';
-        setTimeout(() => { document.getElementById('status-storage').style.display = 'none'; }, 2000);
-        
-        atualizarListaSidebar();
-    }
-
-    function atualizarListaSidebar() {
-        let historico = JSON.parse(localStorage.getItem('historico5JogosProporcional')) || [];
-        const listContainer = document.getElementById('projects-list');
-        listContainer.innerHTML = '';
-
-        if (historico.length === 0) {
-            listContainer.innerHTML = '<p style="color:#aaa; text-align:center; font-size:0.9rem;">Nenhum projeto salvo.</p>';
-            return;
-        }
-
-        historico.forEach(p => {
-            listContainer.innerHTML += `
-                <div class="project-item">
-                    <span class="project-name" onclick="carregarProjeto(${p.id})">${p.nome}</span>
-                    <button class="delete-btn" onclick="deletarProjeto(${p.id})">🗑️</button>
-                </div>
-            `;
-        });
-    }
-
-    window.carregarProjeto = function(id) {
-        let historico = JSON.parse(localStorage.getItem('historico5JogosProporcional')) || [];
-        let p = historico.find(proj => proj.id === id);
-        if (p) {
-            document.getElementById('nomeProjeto').value = p.nome;
-            document.getElementById('valMultipla').value = p.valMultipla;
-            document.getElementById('oddMultipla').value = p.oddMultipla;
-            if(p.margemEmpate !== undefined) document.getElementById('margemEmpate').value = p.margemEmpate;
-
-            for (let i = 1; i <= TOTAL_JOGOS; i++) {
-                document.getElementById(`conf_${i}`).value = p.confrontos && p.confrontos[i-1] ? p.confrontos[i-1] : `Jogo ${i}`;
-                document.getElementById(`oddE_${i}`).value = p.oddsE[i-1];
-                document.getElementById(`oddV_${i}`).value = p.oddsV[i-1];
-            }
-            calcularSistema();
-            toggleSidebar();
-        }
-    }
-
-    window.deletarProjeto = function(id) {
-        let historico = JSON.parse(localStorage.getItem('historico5JogosProporcional')) || [];
-        historico = historico.filter(proj => proj.id !== id);
-        localStorage.setItem('historico5JogosProporcional', JSON.stringify(historico));
-        atualizarListaSidebar();
-    }
-
-    window.onload = function() {
-        atualizarListaSidebar();
-        calcularSistema();
-    };
+    window.onload = calcularSistema;
 </script>
 
 </body>
