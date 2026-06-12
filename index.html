@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Proteção Proporcional</title>
+    <title>Painel Proteção Proporcional - Retorno de Custo</title>
     <style>
         :root {
             --primary: #2e7d32;
@@ -12,8 +12,6 @@
             --card: #ffffff;
             --text: #333333;
             --accent: #0288d1;
-            --danger: #c62828;
-            --danger-bg: #ffebee;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -114,17 +112,14 @@
             margin-bottom: 15px;
         }
         .card h3 { margin: 0 0 10px 0; color: var(--primary); border-bottom: 1px solid #eee; padding-bottom: 5px; font-size: 1.05rem; }
-        .card.card-error { border: 2px solid var(--danger); }
         .row { display: flex; gap: 10px; margin-bottom: 10px; }
         .col { flex: 1; display: flex; flex-direction: column; }
         label { font-size: 0.85rem; font-weight: bold; margin-bottom: 4px; }
         input { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; }
         .input-confronto { background-color: #fafafa; font-weight: 500; border-color: #b0bec5; }
         
-        .result-box { padding: 12px; border-radius: 4px; margin-top: 5px; font-weight: 500; font-size: 0.95rem; line-height: 1.5; }
-        .box-normal { background: #e8f5e9; }
+        .result-box { padding: 12px; border-radius: 4px; margin-top: 5px; font-weight: 500; font-size: 0.95rem; line-height: 1.5; background: #e8f5e9; }
         .box-wait { background: #fff3e0; }
-        .box-alert { background: var(--danger-bg); color: var(--danger); border: 1px solid #ffcdd2; }
         
         .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; margin-bottom: 25px; }
         .btn { width: 100%; padding: 14px; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; font-weight: bold; text-align: center; box-sizing: border-box; }
@@ -132,6 +127,7 @@
         .btn-save { background: var(--accent); color: white; }
         
         .lucro-pos { color: #2e7d32; font-weight: bold; }
+        .lucro-neutro { color: #f57c00; font-weight: bold; }
         .divider { margin: 8px 0; border-top: 1px dashed #ccc; }
         .status-msg { text-align: center; font-weight: bold; color: var(--primary); margin: 10px 0; display: none; }
     </style>
@@ -168,7 +164,7 @@
                 <input type="number" id="oddMultipla" step="0.01" value="99.30">
             </div>
         </div>
-        <div class="result-box box-normal" id="retornoMultipla">Retorno Estimado: R$ 82,42</div>
+        <div class="result-box" id="retornoMultipla">Retorno Estimado: R$ 82,42</div>
     </div>
 
     <div id="jogos-container"></div>
@@ -231,61 +227,40 @@
         document.getElementById('retornoMultipla').innerText = `Retorno Estimado: R$ ${retM.toFixed(2)} (Meta por Jogo: R$ ${metaProporcional.toFixed(2)})`;
 
         let prejuizoAcumulado = valM; 
-        let travado_por_estouro = false;
 
         for (let i = 1; i <= 5; i++) {
-            const cardDia = document.getElementById(`card_dia_${i}`);
             const resBox = document.getElementById(`res_${i}`);
             
-            cardDia.classList.remove('card-error');
-            resBox.className = "result-box box-normal";
-
-            if (travado_por_estouro) {
-                resBox.className = "result-box box-alert";
-                resBox.innerHTML = `⚠️ <b>Cálculo suspenso:</b> Bloqueado devido ao estouro de custo no dia anterior.`;
-                continue;
-            }
-
             let oddE = parseFloat(document.getElementById(`oddE_${i}`).value) || 1;
             let oddV = parseFloat(document.getElementById(`oddV_${i}`).value) || 1;
             
-            let denominador = 1 - (1 / oddE) - (1 / oddV);
-            let valEmpate = 0, valVisitante = 0;
-
-            if (denominador > 0) {
-                let fatorComum = (prejuizoAcumulado + metaProporcional) / denominador;
-                valEmpate = fatorComum / oddE;
-                valVisitante = fatorComum / oddV;
-            }
-
-            let custoTotalAteAqui = prejuizoAcumulado + valEmpate + valVisitante;
-
-            // Trava de retorno baseada no prêmio estimado da Múltipla
-            if (custoTotalAteAqui >= retM) {
-                cardDia.classList.add('card-error');
-                resBox.className = "result-box box-alert";
-                resBox.innerHTML = `
-                    🛑 <b>ESTOURO DE CUSTO BLOQUEADO!</b><br>
-                    O custo acumulado para proteger este jogo atingiria <b>R$ ${custoTotalAteAqui.toFixed(2)}</b>, o que é MAIOR ou IGUAL ao prêmio total da sua múltipla (R$ ${retM.toFixed(2)}).<br>
-                    <div class="divider"></div>
-                    💡 <b>Solução:</b> Modifique as odds deste confronto pegando cotações mais altas para viabilizar a proteção!
-                `;
-                travado_por_estouro = true;
-                continue;
-            }
+            // MATEMÁTICA DE RETORNO DE CUSTO NO VISITANTE (Sem o estol de valores)
+            // 1. Primeiro calcula quanto precisa colocar no visitante para salvar o prejuízo acumulado caso ele vença
+            let valVisitante = prejuizoAcumulado / (oddV - 1);
+            
+            // 2. O custo temporário agora inclui a múltipla, perdas passadas e a proteção do visitante de hoje
+            let custoParcial = prejuizoAcumulado + valVisitante;
+            
+            // 3. O empate calcula em cima desse custo parcial para garantir o lucro alvo
+            let valEmpate = (custoParcial + metaProporcional) / (oddE - 1);
+            
+            // Ajuste final do custo real do dia
+            let custoTotalAteAqui = custoParcial + valEmpate;
 
             let lucroEmpate = (valEmpate * oddE) - custoTotalAteAqui;
-            let lucroVisitante = (valVisitante * oddV) - custoTotalAteAqui;
+            let lucroVisitante = (valVisitante * oddV) - custoTotalAteAqui; // Fica cravado próximo a R$ 0.00 (0x0)
 
+            resBox.className = "result-box";
             resBox.innerHTML = `
-                🤝 <b>Aposta no Empate:</b> R$ ${valEmpate.toFixed(2)}<br>
-                ✈️ <b>Aposta no Visitante:</b> R$ ${valVisitante.toFixed(2)}<br>
+                🤝 <b>Aposta no Empate (Lucro):</b> R$ ${valEmpate.toFixed(2)}<br>
+                ✈️ <b>Aposta no Visitante (Reembolso):</b> R$ ${valVisitante.toFixed(2)}<br>
                 💰 <b>Custo acumulado total:</b> R$ ${custoTotalAteAqui.toFixed(2)}<br>
                 <div class="divider"></div>
                 📈 <b>Se der Empate hoje:</b> <span class="lucro-pos">R$ ${lucroEmpate.toFixed(2)}</span> líquido<br>
-                📉 <b>Se der Visitante hoje:</b> <span class="lucro-pos">R$ ${lucroVisitante.toFixed(2)}</span> líquido
+                📉 <b>Se der Visitante hoje:</b> <span class="lucro-neutro">R$ ${lucroVisitante.toFixed(2)}</span> (0x0 Reembolsado)
             `;
-            prejuizoAcumulado += (valEmpate + valVisitante);
+            
+            prejuizoAcumulado = custoTotalAteAqui;
         }
     }
 
