@@ -234,23 +234,22 @@
             let oddE = parseFloat(document.getElementById(`oddE_${i}`).value) || 1;
             let oddV = parseFloat(document.getElementById(`oddV_${i}`).value) || 1;
             
-            // 1. Calcula o valor exato no visitante para empatar com o prejuízo acumulado para trás
+            // 1. Calcula o valor no visitante para empatar estritamente com as perdas passadas
             let valVisitante = prejuizoAcumulado / (oddV - 1);
             
-            // 2. Custo parcial considerando o acumulado + a aposta do visitante de hoje
+            // 2. Soma o acumulado anterior com o custo da aposta protetiva de hoje
             let custoParcial = prejuizoAcumulado + valVisitante;
             
-            // 3. O empate cobre todo o custo parcial e ainda busca a meta de lucro
+            // 3. O empate calcula cobrindo o custo parcial e adicionando a meta de ganho fixo
             let valEmpate = (custoParcial + metaProporcional) / (oddE - 1);
             
-            // Custo total real após incluir a aposta do empate de hoje
+            // Custo total final do dia após somar a entrada do empate
             let custoTotalAteAqui = custoParcial + valEmpate;
 
-            // CORREÇÃO DOS CÁLCULOS DE RETORNO LÍQUIDO PARA EXIBIÇÃO:
             let lucroEmpate = (valEmpate * oddE) - custoTotalAteAqui;
             let lucroVisitante = (valVisitante * oddV) - custoTotalAteAqui;
 
-            // Força o valor do visitante a mostrar 0.00 caso fique uma dízima negativa por centavos
+            // Corrige dízimas periódicas negativas de centavos para exibir 0.00 limpo
             if (Math.abs(lucroVisitante) < 0.02) {
                 lucroVisitante = 0.00;
             }
