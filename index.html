@@ -54,24 +54,25 @@
                         <span class="text-xs font-semibold text-amber-500 uppercase tracking-wider block mb-0.5">Jogo 1</span>
                         <h3 class="text-lg font-bold text-white">Dia 1 — Proteção imediata</h3>
                     </div>
-                    <div class="flex flex-wrap items-end gap-4 justify-end w-full md:w-auto">
+                    <div class="grid grid-cols-2 gap-4 max-w-md w-full">
                         <div class="flex flex-col gap-1">
-                            <label class="text-[11px] font-medium text-zinc-400 uppercase">Ajuste Stake J1</label>
-                            <div class="flex items-center bg-zinc-950 border border-zinc-800 rounded-lg p-1 gap-1">
-                                <button onclick="ajustarFator('fatorJ1', -0.05)" class="w-7 h-7 bg-zinc-900 hover:bg-zinc-800 rounded text-zinc-400 hover:text-white font-bold text-sm transition-colors cursor-pointer">-</button>
-                                <span id="fatorJ1_txt" class="text-xs font-mono font-bold text-white px-1">100%</span>
-                                <input type="hidden" id="fatorJ1" value="1.00">
-                                <button onclick="ajustarFator('fatorJ1', 0.05)" class="w-7 h-7 bg-zinc-900 hover:bg-zinc-800 rounded text-zinc-400 hover:text-white font-bold text-sm transition-colors cursor-pointer">+</button>
+                            <label class="text-[11px] font-medium text-zinc-400 uppercase">Odd Empate</label>
+                            <input type="number" id="j1_oddE" value="3.95" step="0.01" class="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1 text-sm text-white font-semibold focus:outline-none focus:border-amber-500" oninput="limparResultados()">
+                            <div class="flex items-center justify-between bg-zinc-950 border border-zinc-800/60 rounded-md p-1 mt-1">
+                                <button onclick="ajustarFator('fatorJ1E', -0.05)" class="w-5 h-5 bg-zinc-900 hover:bg-zinc-800 rounded text-zinc-400 text-xs font-bold transition-colors cursor-pointer">-</button>
+                                <span id="fatorJ1E_txt" class="text-[10px] font-mono text-zinc-300 font-bold">100%</span>
+                                <input type="hidden" id="fatorJ1E" value="1.00">
+                                <button onclick="ajustarFator('fatorJ1E', 0.05)" class="w-5 h-5 bg-zinc-900 hover:bg-zinc-800 rounded text-zinc-400 text-xs font-bold transition-colors cursor-pointer">+</button>
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-3 max-w-xs w-full sm:w-auto">
-                            <div class="flex flex-col gap-1">
-                                <label class="text-[11px] font-medium text-zinc-400 uppercase">Odd Empate</label>
-                                <input type="number" id="j1_oddE" value="3.95" step="0.01" class="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1 text-sm text-white font-semibold focus:outline-none focus:border-amber-500" oninput="limparResultados()">
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <label class="text-[11px] font-medium text-zinc-400 uppercase">Odd Visitante</label>
-                                <input type="number" id="j1_oddV" value="5.5" step="0.01" class="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1 text-sm text-white font-semibold focus:outline-none focus:border-amber-500" oninput="limparResultados()">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[11px] font-medium text-zinc-400 uppercase">Odd Visitante</label>
+                            <input type="number" id="j1_oddV" value="5.5" step="0.01" class="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1 text-sm text-white font-semibold focus:outline-none focus:border-amber-500" oninput="limparResultados()">
+                            <div class="flex items-center justify-between bg-zinc-950 border border-zinc-800/60 rounded-md p-1 mt-1">
+                                <button onclick="ajustarFator('fatorJ1V', -0.05)" class="w-5 h-5 bg-zinc-900 hover:bg-zinc-800 rounded text-zinc-400 text-xs font-bold transition-colors cursor-pointer">-</button>
+                                <span id="fatorJ1V_txt" class="text-[10px] font-mono text-zinc-300 font-bold">100%</span>
+                                <input type="hidden" id="fatorJ1V" value="1.00">
+                                <button onclick="ajustarFator('fatorJ1V', 0.05)" class="w-5 h-5 bg-zinc-900 hover:bg-zinc-800 rounded text-zinc-400 text-xs font-bold transition-colors cursor-pointer">+</button>
                             </div>
                         </div>
                     </div>
@@ -113,24 +114,25 @@
                         <span class="text-xs font-semibold text-blue-500 uppercase tracking-wider block mb-0.5">Jogo 2</span>
                         <h3 class="text-lg font-bold text-white">Dia 2 — Se mandante J1 venceu</h3>
                     </div>
-                    <div class="flex flex-wrap items-end gap-4 justify-end w-full md:w-auto">
+                    <div class="grid grid-cols-2 gap-4 max-w-md w-full">
                         <div class="flex flex-col gap-1">
-                            <label class="text-[11px] font-medium text-zinc-400 uppercase">Ajuste Stake J2</label>
-                            <div class="flex items-center bg-zinc-950 border border-zinc-800 rounded-lg p-1 gap-1">
-                                <button onclick="ajustarFator('fatorJ2', -0.05)" class="w-7 h-7 bg-zinc-900 hover:bg-zinc-800 rounded text-zinc-400 hover:text-white font-bold text-sm transition-colors cursor-pointer">-</button>
-                                <span id="fatorJ2_txt" class="text-xs font-mono font-bold text-white px-1">100%</span>
-                                <input type="hidden" id="fatorJ2" value="1.00">
-                                <button onclick="ajustarFator('fatorJ2', 0.05)" class="w-7 h-7 bg-zinc-900 hover:bg-zinc-800 rounded text-zinc-400 hover:text-white font-bold text-sm transition-colors cursor-pointer">+</button>
+                            <label class="text-[11px] font-medium text-zinc-400 uppercase">Odd Empate</label>
+                            <input type="number" id="j2_oddE" value="3.8" step="0.01" class="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1 text-sm text-white font-semibold focus:outline-none focus:border-blue-500" oninput="limparResultados()">
+                            <div class="flex items-center justify-between bg-zinc-950 border border-zinc-800/60 rounded-md p-1 mt-1">
+                                <button onclick="ajustarFator('fatorJ2E', -0.05)" class="w-5 h-5 bg-zinc-900 hover:bg-zinc-800 rounded text-zinc-400 text-xs font-bold transition-colors cursor-pointer">-</button>
+                                <span id="fatorJ2E_txt" class="text-[10px] font-mono text-zinc-300 font-bold">100%</span>
+                                <input type="hidden" id="fatorJ2E" value="1.00">
+                                <button onclick="ajustarFator('fatorJ2E', 0.05)" class="w-5 h-5 bg-zinc-900 hover:bg-zinc-800 rounded text-zinc-400 text-xs font-bold transition-colors cursor-pointer">+</button>
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-3 max-w-xs w-full sm:w-auto">
-                            <div class="flex flex-col gap-1">
-                                <label class="text-[11px] font-medium text-zinc-400 uppercase">Odd Empate</label>
-                                <input type="number" id="j2_oddE" value="3.8" step="0.01" class="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1 text-sm text-white font-semibold focus:outline-none focus:border-blue-500" oninput="limparResultados()">
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <label class="text-[11px] font-medium text-zinc-400 uppercase">Odd Visitante</label>
-                                <input type="number" id="j2_oddV" value="4.9" step="0.01" class="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1 text-sm text-white font-semibold focus:outline-none focus:border-blue-500" oninput="limparResultados()">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[11px] font-medium text-zinc-400 uppercase">Odd Visitante</label>
+                            <input type="number" id="j2_oddV" value="4.9" step="0.01" class="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1 text-sm text-white font-semibold focus:outline-none focus:border-blue-500" oninput="limparResultados()">
+                            <div class="flex items-center justify-between bg-zinc-950 border border-zinc-800/60 rounded-md p-1 mt-1">
+                                <button onclick="ajustarFator('fatorJ2V', -0.05)" class="w-5 h-5 bg-zinc-900 hover:bg-zinc-800 rounded text-zinc-400 text-xs font-bold transition-colors cursor-pointer">-</button>
+                                <span id="fatorJ2V_txt" class="text-[10px] font-mono text-zinc-300 font-bold">100%</span>
+                                <input type="hidden" id="fatorJ2V" value="1.00">
+                                <button onclick="ajustarFator('fatorJ2V', 0.05)" class="w-5 h-5 bg-zinc-900 hover:bg-zinc-800 rounded text-zinc-400 text-xs font-bold transition-colors cursor-pointer">+</button>
                             </div>
                         </div>
                     </div>
@@ -172,24 +174,25 @@
                         <span class="text-xs font-semibold text-rose-500 uppercase tracking-wider block mb-0.5">Jogo 3</span>
                         <h3 class="text-lg font-bold text-white">Dia 1 — Proteção antecipada (Dia 3)</h3>
                     </div>
-                    <div class="flex flex-wrap items-end gap-4 justify-end w-full md:w-auto">
+                    <div class="grid grid-cols-2 gap-4 max-w-md w-full">
                         <div class="flex flex-col gap-1">
-                            <label class="text-[11px] font-medium text-zinc-400 uppercase">Ajuste Stake J3</label>
-                            <div class="flex items-center bg-zinc-950 border border-zinc-800 rounded-lg p-1 gap-1">
-                                <button onclick="ajustarFator('fatorJ3', -0.05)" class="w-7 h-7 bg-zinc-900 hover:bg-zinc-800 rounded text-zinc-400 hover:text-white font-bold text-sm transition-colors cursor-pointer">-</button>
-                                <span id="fatorJ3_txt" class="text-xs font-mono font-bold text-white px-1">100%</span>
-                                <input type="hidden" id="fatorJ3" value="1.00">
-                                <button onclick="ajustarFator('fatorJ3', 0.05)" class="w-7 h-7 bg-zinc-900 hover:bg-zinc-800 rounded text-zinc-400 hover:text-white font-bold text-sm transition-colors cursor-pointer">+</button>
+                            <label class="text-[11px] font-medium text-zinc-400 uppercase">Odd Empate</label>
+                            <input type="number" id="j3_oddE" value="12.24" step="0.01" class="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1 text-sm text-white font-semibold focus:outline-none focus:border-rose-500" oninput="limparResultados()">
+                            <div class="flex items-center justify-between bg-zinc-950 border border-zinc-800/60 rounded-md p-1 mt-1">
+                                <button onclick="ajustarFator('fatorJ3E', -0.05)" class="w-5 h-5 bg-zinc-900 hover:bg-zinc-800 rounded text-zinc-400 text-xs font-bold transition-colors cursor-pointer">-</button>
+                                <span id="fatorJ3E_txt" class="text-[10px] font-mono text-zinc-300 font-bold">100%</span>
+                                <input type="hidden" id="fatorJ3E" value="1.00">
+                                <button onclick="ajustarFator('fatorJ3E', 0.05)" class="w-5 h-5 bg-zinc-900 hover:bg-zinc-800 rounded text-zinc-400 text-xs font-bold transition-colors cursor-pointer">+</button>
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-3 max-w-xs w-full sm:w-auto">
-                            <div class="flex flex-col gap-1">
-                                <label class="text-[11px] font-medium text-zinc-400 uppercase">Odd Empate</label>
-                                <input type="number" id="j3_oddE" value="12.24" step="0.01" class="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1 text-sm text-white font-semibold focus:outline-none focus:border-rose-500" oninput="limparResultados()">
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <label class="text-[11px] font-medium text-zinc-400 uppercase">Odd Visitante</label>
-                                <input type="number" id="j3_oddV" value="15.91" step="0.01" class="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1 text-sm text-white font-semibold focus:outline-none focus:border-rose-500" oninput="limparResultados()">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[11px] font-medium text-zinc-400 uppercase">Odd Visitante</label>
+                            <input type="number" id="j3_oddV" value="15.91" step="0.01" class="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1 text-sm text-white font-semibold focus:outline-none focus:border-rose-500" oninput="limparResultados()">
+                            <div class="flex items-center justify-between bg-zinc-950 border border-zinc-800/60 rounded-md p-1 mt-1">
+                                <button onclick="ajustarFator('fatorJ3V', -0.05)" class="w-5 h-5 bg-zinc-900 hover:bg-zinc-800 rounded text-zinc-400 text-xs font-bold transition-colors cursor-pointer">-</button>
+                                <span id="fatorJ3V_txt" class="text-[10px] font-mono text-zinc-300 font-bold">100%</span>
+                                <input type="hidden" id="fatorJ3V" value="1.00">
+                                <button onclick="ajustarFator('fatorJ3V', 0.05)" class="w-5 h-5 bg-zinc-900 hover:bg-zinc-800 rounded text-zinc-400 text-xs font-bold transition-colors cursor-pointer">+</button>
                             </div>
                         </div>
                     </div>
@@ -218,205 +221,4 @@
                             <span class="text-zinc-400 font-medium block mb-1">Aposta Visitante</span>
                             <strong class="text-white text-sm" id="j3_apV_txt">R$ 0,00</strong>
                             <span class="text-zinc-500 block mt-0.5 text-[11px]">Retorno: <span class="text-emerald-400 font-semibold" id="j3_retV_txt">R$ 0,00</span></span>
-                            <span class="text-zinc-400 block text-[11px]">Custo Cenário: <span class="text-orange-400 font-medium" id="j3_ccV_txt">R$ 0,00</span></span>
-                            <span class="text-zinc-500 block text-[10px]">Lucro se bater: <span class="text-emerald-400 font-medium" id="j3_prV_txt">R$ 0,00</span></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="mb-6">
-            <button onclick="handleCalculate()" class="w-full h-12 text-base font-bold bg-white text-black hover:bg-white/90 gap-2 rounded-xl flex items-center justify-center cursor-pointer shadow-lg transition-all active:scale-[0.99]">
-                <i data-lucide="calculator" class="w-5 h-5"></i>
-                Calcular Proteções Equilibradas
-            </button>
-        </div>
-
-        <div class="hidden rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5" id="summary-block">
-            <div class="flex items-center gap-2 mb-4">
-                <i data-lucide="bookmark-check" class="w-5 h-5 text-blue-500"></i>
-                <h3 class="text-md font-bold text-white">Resumo Final Executivo</h3>
-            </div>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-                <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800/60">
-                    <span class="text-[10px] uppercase font-semibold text-zinc-500 block mb-1">Investimento Inicial</span>
-                    <strong class="text-sm text-white" id="sum_montante">R$ 0,00</strong>
-                </div>
-                <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800/60">
-                    <span class="text-[10px] uppercase font-semibold text-zinc-500 block mb-1">Retorno Múltipla</span>
-                    <strong class="text-sm text-emerald-400" id="sum_retorno">R$ 0,00</strong>
-                </div>
-                <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800/60">
-                    <span class="text-[10px] uppercase font-semibold text-zinc-500 block mb-1">Total Proteções</span>
-                    <strong class="text-sm text-amber-500" id="sum_protecoes">R$ 0,00</strong>
-                </div>
-                <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800/60">
-                    <span class="text-[10px] uppercase font-semibold text-zinc-500 block mb-1">Risco Total Máximo</span>
-                    <strong class="text-sm text-red-400" id="sum_total_custo">R$ 0,00</strong>
-                </div>
-            </div>
-        </div>
-
-        <div class="text-center mt-8 text-xs text-zinc-600">
-            Proteção em Cascata v1.3 — Sistema de Equilíbrio Real Homologado
-        </div>
-        
-    </div>
-
-<script>
-    lucide.createIcons();
-
-    function f(v) { return parseFloat(v.toFixed(2)); }
-    function fmt(v) { return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
-
-    function ajustarFator(idInput, valorAlteracao) {
-        const input = document.getElementById(idInput);
-        let valorAtual = parseFloat(input.value) || 1.00;
-        valorAtual += valorAlteracao;
-        
-        if (valorAtual < 0.10) valorAtual = 0.10;
-        
-        input.value = valorAtual.toFixed(2);
-        document.getElementById(idInput + '_txt').innerText = Math.round(valorAtual * 100) + '%';
-        
-        handleCalculate();
-    }
-
-    function limparResultados() {
-        document.getElementById('audit-j1').classList.add('hidden');
-        document.getElementById('audit-j2').classList.add('hidden');
-        document.getElementById('audit-j3').classList.add('hidden');
-        document.getElementById('summary-block').classList.add('hidden');
-    }
-
-    function handleCalculate() {
-        const montante = parseFloat(document.getElementById('montante').value) || 0;
-        const oddPrincipal = parseFloat(document.getElementById('oddPrincipal').value) || 0;
-        const metaLucro = parseFloat(document.getElementById('metaLucro').value) || 0;
-
-        if (!montante || !oddPrincipal) {
-            alert("Preencha o Montante e a Odd Principal.");
-            return;
-        }
-
-        const o1E = parseFloat(document.getElementById('j1_oddE').value) || 1;
-        const o1V = parseFloat(document.getElementById('j1_oddV').value) || 1;
-        const o2E = parseFloat(document.getElementById('j2_oddE').value) || 1;
-        const o2V = parseFloat(document.getElementById('j2_oddV').value) || 1;
-        const o3E = parseFloat(document.getElementById('j3_oddE').value) || 1;
-        const o3V = parseFloat(document.getElementById('j3_oddV').value) || 1;
-
-        const fatJ1 = parseFloat(document.getElementById('fatorJ1').value) || 1.00;
-        const fatJ2 = parseFloat(document.getElementById('fatorJ2').value) || 1.00;
-        const fatJ3 = parseFloat(document.getElementById('fatorJ3').value) || 1.00;
-
-        const retornoMultipla = f(montante * oddPrincipal);
-
-        let j1_apE = 0, j1_apV = 0;
-        let j2_apE = 0, j2_apV = 0;
-        let j3_apE = 0, j3_apV = 0;
-
-        let cc1E = 0, cc1V = 0;
-        let cc2E = 0, cc2V = 0;
-        let cc3E = 0, cc3V = 0;
-
-        // Motor de Convergência com Fórmula Corrigida para Retorno Clássico de Arbitragem
-        for (let iter = 0; iter < 40; iter++) {
-            
-            // JOGO 1: Dia 1 (Ocorre de imediato)
-            // Se der Empate no J1, perdemos o Montante Principal e a outra aposta de proteção (Visitante J1)
-            cc1E = montante + j1_apV;
-            j1_apE = f(((cc1E + metaLucro) / o1E) * fatJ1);
-
-            // Se der Visitante no J1, perdemos o Montante Principal e a proteção concorrente (Empate J1)
-            cc1V = montante + j1_apE;
-            j1_apV = f(((cc1V + metaLucro) / o1V) * fatJ1);
-
-            // JOGO 2: Dia 2 (Condicionado a Mandante J1 ter ganho)
-            // Custo fixado até aqui: Montante + Apostas do Dia 1
-            const custoPassadoJ2 = montante + j1_apE + j1_apV;
-            
-            cc2E = custoPassadoJ2 + j2_apV;
-            j2_apE = f(((cc2E + metaLucro) / o2E) * fatJ2);
-
-            cc2V = custoPassadoJ2 + j2_apE;
-            j2_apV = f(((cc2V + metaLucro) / o2V) * fatJ2);
-
-            // JOGO 3: Dia 1 ou Antecipado
-            // Custos do cenário de interrupção no Jogo 3 englobam todos os gastos paralelos executados
-            const custoPassadoJ3 = montante + j1_apE + j1_apV + j2_apE + j2_apV;
-
-            cc3E = custoPassadoJ3 + j3_apV;
-            j3_apE = f(((cc3E + metaLucro) / o3E) * fatJ3);
-
-            cc3V = custoPassadoJ3 + j3_apE;
-            j3_apV = f(((cc3V + metaLucro) / o3V) * fatJ3);
-        }
-
-        // Exibir blocos removendo "hidden"
-        document.getElementById('audit-j1').classList.remove('hidden');
-        document.getElementById('audit-j2').classList.remove('hidden');
-        document.getElementById('audit-j3').classList.remove('hidden');
-        document.getElementById('summary-block').classList.remove('hidden');
-
-        // Renderização Jogo 1
-        const custoJ1 = f(j1_apE + j1_apV);
-        document.getElementById('j1_custo_txt').innerText = fmt(custoJ1);
-        document.getElementById('j1_meta_txt').innerText = fmt(metaLucro);
-        document.getElementById('j1_apE_txt').innerText = fmt(j1_apE);
-        document.getElementById('j1_apV_txt').innerText = fmt(j1_apV);
-        
-        const retE1 = f(j1_apE * o1E);
-        const retV1 = f(j1_apV * o1V);
-        document.getElementById('j1_retE_txt').innerText = fmt(retE1);
-        document.getElementById('j1_retV_txt').innerText = fmt(retV1);
-        
-        document.getElementById('j1_ccE_txt').innerText = fmt(cc1E);
-        document.getElementById('j1_ccV_txt').innerText = fmt(cc1V);
-        document.getElementById('j1_prE_txt').innerText = fmt(f(retE1 - (cc1E + j1_apE)));
-        document.getElementById('j1_prV_txt').innerText = fmt(f(retV1 - (cc1V + j1_apV)));
-
-        // Renderização Jogo 2
-        document.getElementById('j2_custo_txt').innerText = fmt(f(j1_apE + j1_apV + j2_apE + j2_apV));
-        document.getElementById('j2_meta_txt').innerText = fmt(metaLucro);
-        document.getElementById('j2_apE_txt').innerText = fmt(j2_apE);
-        document.getElementById('j2_apV_txt').innerText = fmt(j2_apV);
-        
-        const retE2 = f(j2_apE * o2E);
-        const retV2 = f(j2_apV * o2V);
-        document.getElementById('j2_retE_txt').innerText = fmt(retE2);
-        document.getElementById('j2_retV_txt').innerText = fmt(retV2);
-        
-        document.getElementById('j2_ccE_txt').innerText = fmt(cc2E);
-        document.getElementById('j2_ccV_txt').innerText = fmt(cc2V);
-        document.getElementById('j2_prE_txt').innerText = fmt(f(retE2 - (cc2E + j2_apE)));
-        document.getElementById('j2_prV_txt').innerText = fmt(f(retV2 - (cc2V + j2_apV)));
-
-        // Renderização Jogo 3
-        document.getElementById('j3_custo_txt').innerText = fmt(f(j1_apE + j1_apV + j2_apE + j2_apV + j3_apE + j3_apV));
-        document.getElementById('j3_meta_txt').innerText = fmt(metaLucro);
-        document.getElementById('j3_apE_txt').innerText = fmt(j3_apE);
-        document.getElementById('j3_apV_txt').innerText = fmt(j3_apV);
-        
-        const retE3 = f(j3_apE * o3E);
-        const retV3 = f(j3_apV * o3V);
-        document.getElementById('j3_retE_txt').innerText = fmt(retE3);
-        document.getElementById('j3_retV_txt').innerText = fmt(retV3);
-        
-        document.getElementById('j3_ccE_txt').innerText = fmt(cc3E);
-        document.getElementById('j3_ccV_txt').innerText = fmt(cc3V);
-        document.getElementById('j3_prE_txt').innerText = fmt(f(retE3 - (cc3E + j3_apE)));
-        document.getElementById('j3_prV_txt').innerText = fmt(f(retV3 - (cc3V + j3_apV)));
-
-        // Resumo Final Executivo
-        const totalProtecoes = f(j1_apE + j1_apV + j2_apE + j2_apV + j3_apE + j3_apV);
-        document.getElementById('sum_montante').innerText = fmt(montante);
-        document.getElementById('sum_retorno').innerText = fmt(retornoMultipla);
-        document.getElementById('sum_protecoes').innerText = fmt(totalProtecoes);
-        document.getElementById('sum_total_custo').innerText = fmt(f(montante + totalProtecoes));
-    }
-</script>
-</body>
-</html>
+           
