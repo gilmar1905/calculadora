@@ -318,39 +318,41 @@
         let j2_apE = 0, j2_apV = 0;
         let j3_apE = 0, j3_apV = 0;
 
-        // Variáveis de somatórios de custos por cenário
         let cc1E = 0, cc1V = 0;
         let cc2E = 0, cc2V = 0;
         let cc3E = 0, cc3V = 0;
 
-        // Motor de Convergência Iterativa com base nas somas exatas dos cenários requeridos
-        for (let iter = 0; iter < 30; iter++) {
-            // JOGO 3: Calculado primeiro pois influi nos custos anteriores
-            // Empate J3: Montante + Visitante J3 + J1(E+V) + J2(E+V)
-            cc3E = montante + j3_apV + j1_apE + j1_apV + j2_apE + j2_apV;
-            j3_apE = f(((cc3E + metaLucro) / (o3E - 1)) * fatJ3);
+        // Motor de Convergência com Fórmula Corrigida para Retorno Clássico de Arbitragem
+        for (let iter = 0; iter < 40; iter++) {
+            
+            // JOGO 1: Dia 1 (Ocorre de imediato)
+            // Se der Empate no J1, perdemos o Montante Principal e a outra aposta de proteção (Visitante J1)
+            cc1E = montante + j1_apV;
+            j1_apE = f(((cc1E + metaLucro) / o1E) * fatJ1);
 
-            // Visitante J3: Montante + Empate J3 + J1(E+V) + J2(E+V)
-            cc3V = montante + j3_apE + j1_apE + j1_apV + j2_apE + j2_apV;
-            j3_apV = f(((cc3V + metaLucro) / (o3V - 1)) * fatJ3);
+            // Se der Visitante no J1, perdemos o Montante Principal e a proteção concorrente (Empate J1)
+            cc1V = montante + j1_apE;
+            j1_apV = f(((cc1V + metaLucro) / o1V) * fatJ1);
 
-            // JOGO 1: Dia 1
-            // Empate J1: Montante + Visitante J1 + Empate J3 + Visitante J3
-            cc1E = montante + j1_apV + j3_apE + j3_apV;
-            j1_apE = f(((cc1E + metaLucro) / (o1E - 1)) * fatJ1);
+            // JOGO 2: Dia 2 (Condicionado a Mandante J1 ter ganho)
+            // Custo fixado até aqui: Montante + Apostas do Dia 1
+            const custoPassadoJ2 = montante + j1_apE + j1_apV;
+            
+            cc2E = custoPassadoJ2 + j2_apV;
+            j2_apE = f(((cc2E + metaLucro) / o2E) * fatJ2);
 
-            // Visitante J1: Montante + Empate J1 + Empate J3 + Visitante J3
-            cc1V = montante + j1_apE + j3_apE + j3_apV;
-            j1_apV = f(((cc1V + metaLucro) / (o1V - 1)) * fatJ1);
+            cc2V = custoPassadoJ2 + j2_apE;
+            j2_apV = f(((cc2V + metaLucro) / o2V) * fatJ2);
 
-            // JOGO 2: Dia 2 (Condicionado)
-            // Empate J2: Montante + Visitante J2 + J1(E+V) + J3(E+V)
-            cc2E = montante + j2_apV + j1_apE + j1_apV + j3_apE + j3_apV;
-            j2_apE = f(((cc2E + metaLucro) / (o2E - 1)) * fatJ2);
+            // JOGO 3: Dia 1 ou Antecipado
+            // Custos do cenário de interrupção no Jogo 3 englobam todos os gastos paralelos executados
+            const custoPassadoJ3 = montante + j1_apE + j1_apV + j2_apE + j2_apV;
 
-            // Visitante J2: Montante + Empate J2 + J1(E+V) + J3(E+V)
-            cc2V = montante + j2_apE + j1_apE + j1_apV + j3_apE + j3_apV;
-            j2_apV = f(((cc2V + metaLucro) / (o2V - 1)) * fatJ2);
+            cc3E = custoPassadoJ3 + j3_apV;
+            j3_apE = f(((cc3E + metaLucro) / o3E) * fatJ3);
+
+            cc3V = custoPassadoJ3 + j3_apE;
+            j3_apV = f(((cc3V + metaLucro) / o3V) * fatJ3);
         }
 
         // Exibir blocos removendo "hidden"
@@ -371,7 +373,6 @@
         document.getElementById('j1_retE_txt').innerText = fmt(retE1);
         document.getElementById('j1_retV_txt').innerText = fmt(retV1);
         
-        // Atualização dos custos impressos na tela e lucros correspondentes
         document.getElementById('j1_ccE_txt').innerText = fmt(cc1E);
         document.getElementById('j1_ccV_txt').innerText = fmt(cc1V);
         document.getElementById('j1_prE_txt').innerText = fmt(f(retE1 - (cc1E + j1_apE)));
@@ -394,7 +395,6 @@
         document.getElementById('j2_prV_txt').innerText = fmt(f(retV2 - (cc2V + j2_apV)));
 
         // Renderização Jogo 3
-        const custoTotalSerie = f(montante + j1_apE + j1_apV + j2_apE + j2_apV + j3_apE + j3_apV);
         document.getElementById('j3_custo_txt').innerText = fmt(f(j1_apE + j1_apV + j2_apE + j2_apV + j3_apE + j3_apV));
         document.getElementById('j3_meta_txt').innerText = fmt(metaLucro);
         document.getElementById('j3_apE_txt').innerText = fmt(j3_apE);
