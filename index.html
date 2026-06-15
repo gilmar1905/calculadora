@@ -30,7 +30,7 @@
                 <i data-lucide="database" class="w-5 h-5 text-zinc-400"></i>
                 <div>
                     <h3 class="text-sm font-bold text-white">Memória do Navegador</h3>
-                    <p class="text-xs text-zinc-500">Save seus dados para não perder as odds de um dia para o outro.</p>
+                    <p class="text-xs text-zinc-500">Salve seus dados para não perder as odds de um dia para o outro.</p>
                 </div>
             </div>
             <div class="flex gap-2 w-full sm:w-auto">
@@ -416,7 +416,7 @@
             let ccJ2E = 0, ccJ2V = 0;
             let ccJ3E = 0, ccJ3V = 0;
 
-            // Motor estável de distribuição
+            // Motor estável de distribuição em Cascata
             for (let iter = 0; iter < 15; iter++) {
                 j3_apE = f(((montante + metaLucro) / (o3E - 1)) * fatJ3E);
                 j3_apV = f(((montante + metaLucro) / (o3V - 1)) * fatJ3V);
@@ -428,7 +428,7 @@
                 j2_apV = f(((montante + j1_apE + j1_apV + j3_apE + j3_apV + metaLucro) / (o2V - 1)) * fatJ2V);
             }
 
-            // Atribuição rígida dos cenários descritos por você
+            // Atribuição isolada de cenários estáveis
             ccJ1E = f(montante + j1_apV + j3_apE + j3_apV);
             ccJ1V = f(montante + j1_apE + j3_apE + j3_apV);
 
@@ -452,7 +452,7 @@
                 }
             }
 
-            // J1 RENDERS
+            // RENDERS DO JOGO 1
             document.getElementById('j1_custo_txt').innerText = fmt(f(j1_apE + j1_apV));
             document.getElementById('j1_meta_txt').innerText = fmt(metaLucro);
             document.getElementById('j1_apE_txt').innerText = fmt(j1_apE);
@@ -465,7 +465,7 @@
             atualizarEstiloLucro(document.getElementById('j1_prE_txt'), f(retE1 - (ccJ1E + j1_apE)));
             atualizarEstiloLucro(document.getElementById('j1_prV_txt'), f(retV1 - (ccJ1V + j1_apV)));
 
-            // J2 RENDERS
+            // RENDERS DO JOGO 2
             document.getElementById('j2_custo_txt').innerText = fmt(f(j1_apE + j1_apV + j2_apE + j2_apV));
             document.getElementById('j2_meta_txt').innerText = fmt(metaLucro);
             document.getElementById('j2_apE_txt').innerText = fmt(j2_apE);
@@ -478,7 +478,7 @@
             atualizarEstiloLucro(document.getElementById('j2_prE_txt'), f(retE2 - (ccJ2E + j2_apE)));
             atualizarEstiloLucro(document.getElementById('j2_prV_txt'), f(retV2 - (ccJ2V + j2_apV)));
 
-            // J3 RENDERS
+            // RENDERS DO JOGO 3
             document.getElementById('j3_custo_txt').innerText = fmt(f(j3_apE + j3_apV));
             document.getElementById('j3_meta_txt').innerText = fmt(metaLucro);
             document.getElementById('j3_apE_txt').innerText = fmt(j3_apE);
