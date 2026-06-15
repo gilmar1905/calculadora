@@ -21,7 +21,7 @@
             </div>
             <h1 class="text-3xl sm:text-4xl font-black text-white tracking-tight">Calculadora de Apostas</h1>
             <p class="text-zinc-400 mt-2 text-sm max-w-md mx-auto">
-                Sistema avançado com correção de inversão de lucro e árvore de custos estáveis.
+                Cenários individualizados por time com base em custos afundados reais.
             </p>
         </div>
 
@@ -30,7 +30,7 @@
                 <i data-lucide="database" class="w-5 h-5 text-zinc-400"></i>
                 <div>
                     <h3 class="text-sm font-bold text-white">Memória do Navegador</h3>
-                    <p class="text-xs text-zinc-500">Salve seus dados para não perder as odds de um dia para o outro.</p>
+                    <p class="text-xs text-zinc-500">Save seus dados para não perder as odds de um dia para o outro.</p>
                 </div>
             </div>
             <div class="flex gap-2 w-full sm:w-auto">
@@ -296,7 +296,7 @@
         </div>
 
         <div class="text-center mt-8 text-xs text-zinc-600">
-            Proteção em Cascata v2.7 — Correção Definitiva de Escopo de Custo
+            Proteção em Cascata v2.8 — Cenários de Custo Afundado Individualizados
         </div>
     </div>
 
@@ -416,7 +416,7 @@
             let ccJ2E = 0, ccJ2V = 0;
             let ccJ3E = 0, ccJ3V = 0;
 
-            // Loop de equilíbrio estável das stakes
+            // Mantém o motor matemático de cálculo de stakes original estável
             for (let iter = 0; iter < 15; iter++) {
                 j3_apE = f(((montante + metaLucro) / (o3E - 1)) * fatJ3E);
                 j3_apV = f(((montante + metaLucro) / (o3V - 1)) * fatJ3V);
@@ -428,15 +428,16 @@
                 j2_apV = f(((montante + j1_apE + j1_apV + j3_apE + j3_apV + metaLucro) / (o2V - 1)) * fatJ2V);
             }
 
-            // CORREÇÃO LOGÍSTICA: O Custo Cenário Real engloba o investimento total daquele cenário específico
-            ccJ1E = f(montante + j1_apE + j1_apV + j3_apE + j3_apV);
-            ccJ1V = f(montante + j1_apE + j1_apV + j3_apE + j3_apV);
+            // INDIVIDUALIZAÇÃO DOS CENÁRIOS: O custo de cada cenário contabiliza apenas o que foi perdido REALMENTE nele.
+            // Exemplo: Se der J1 Empate, você NÃO perde a stake do Empate, perde apenas o Montante, a stake do Visitante e o bloco J3.
+            ccJ1E = f(montante + j1_apV + j3_apE + j3_apV);
+            ccJ1V = f(montante + j1_apE + j3_apE + j3_apV);
 
-            ccJ2E = f(montante + j1_apE + j1_apV + j2_apE + j2_apV + j3_apE + j3_apV);
-            ccJ2V = f(montante + j1_apE + j1_apV + j2_apE + j2_apV + j3_apE + j3_apV);
+            ccJ2E = f(montante + j1_apE + j1_apV + j2_apV + j3_apE + j3_apV);
+            ccJ2V = f(montante + j1_apE + j1_apV + j2_apE + j3_apE + j3_apV);
 
-            ccJ3E = f(montante + j1_apE + j1_apV + j2_apE + j2_apV + j3_apE + j3_apV);
-            ccJ3V = f(montante + j1_apE + j1_apV + j2_apE + j2_apV + j3_apE + j3_apV);
+            ccJ3E = f(montante + j1_apE + j1_apV + j2_apE + j2_apV + j3_apV);
+            ccJ3V = f(montante + j1_apE + j1_apV + j2_apE + j2_apV + j3_apE);
 
             document.getElementById('audit-j1').classList.remove('hidden');
             document.getElementById('audit-j2').classList.remove('hidden');
@@ -452,7 +453,7 @@
                 }
             }
 
-            // RENDERS DO JOGO 1
+            // RENDERS INDIVIDUAIS DO JOGO 1 (Retorno da aposta menos o Custo Real das perdas do cenário)
             document.getElementById('j1_custo_txt').innerText = fmt(f(j1_apE + j1_apV));
             document.getElementById('j1_meta_txt').innerText = fmt(metaLucro);
             document.getElementById('j1_apE_txt').innerText = fmt(j1_apE);
@@ -465,7 +466,7 @@
             atualizarEstiloLucro(document.getElementById('j1_prE_txt'), f(retE1 - ccJ1E));
             atualizarEstiloLucro(document.getElementById('j1_prV_txt'), f(retV1 - ccJ1V));
 
-            // RENDERS DO JOGO 2
+            // RENDERS INDIVIDUAIS DO JOGO 2
             document.getElementById('j2_custo_txt').innerText = fmt(f(j1_apE + j1_apV + j2_apE + j2_apV));
             document.getElementById('j2_meta_txt').innerText = fmt(metaLucro);
             document.getElementById('j2_apE_txt').innerText = fmt(j2_apE);
@@ -478,7 +479,7 @@
             atualizarEstiloLucro(document.getElementById('j2_prE_txt'), f(retE2 - ccJ2E));
             atualizarEstiloLucro(document.getElementById('j2_prV_txt'), f(retV2 - ccJ2V));
 
-            // RENDERS DO JOGO 3
+            // RENDERS INDIVIDUAIS DO JOGO 3
             document.getElementById('j3_custo_txt').innerText = fmt(f(j3_apE + j3_apV));
             document.getElementById('j3_meta_txt').innerText = fmt(metaLucro);
             document.getElementById('j3_apE_txt').innerText = fmt(j3_apE);
