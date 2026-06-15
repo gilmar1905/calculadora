@@ -89,7 +89,7 @@
                         </div>
                     </div>
                     <div class="bg-emerald-500/5 px-4 py-2.5 flex justify-between items-center text-xs font-semibold">
-                        <span class="text-emerald-400 uppercase tracking-wider">✓ Lucro Alvo Controlado</span>
+                        <span class="text-emerald-400 uppercase tracking-wider">✓ Lucro Extra Controlado</span>
                         <strong class="text-emerald-400 text-sm" id="j1_prova_txt">R$ 0,00</strong>
                     </div>
                 </div>
@@ -115,7 +115,7 @@
                 <div class="hidden bg-zinc-950/80 rounded-xl border border-zinc-800/80 overflow-hidden divide-y divide-zinc-800" id="audit-j2">
                     <div class="grid grid-cols-2 divide-x divide-zinc-800 text-xs">
                         <div class="p-3">
-                            <span class="text-zinc-500 uppercase block text-[10px] mb-0.5">Prejuízo Passado Acumulado</span>
+                            <span class="text-zinc-500 uppercase block text-[10px] mb-0.5">Despesas Acumuladas</span>
                             <strong class="text-red-400 font-bold text-sm" id="j2_custo_txt">R$ 0,00</strong>
                         </div>
                         <div class="p-3">
@@ -136,7 +136,7 @@
                         </div>
                     </div>
                     <div class="bg-emerald-500/5 px-4 py-2.5 flex justify-between items-center text-xs font-semibold">
-                        <span class="text-emerald-400 uppercase tracking-wider">✓ Lucro Líquido Real do Cenário</span>
+                        <span class="text-emerald-400 uppercase tracking-wider">✓ Lucro Extra Controlado</span>
                         <strong class="text-emerald-400 text-sm" id="j2_prova_txt">R$ 0,00</strong>
                     </div>
                 </div>
@@ -146,7 +146,7 @@
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                     <div>
                         <span class="text-xs font-semibold text-rose-500 uppercase tracking-wider block mb-0.5">Jogo 3</span>
-                        <h3 class="text-lg font-bold text-white">Dia 1 — Proteção antecipada</h3>
+                        <h3 class="text-lg font-bold text-white">Dia 3 — Proteção Final</h3>
                     </div>
                     <div class="grid grid-cols-2 gap-3 max-w-xs w-full">
                         <div class="flex flex-col gap-1">
@@ -162,7 +162,7 @@
                 <div class="hidden bg-zinc-950/80 rounded-xl border border-zinc-800/80 overflow-hidden divide-y divide-zinc-800" id="audit-j3">
                     <div class="grid grid-cols-2 divide-x divide-zinc-800 text-xs">
                         <div class="p-3">
-                            <span class="text-zinc-500 uppercase block text-[10px] mb-0.5">Prejuízo Passado Acumulado</span>
+                            <span class="text-zinc-500 uppercase block text-[10px] mb-0.5">Despesas Acumuladas</span>
                             <strong class="text-red-400 font-bold text-sm" id="j3_custo_txt">R$ 0,00</strong>
                         </div>
                         <div class="p-3">
@@ -183,7 +183,7 @@
                         </div>
                     </div>
                     <div class="bg-emerald-500/5 px-4 py-2.5 flex justify-between items-center text-xs font-semibold">
-                        <span class="text-emerald-400 uppercase tracking-wider">✓ Lucro Líquido Real do Cenário</span>
+                        <span class="text-emerald-400 uppercase tracking-wider">✓ Lucro Extra Controlado</span>
                         <strong class="text-emerald-400 text-sm" id="j3_prova_txt">R$ 0,00</strong>
                     </div>
                 </div>
@@ -216,14 +216,14 @@
                     <strong class="text-sm text-amber-500" id="sum_protecoes">R$ 0,00</strong>
                 </div>
                 <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800/60">
-                    <span class="text-[10px] uppercase font-semibold text-zinc-500 block mb-1">Custo Máximo Total</span>
+                    <span class="text-[10px] uppercase font-semibold text-zinc-500 block mb-1">Custo Máximo Global</span>
                     <strong class="text-sm text-red-400" id="sum_total_custo">R$ 0,00</strong>
                 </div>
             </div>
         </div>
 
         <div class="text-center mt-8 text-xs text-zinc-600">
-            Proteção em Cascata v1.6 — Validação Completa Homologada
+            Proteção em Cascata v1.7 — Ajuste de Estabilidade Geral
         </div>
     </div>
 
@@ -264,26 +264,67 @@
             let j2_e = 0, j2_v = 0;
             let j3_e = 0, j3_v = 0;
 
-            // Laço de Convergência das Proteções Cruzadas Estabilizadas
-            for (let iter = 0; iter < 40; iter++) {
-                // CARD 1 — Mantido Intacto (Sua lógica de sucesso)
+            // Laço estável em cascata linear — sem divisores que quebram com odds baixas/médias
+            for (let iter = 0; iter < 25; iter++) {
+                // Jogo 1 (Original intacto)
                 let baseJ1 = montante + c3;
                 j1_e = f((baseJ1 + metaLucro) / (o1E - 1));
                 j1_v = f((baseJ1 + metaLucro) / (o1V - 1));
                 c1 = f(j1_e + j1_v);
 
-                // CARD 2 — Cobertura Cruzada Completa (Cobre Montante + J1 + J3 + a outra ponta do J2)
-                let perdasPassadasJ2 = montante + c1 + c3;
-                let divisorJ2 = 1 - (1 / o2E) - (1 / o2V);
-                if (divisorJ2 > 0) {
-                    let totalAlvoJ2 = (perdasPassadasJ2 + metaLucro) / divisorJ2;
-                    j2_e = f(totalAlvoJ2 / o2E);
-                    j2_v = f(totalAlvoJ2 / o2V);
-                }
+                // Jogo 2 (Soma Montante + Todo o Jogo 1 + Todo o Jogo 3 e calcula de forma estável)
+                let baseJ2 = montante + c1 + c3;
+                j2_e = f((baseJ2 + metaLucro) / (o2E - 1));
+                j2_v = f((baseJ2 + metaLucro) / (o2V - 1));
                 c2 = f(j2_e + j2_v);
 
-                // CARD 3 — CORRIGIDO: Cobertura Cruzada Completa (Cobre Montante + J1 + J2 + a outra ponta do J3)
-                let perdasPassadasJ3 = montante + c1 + c2;
-                let divisorJ3 = 1 - (1 / o3E) - (1 / o3V);
-                if (divisorJ3 > 0) {
-                    let totalAlvoJ3 = (perdasPassadasJ3 + metaLucro
+                // Jogo 3 (Soma Montante + Todo o Jogo 1 + Todo o Jogo 2 e calcula de forma estável)
+                let baseJ3 = montante + c1 + c2;
+                j3_e = f((baseJ3 + metaLucro) / (o3E - 1));
+                j3_v = f((baseJ3 + metaLucro) / (o3V - 1));
+                c3 = f(j3_e + j3_v);
+            }
+
+            const custoTotalOp = f(montante + c1 + c2 + c3);
+
+            // RENDER CARD 1
+            document.getElementById(`j1_custo_txt`).innerText = fmt(montante + c3);
+            document.getElementById(`j1_meta_txt`).innerText = fmt(metaLucro);
+            document.getElementById(`j1_apE_txt`).innerText = fmt(j1_e);
+            document.getElementById(`j1_retE_txt`).innerText = fmt(j1_e * o1E);
+            document.getElementById(`j1_apV_txt`).innerText = fmt(j1_v);
+            document.getElementById(`j1_retV_txt`).innerText = fmt(j1_v * o1V);
+            document.getElementById(`j1_prova_txt`).innerText = fmt(metaLucro);
+            document.getElementById(`audit-j1`).classList.remove('hidden');
+
+            // RENDER CARD 2
+            document.getElementById(`j2_custo_txt`).innerText = fmt(montante + c1 + c3);
+            document.getElementById(`j2_meta_txt`).innerText = fmt(metaLucro);
+            document.getElementById(`j2_apE_txt`).innerText = fmt(j2_e);
+            document.getElementById(`j2_retE_txt`).innerText = fmt(j2_e * o2E);
+            document.getElementById(`j2_apV_txt`).innerText = fmt(j2_v);
+            document.getElementById(`j2_retV_txt`).innerText = fmt(j2_v * o2V);
+            document.getElementById(`j2_prova_txt`).innerText = fmt(metaLucro);
+            document.getElementById(`audit-j2`).classList.remove('hidden');
+
+            // RENDER CARD 3
+            document.getElementById(`j3_custo_txt`).innerText = fmt(montante + c1 + c2);
+            document.getElementById(`j3_meta_txt`).innerText = fmt(metaLucro);
+            document.getElementById(`j3_apE_txt`).innerText = fmt(j3_e);
+            document.getElementById(`j3_retE_txt`).innerText = fmt(j3_e * o3E);
+            document.getElementById(`j3_apV_txt`).innerText = fmt(j3_v);
+            document.getElementById(`j3_retV_txt`).innerText = fmt(j3_v * o3V);
+            document.getElementById(`j3_prova_txt`).innerText = fmt(metaLucro);
+            document.getElementById(`audit-j3`).classList.remove('hidden');
+
+            // Resumo Inferior
+            document.getElementById('sum_montante').innerText = fmt(montante);
+            document.getElementById('sum_retorno').innerText = fmt(retornoMultipla);
+            document.getElementById('sum_protecoes').innerText = fmt(c1 + c2 + c3);
+            document.getElementById('sum_total_custo').innerText = fmt(custoTotalOp);
+
+            document.getElementById('summary-block').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
