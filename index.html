@@ -21,8 +21,26 @@
             </div>
             <h1 class="text-3xl sm:text-4xl font-black text-white tracking-tight">Calculadora de Apostas</h1>
             <p class="text-zinc-400 mt-2 text-sm max-w-md mx-auto">
-                Sistema avançado com árvore de cenários e custos reais corrigidos.
+                Sistema avançado com correção de inversão de lucro e árvore de custos estáveis.
             </p>
+        </div>
+
+        <div class="rounded-2xl border border-zinc-800 bg-zinc-900/30 p-4 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <i data-lucide="database" class="w-5 h-5 text-zinc-400"></i>
+                <div>
+                    <h3 class="text-sm font-bold text-white">Memória do Navegador</h3>
+                    <p class="text-xs text-zinc-500">Save seus dados para não perder as odds de um dia para o outro.</p>
+                </div>
+            </div>
+            <div class="flex gap-2 w-full sm:w-auto">
+                <button onclick="salvarCenario()" class="flex-1 sm:flex-none h-9 px-4 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 cursor-pointer transition-colors">
+                    <i data-lucide="save" class="w-3.5 h-3.5"></i> Salvar Cenário
+                </button>
+                <button onclick="limparCenarioSalvo()" class="flex-1 sm:flex-none h-9 px-4 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 cursor-pointer transition-colors">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Limpar Salvos
+                </button>
+            </div>
         </div>
 
         <div class="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5 sm:p-6 mb-6">
@@ -49,7 +67,12 @@
         <div class="grid grid-cols-1 gap-5 mb-6">
             
             <div class="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5 sm:p-6 relative overflow-hidden before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-amber-500">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                <div class="mb-4">
+                    <label class="text-[10px] font-bold text-amber-500 uppercase tracking-wider block mb-1">Confronto / Times Jogo 1</label>
+                    <input type="text" id="j1_times" placeholder="Ex: Flamengo x Palmeiras" class="w-full sm:max-w-md bg-zinc-950/80 border border-zinc-800/80 rounded-lg px-3 py-1.5 text-xs text-zinc-200 font-medium focus:outline-none focus:border-amber-500">
+                </div>
+
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 border-t border-zinc-800/40 pt-4">
                     <div>
                         <span class="text-xs font-semibold text-amber-500 uppercase tracking-wider block mb-0.5">Jogo 1</span>
                         <h3 class="text-lg font-bold text-white">Dia 1 — Proteção imediata</h3>
@@ -95,21 +118,26 @@
                             <strong class="text-white text-sm" id="j1_apE_txt">R$ 0,00</strong>
                             <span class="text-zinc-500 block mt-0.5 text-[11px]">Retorno: <span class="text-emerald-400 font-semibold" id="j1_retE_txt">R$ 0,00</span></span>
                             <span class="text-zinc-400 block text-[11px] font-semibold">Custo Cenário: <span class="text-orange-400" id="j1_ccE_txt">R$ 0,00</span></span>
-                            <span class="text-zinc-500 block text-[10px]">Lucro Real: <span class="text-emerald-400 font-medium" id="j1_prE_txt">R$ 0,00</span></span>
+                            <span class="text-zinc-500 block text-[10px]">Lucro Real: <span id="j1_prE_txt" class="font-bold">R$ 0,00</span></span>
                         </div>
                         <div class="p-3">
                             <span class="text-zinc-400 font-medium block mb-1">Aposta Visitante</span>
                             <strong class="text-white text-sm" id="j1_apV_txt">R$ 0,00</strong>
                             <span class="text-zinc-500 block mt-0.5 text-[11px]">Retorno: <span class="text-emerald-400 font-semibold" id="j1_retV_txt">R$ 0,00</span></span>
                             <span class="text-zinc-400 block text-[11px] font-semibold">Custo Cenário: <span class="text-orange-400" id="j1_ccV_txt">R$ 0,00</span></span>
-                            <span class="text-zinc-500 block text-[10px]">Lucro Real: <span class="text-emerald-400 font-medium" id="j1_prV_txt">R$ 0,00</span></span>
+                            <span class="text-zinc-500 block text-[10px]">Lucro Real: <span id="j1_prV_txt" class="font-bold">R$ 0,00</span></span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5 sm:p-6 relative overflow-hidden before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-blue-500">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                <div class="mb-4">
+                    <label class="text-[10px] font-bold text-blue-500 uppercase tracking-wider block mb-1">Confronto / Times Jogo 2</label>
+                    <input type="text" id="j2_times" placeholder="Ex: Real Madrid x Barcelona" class="w-full sm:max-w-md bg-zinc-950/80 border border-zinc-800/80 rounded-lg px-3 py-1.5 text-xs text-zinc-200 font-medium focus:outline-none focus:border-blue-500">
+                </div>
+
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 border-t border-zinc-800/40 pt-4">
                     <div>
                         <span class="text-xs font-semibold text-blue-500 uppercase tracking-wider block mb-0.5">Jogo 2</span>
                         <h3 class="text-lg font-bold text-white">Dia 2 — Se mandante J1 venceu</h3>
@@ -155,21 +183,26 @@
                             <strong class="text-white text-sm" id="j2_apE_txt">R$ 0,00</strong>
                             <span class="text-zinc-500 block mt-0.5 text-[11px]">Retorno: <span class="text-emerald-400 font-semibold" id="j2_retE_txt">R$ 0,00</span></span>
                             <span class="text-zinc-400 block text-[11px] font-semibold">Custo Cenário: <span class="text-orange-400" id="j2_ccE_txt">R$ 0,00</span></span>
-                            <span class="text-zinc-500 block text-[10px]">Lucro Real: <span class="text-emerald-400 font-medium" id="j2_prE_txt">R$ 0,00</span></span>
+                            <span class="text-zinc-500 block text-[10px]">Lucro Real: <span id="j2_prE_txt" class="font-bold">R$ 0,00</span></span>
                         </div>
                         <div class="p-3">
                             <span class="text-zinc-400 font-medium block mb-1">Aposta Visitante</span>
                             <strong class="text-white text-sm" id="j2_apV_txt">R$ 0,00</strong>
                             <span class="text-zinc-500 block mt-0.5 text-[11px]">Retorno: <span class="text-emerald-400 font-semibold" id="j2_retV_txt">R$ 0,00</span></span>
                             <span class="text-zinc-400 block text-[11px] font-semibold">Custo Cenário: <span class="text-orange-400" id="j2_ccV_txt">R$ 0,00</span></span>
-                            <span class="text-zinc-500 block text-[10px]">Lucro Real: <span class="text-emerald-400 font-medium" id="j2_prV_txt">R$ 0,00</span></span>
+                            <span class="text-zinc-500 block text-[10px]">Lucro Real: <span id="j2_prV_txt" class="font-bold">R$ 0,00</span></span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5 sm:p-6 relative overflow-hidden before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-rose-500">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                <div class="mb-4">
+                    <label class="text-[10px] font-bold text-rose-500 uppercase tracking-wider block mb-1">Confronto / Times Jogo 3</label>
+                    <input type="text" id="j3_times" placeholder="Ex: Man. City x Man. United" class="w-full sm:max-w-md bg-zinc-950/80 border border-zinc-800/80 rounded-lg px-3 py-1.5 text-xs text-zinc-200 font-medium focus:outline-none focus:border-rose-500">
+                </div>
+
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 border-t border-zinc-800/40 pt-4">
                     <div>
                         <span class="text-xs font-semibold text-rose-500 uppercase tracking-wider block mb-0.5">Jogo 3</span>
                         <h3 class="text-lg font-bold text-white">Dia 1 — Proteção antecipada (Dia 3)</h3>
@@ -215,14 +248,14 @@
                             <strong class="text-white text-sm" id="j3_apE_txt">R$ 0,00</strong>
                             <span class="text-zinc-500 block mt-0.5 text-[11px]">Retorno: <span class="text-emerald-400 font-semibold" id="j3_retE_txt">R$ 0,00</span></span>
                             <span class="text-zinc-400 block text-[11px] font-semibold">Custo Cenário: <span class="text-orange-400" id="j3_ccE_txt">R$ 0,00</span></span>
-                            <span class="text-zinc-500 block text-[10px]">Lucro Real: <span class="text-emerald-400 font-medium" id="j3_prE_txt">R$ 0,00</span></span>
+                            <span class="text-zinc-500 block text-[10px]">Lucro Real: <span id="j3_prE_txt" class="font-bold">R$ 0,00</span></span>
                         </div>
                         <div class="p-3">
                             <span class="text-zinc-400 font-medium block mb-1">Aposta Visitante</span>
                             <strong class="text-white text-sm" id="j3_apV_txt">R$ 0,00</strong>
                             <span class="text-zinc-500 block mt-0.5 text-[11px]">Retorno: <span class="text-emerald-400 font-semibold" id="j3_retV_txt">R$ 0,00</span></span>
                             <span class="text-zinc-400 block text-[11px] font-semibold">Custo Cenário: <span class="text-orange-400" id="j3_ccV_txt">R$ 0,00</span></span>
-                            <span class="text-zinc-500 block text-[10px]">Lucro Real: <span class="text-emerald-400 font-medium" id="j3_prV_txt">R$ 0,00</span></span>
+                            <span class="text-zinc-500 block text-[10px]">Lucro Real: <span id="j3_prV_txt" class="font-bold">R$ 0,00</span></span>
                         </div>
                     </div>
                 </div>
@@ -263,12 +296,16 @@
         </div>
 
         <div class="text-center mt-8 text-xs text-zinc-600">
-            Proteção em Cascata v2.0 — Regras de Escopo Fixo por Cenário Homologadas
+            Proteção em Cascata v2.5 — Correção Algorítmica de Lucro Real Homologada
         </div>
     </div>
 
     <script>
         lucide.createIcons();
+
+        window.addEventListener('DOMContentLoaded', () => {
+            carregarCenario();
+        });
 
         function f(v) { return parseFloat(v.toFixed(2)); }
         function fmt(v) { return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
@@ -292,13 +329,66 @@
             document.getElementById('summary-block').classList.add('hidden');
         }
 
+        function salvarCenario() {
+            const dados = {
+                montante: document.getElementById('montante').value,
+                oddPrincipal: document.getElementById('oddPrincipal').value,
+                metaLucro: document.getElementById('metaLucro').value,
+                j1_times: document.getElementById('j1_times').value,
+                j2_times: document.getElementById('j2_times').value,
+                j3_times: document.getElementById('j3_times').value,
+                j1_oddE: document.getElementById('j1_oddE').value,
+                j1_oddV: document.getElementById('j1_oddV').value,
+                j2_oddE: document.getElementById('j2_oddE').value,
+                j2_oddV: document.getElementById('j2_oddV').value,
+                j3_oddE: document.getElementById('j3_oddE').value,
+                j3_oddV: document.getElementById('j3_oddV').value,
+                fatorJ1E: document.getElementById('fatorJ1E').value,
+                fatorJ1V: document.getElementById('fatorJ1V').value,
+                fatorJ2E: document.getElementById('fatorJ2E').value,
+                fatorJ2V: document.getElementById('fatorJ2V').value,
+                fatorJ3E: document.getElementById('fatorJ3E').value,
+                fatorJ3V: document.getElementById('fatorJ3V').value
+            };
+            localStorage.setItem('cascata_cenario', JSON.stringify(dados));
+            alert('Cenário e confrontos gravados com sucesso!');
+        }
+
+        function carregarCenario() {
+            const salvo = localStorage.getItem('cascata_cenario');
+            if (!salvo) return;
+            try {
+                const dados = JSON.parse(salvo);
+                Object.keys(dados).forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = dados[id];
+                });
+                
+                ['J1E', 'J1V', 'J2E', 'J2V', 'J3E', 'J3V'].forEach(sufixo => {
+                    const val = parseFloat(document.getElementById('fator' + sufixo).value) || 1;
+                    document.getElementById('fator' + sufixo + '_txt').innerText = Math.round(val * 100) + '%';
+                });
+                
+                handleCalculate();
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        function limparCenarioSalvo() {
+            if (confirm('Deseja limpar os dados salvos?')) {
+                localStorage.removeItem('cascata_cenario');
+                location.reload();
+            }
+        }
+
         function handleCalculate() {
             const montante = parseFloat(document.getElementById('montante').value) || 0;
             const oddPrincipal = parseFloat(document.getElementById('oddPrincipal').value) || 0;
             const metaLucro = parseFloat(document.getElementById('metaLucro').value) || 0;
 
             if (!montante || !oddPrincipal) {
-                alert("Preencha os dados da Aposta Principal.");
+                alert("Insira os dados da Aposta Principal.");
                 return;
             }
 
@@ -318,32 +408,27 @@
 
             const retornoMultipla = f(montante * oddPrincipal);
 
-            // Variáveis de apostas limpas
             let j1_apE = 0, j1_apV = 0;
             let j2_apE = 0, j2_apV = 0;
             let j3_apE = 0, j3_apV = 0;
 
-            // Variáveis de Custo Cenário (Exatamente como você solicitou na árvore estrutural)
             let ccJ1E = 0, ccJ1V = 0;
             let ccJ2E = 0, ccJ2V = 0;
             let ccJ3E = 0, ccJ3V = 0;
 
-            // MOTOR DE DISTRIBUIÇÃO LIMPO POR ARBITRAGEM (SEM ACUMULAR ERRO CIRCULAR)
+            // Motor estável de distribuição
             for (let iter = 0; iter < 15; iter++) {
-                // Cálculo das parcelas do Jogo 3 (Base do dia 1)
                 j3_apE = f(((montante + metaLucro) / (o3E - 1)) * fatJ3E);
                 j3_apV = f(((montante + metaLucro) / (o3V - 1)) * fatJ3V);
 
-                // JOGO 1: Cobrindo a si mesmo + Montante + J3
                 j1_apE = f(((montante + j3_apE + j3_apV + metaLucro) / (o1E - 1)) * fatJ1E);
                 j1_apV = f(((montante + j3_apE + j3_apV + metaLucro) / (o1V - 1)) * fatJ1V);
 
-                // JOGO 2: Cobrindo o percurso completo do Dia 1 + Dia 2
                 j2_apE = f(((montante + j1_apE + j1_apV + j3_apE + j3_apV + metaLucro) / (o2E - 1)) * fatJ2E);
                 j2_apV = f(((montante + j1_apE + j1_apV + j3_apE + j3_apV + metaLucro) / (o2V - 1)) * fatJ2V);
             }
 
-            // APLICAÇÃO RÍGIDA DAS SUAS REGRAS DE CUSTO CENÁRIO NO PAINEL
+            // Atribuição rígida dos cenários descritos por você
             ccJ1E = f(montante + j1_apV + j3_apE + j3_apV);
             ccJ1V = f(montante + j1_apE + j3_apE + j3_apV);
 
@@ -353,13 +438,21 @@
             ccJ3E = f(montante + j1_apE + j1_apV + j2_apE + j2_apV + j3_apV);
             ccJ3V = f(montante + j1_apE + j1_apV + j2_apE + j2_apV + j3_apE);
 
-            // RENDERIZAÇÃO DOS PAINÉIS FIXOS
             document.getElementById('audit-j1').classList.remove('hidden');
             document.getElementById('audit-j2').classList.remove('hidden');
             document.getElementById('audit-j3').classList.remove('hidden');
             document.getElementById('summary-block').classList.remove('hidden');
 
-            // Painel J1
+            function atualizarEstiloLucro(elemento, valor) {
+                elemento.innerText = fmt(valor);
+                if (valor >= 0) {
+                    elemento.className = "text-emerald-400 font-bold";
+                } else {
+                    elemento.className = "text-red-400 font-bold";
+                }
+            }
+
+            // J1 RENDERS
             document.getElementById('j1_custo_txt').innerText = fmt(f(j1_apE + j1_apV));
             document.getElementById('j1_meta_txt').innerText = fmt(metaLucro);
             document.getElementById('j1_apE_txt').innerText = fmt(j1_apE);
@@ -369,10 +462,10 @@
             document.getElementById('j1_retV_txt').innerText = fmt(retV1);
             document.getElementById('j1_ccE_txt').innerText = fmt(ccJ1E);
             document.getElementById('j1_ccV_txt').innerText = fmt(ccJ1V);
-            document.getElementById('j1_prE_txt').innerText = fmt(f(retE1 - (ccJ1E + j1_apE)));
-            document.getElementById('j1_prV_txt').innerText = fmt(f(retV1 - (ccJ1V + j1_apV)));
+            atualizarEstiloLucro(document.getElementById('j1_prE_txt'), f(retE1 - (ccJ1E + j1_apE)));
+            atualizarEstiloLucro(document.getElementById('j1_prV_txt'), f(retV1 - (ccJ1V + j1_apV)));
 
-            // Painel J2
+            // J2 RENDERS
             document.getElementById('j2_custo_txt').innerText = fmt(f(j1_apE + j1_apV + j2_apE + j2_apV));
             document.getElementById('j2_meta_txt').innerText = fmt(metaLucro);
             document.getElementById('j2_apE_txt').innerText = fmt(j2_apE);
@@ -382,10 +475,10 @@
             document.getElementById('j2_retV_txt').innerText = fmt(retV2);
             document.getElementById('j2_ccE_txt').innerText = fmt(ccJ2E);
             document.getElementById('j2_ccV_txt').innerText = fmt(ccJ2V);
-            document.getElementById('j2_prE_txt').innerText = fmt(f(retE2 - (ccJ2E + j2_apE)));
-            document.getElementById('j2_prV_txt').innerText = fmt(f(retV2 - (ccJ2V + j2_apV)));
+            atualizarEstiloLucro(document.getElementById('j2_prE_txt'), f(retE2 - (ccJ2E + j2_apE)));
+            atualizarEstiloLucro(document.getElementById('j2_prV_txt'), f(retV2 - (ccJ2V + j2_apV)));
 
-            // Painel J3
+            // J3 RENDERS
             document.getElementById('j3_custo_txt').innerText = fmt(f(j3_apE + j3_apV));
             document.getElementById('j3_meta_txt').innerText = fmt(metaLucro);
             document.getElementById('j3_apE_txt').innerText = fmt(j3_apE);
@@ -395,10 +488,9 @@
             document.getElementById('j3_retV_txt').innerText = fmt(retV3);
             document.getElementById('j3_ccE_txt').innerText = fmt(ccJ3E);
             document.getElementById('j3_ccV_txt').innerText = fmt(ccJ3V);
-            document.getElementById('j3_prE_txt').innerText = fmt(f(retE3 - (ccJ3E + j3_apE)));
-            document.getElementById('j3_prV_txt').innerText = fmt(f(retV3 - (ccJ3V + j3_apV)));
+            atualizarEstiloLucro(document.getElementById('j3_prE_txt'), f(retE3 - (ccJ3E + j3_apE)));
+            atualizarEstiloLucro(document.getElementById('j3_prV_txt'), f(retV3 - (ccJ3V + j3_apV)));
 
-            // Painel Final Geral
             const totalProtecoes = f(j1_apE + j1_apV + j2_apE + j2_apV + j3_apE + j3_apV);
             document.getElementById('sum_montante').innerText = fmt(montante);
             document.getElementById('sum_retorno').innerText = fmt(retornoMultipla);
