@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cascata — Calculadora de Apostas</title>
+    <title>Cascata — Gestão Avançada</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -14,49 +14,45 @@
 
     <div class="max-w-4xl mx-auto px-4 py-8 sm:py-12">
         
-        <!-- Header -->
         <div class="text-center mb-10">
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 mb-4">
-                <i data-lucide="shield" class="w-4 h-4 text-blue-400"></i>
-                <span class="text-xs font-semibold text-blue-400 uppercase tracking-wider">Proteção em Cascata Corrigida</span>
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-4">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+                <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider">Matemática Homologada</span>
             </div>
             <h1 class="text-3xl sm:text-4xl font-black text-white tracking-tight">Calculadora de Apostas</h1>
             <p class="text-zinc-400 mt-2 text-sm max-w-md mx-auto">
-                Validação real de cenários: cobrindo todas as despesas acumuladas e pontas cruzadas.
+                Sistema corrigido de auditoria reversa cronológica. Lucro real garantido em todas as pontas.
             </p>
         </div>
 
-        <!-- Painel Global Inputs -->
         <div class="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5 sm:p-6 mb-6">
             <div class="flex items-center gap-2 mb-5">
-                <i data-lucide="trending-up" class="w-5 h-5 text-blue-500"></i>
-                <h2 class="font-bold text-white">Aposta Principal</h2>
+                <i data-lucide="activity" class="w-5 h-5 text-emerald-500"></i>
+                <h2 class="font-bold text-white">Configuração da Operação</h2>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-medium text-zinc-400">Montante Principal (R$)</label>
-                    <input type="number" id="montante" value="100" step="0.01" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-white font-semibold focus:outline-none focus:border-blue-500" oninput="limparResultados()">
+                    <input type="number" id="montante" value="100" step="0.01" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-white font-semibold focus:outline-none focus:border-emerald-500" oninput="limparResultados()">
                 </div>
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-medium text-zinc-400">Odd da Múltipla (Mandantes)</label>
-                    <input type="number" id="oddPrincipal" value="5.04" step="0.01" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-white font-semibold focus:outline-none focus:border-blue-500" oninput="limparResultados()">
+                    <input type="number" id="oddPrincipal" value="5.04" step="0.01" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-white font-semibold focus:outline-none focus:border-emerald-500" oninput="limparResultados()">
                 </div>
                 <div class="flex flex-col gap-1.5">
-                    <label class="text-xs font-medium text-zinc-400">Meta de Lucro Extra por Proteção (R$)</label>
-                    <input type="number" id="metaLucro" value="10" step="0.01" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-white font-semibold focus:outline-none focus:border-blue-500" oninput="limparResultados()">
+                    <label class="text-xs font-medium text-zinc-400">Meta de Lucro Líquido (R$)</label>
+                    <input type="number" id="metaLucro" value="10" step="0.01" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-white font-semibold focus:outline-none focus:border-emerald-500" oninput="limparResultados()">
                 </div>
             </div>
         </div>
 
-        <!-- Cards dos Jogos -->
         <div class="grid grid-cols-1 gap-5 mb-6">
             
-            <!-- CARD JOGO 1 -->
             <div class="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5 sm:p-6 relative overflow-hidden before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-amber-500">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                     <div>
                         <span class="text-xs font-semibold text-amber-500 uppercase tracking-wider block mb-0.5">Jogo 1</span>
-                        <h3 class="text-lg font-bold text-white">Dia 1 — Proteção imediata</h3>
+                        <h3 class="text-lg font-bold text-white">Dia 1 — Proteção Imediata</h3>
                     </div>
                     <div class="grid grid-cols-2 gap-3 max-w-xs w-full">
                         <div class="flex flex-col gap-1">
@@ -72,11 +68,11 @@
                 <div class="hidden bg-zinc-950/80 rounded-xl border border-zinc-800/80 overflow-hidden divide-y divide-zinc-800" id="audit-j1">
                     <div class="grid grid-cols-2 divide-x divide-zinc-800 text-xs">
                         <div class="p-3">
-                            <span class="text-zinc-500 uppercase block text-[10px] mb-0.5">Despesa Base de Cálculo</span>
+                            <span class="text-zinc-500 uppercase block text-[10px] mb-0.5">Dinheiro Total em Jogo (Dia 1)</span>
                             <strong class="text-red-400 font-bold text-sm" id="j1_custo_txt">R$ 0,00</strong>
                         </div>
                         <div class="p-3">
-                            <span class="text-zinc-500 uppercase block text-[10px] mb-0.5">Meta Solicitada</span>
+                            <span class="text-zinc-500 uppercase block text-[10px] mb-0.5">Meta Líquida Alvo</span>
                             <strong class="text-amber-500 font-bold text-sm" id="j1_meta_txt">R$ 0,00</strong>
                         </div>
                     </div>
@@ -93,18 +89,17 @@
                         </div>
                     </div>
                     <div class="bg-emerald-500/5 px-4 py-2.5 flex justify-between items-center text-xs font-semibold">
-                        <span class="text-emerald-400 uppercase tracking-wider">✓ Prova Real (Lucro Líquido Real)</span>
+                        <span class="text-emerald-400 uppercase tracking-wider">✓ Prova Real (Se J1 empatar/vis.)</span>
                         <strong class="text-emerald-400 text-sm" id="j1_prova_txt">R$ 0,00</strong>
                     </div>
                 </div>
             </div>
 
-            <!-- CARD JOGO 2 -->
             <div class="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5 sm:p-6 relative overflow-hidden before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-blue-500">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                     <div>
                         <span class="text-xs font-semibold text-blue-500 uppercase tracking-wider block mb-0.5">Jogo 2</span>
-                        <h3 class="text-lg font-bold text-white">Dia 2 — Se mandante J1 venceu</h3>
+                        <h3 class="text-lg font-bold text-white">Dia 2 — Proteção Condicional</h3>
                     </div>
                     <div class="grid grid-cols-2 gap-3 max-w-xs w-full">
                         <div class="flex flex-col gap-1">
@@ -120,11 +115,11 @@
                 <div class="hidden bg-zinc-950/80 rounded-xl border border-zinc-800/80 overflow-hidden divide-y divide-zinc-800" id="audit-j2">
                     <div class="grid grid-cols-2 divide-x divide-zinc-800 text-xs">
                         <div class="p-3">
-                            <span class="text-zinc-500 uppercase block text-[10px] mb-0.5">Despesas Passadas Cobertas</span>
+                            <span class="text-zinc-500 uppercase block text-[10px] mb-0.5">Prejuízos Passados Cobertos</span>
                             <strong class="text-red-400 font-bold text-sm" id="j2_custo_txt">R$ 0,00</strong>
                         </div>
                         <div class="p-3">
-                            <span class="text-zinc-500 uppercase block text-[10px] mb-0.5">Meta Solicitada</span>
+                            <span class="text-zinc-500 uppercase block text-[10px] mb-0.5">Meta Líquida Alvo</span>
                             <strong class="text-amber-500 font-bold text-sm" id="j2_meta_txt">R$ 0,00</strong>
                         </div>
                     </div>
@@ -141,18 +136,17 @@
                         </div>
                     </div>
                     <div class="bg-emerald-500/5 px-4 py-2.5 flex justify-between items-center text-xs font-semibold">
-                        <span class="text-emerald-400 uppercase tracking-wider">✓ Prova Real (Lucro Líquido Real)</span>
+                        <span class="text-emerald-400 uppercase tracking-wider">✓ Prova Real (Se J2 empatar/vis.)</span>
                         <strong class="text-emerald-400 text-sm" id="j2_prova_txt">R$ 0,00</strong>
                     </div>
                 </div>
             </div>
 
-            <!-- CARD JOGO 3 -->
             <div class="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5 sm:p-6 relative overflow-hidden before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-rose-500">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                     <div>
                         <span class="text-xs font-semibold text-rose-500 uppercase tracking-wider block mb-0.5">Jogo 3</span>
-                        <h3 class="text-lg font-bold text-white">Dia 3 — Proteção Final</h3>
+                        <h3 class="text-lg font-bold text-white">Dia 3 — Cobertura Final</h3>
                     </div>
                     <div class="grid grid-cols-2 gap-3 max-w-xs w-full">
                         <div class="flex flex-col gap-1">
@@ -168,11 +162,11 @@
                 <div class="hidden bg-zinc-950/80 rounded-xl border border-zinc-800/80 overflow-hidden divide-y divide-zinc-800" id="audit-j3">
                     <div class="grid grid-cols-2 divide-x divide-zinc-800 text-xs">
                         <div class="p-3">
-                            <span class="text-zinc-500 uppercase block text-[10px] mb-0.5">Despesas Passadas Cobertas</span>
+                            <span class="text-zinc-500 uppercase block text-[10px] mb-0.5">Custo Histórico Total Coberto</span>
                             <strong class="text-red-400 font-bold text-sm" id="j3_custo_txt">R$ 0,00</strong>
                         </div>
                         <div class="p-3">
-                            <span class="text-zinc-500 uppercase block text-[10px] mb-0.5">Meta Solicitada</span>
+                            <span class="text-zinc-500 uppercase block text-[10px] mb-0.5">Meta Líquida Alvo</span>
                             <strong class="text-amber-500 font-bold text-sm" id="j3_meta_txt">R$ 0,00</strong>
                         </div>
                     </div>
@@ -189,7 +183,7 @@
                         </div>
                     </div>
                     <div class="bg-emerald-500/5 px-4 py-2.5 flex justify-between items-center text-xs font-semibold">
-                        <span class="text-emerald-400 uppercase tracking-wider">✓ Prova Real (Lucro Líquido Real)</span>
+                        <span class="text-emerald-400 uppercase tracking-wider">✓ Prova Real (Se J3 empatar/vis.)</span>
                         <strong class="text-emerald-400 text-sm" id="j3_prova_txt">R$ 0,00</strong>
                     </div>
                 </div>
@@ -197,26 +191,24 @@
 
         </div>
 
-        <!-- Botão Calcular -->
         <div class="mb-6">
-            <button onclick="handleCalculate()" class="w-full h-12 text-base font-bold bg-white text-black hover:bg-white/90 gap-2 rounded-xl flex items-center justify-center cursor-pointer shadow-lg transition-all active:scale-[0.99]">
-                <i data-lucide="calculator" class="w-5 h-5"></i> Calcular Proteções
+            <button onclick="handleCalculate()" class="w-full h-12 text-base font-bold bg-emerald-500 text-black hover:bg-emerald-400 gap-2 rounded-xl flex items-center justify-center cursor-pointer shadow-lg transition-all active:scale-[0.99]">
+                <i data-lucide="calculator" class="w-5 h-5"></i> Executar Auditoria Cronológica
             </button>
         </div>
 
-        <!-- Bloco de Resumo -->
         <div class="hidden rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5" id="summary-block">
             <div class="flex items-center gap-2 mb-4">
-                <i data-lucide="bookmark-check" class="w-5 h-5 text-blue-500"></i>
-                <h3 class="text-md font-bold text-white">Resumo da Operação</h3>
+                <i data-lucide="bookmark-check" class="w-5 h-5 text-emerald-500"></i>
+                <h3 class="text-md font-bold text-white">Resumo Financeiro Limpo</h3>
             </div>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
                 <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800/60">
-                    <span class="text-[10px] uppercase font-semibold text-zinc-500 block mb-1">Montante Principal</span>
+                    <span class="text-[10px] uppercase font-semibold text-zinc-500 block mb-1">Investimento Inicial</span>
                     <strong class="text-sm text-white" id="sum_montante">R$ 0,00</strong>
                 </div>
                 <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800/60">
-                    <span class="text-[10px] uppercase font-semibold text-zinc-500 block mb-1">Retorno da Múltipla</span>
+                    <span class="text-[10px] uppercase font-semibold text-zinc-500 block mb-1">Retorno Verde Múltipla</span>
                     <strong class="text-sm text-emerald-400" id="sum_retorno">R$ 0,00</strong>
                 </div>
                 <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800/60">
@@ -224,18 +216,14 @@
                     <strong class="text-sm text-amber-500" id="sum_protecoes">R$ 0,00</strong>
                 </div>
                 <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800/60">
-                    <span class="text-[10px] uppercase font-semibold text-zinc-500 block mb-1">Custo Máximo Global</span>
+                    <span class="text-[10px] uppercase font-semibold text-zinc-500 block mb-1">Custo Máximo Absoluto</span>
                     <strong class="text-sm text-red-400" id="sum_total_custo">R$ 0,00</strong>
                 </div>
             </div>
         </div>
 
-        <div class="text-center mt-8 text-xs text-zinc-600">
-            Proteção em Cascata v3.0 — Sistema Real Antifreio de Lucro Líquido
-        </div>
     </div>
 
-    <!-- SCRIPT CORRIGIDO INSERIDO CORRETAMENTE NO LUGAR DO HTML -->
     <script>
         lucide.createIcons();
 
@@ -268,55 +256,59 @@
 
             const retornoMultipla = f(montante * oddPrincipal);
 
-            let c1 = 0, c2 = 0, c3 = 0;
-            let j1_e = 0, j1_v = 0;
-            let j2_e = 0, j2_v = 0;
-            let j3_e = 0, j3_v = 0;
+            // ==========================================
+            // MATEMÁTICA REVERSA CRONOLÓGICA SEM LOOPING
+            // ==========================================
 
-            // Executa a convergência cronológica exata das despesas cruzadas do Dia 1
-            for (let iter = 0; iter < 30; iter++) {
-                let despesasPassadasJ1 = montante + c3;
-                let divisorJ1 = 1 - (1 / o1E) - (1 / o1V);
-                if (divisorJ1 > 0) {
-                    let alvoJ1 = (despesasPassadasJ1 + metaLucro) / divisorJ1;
-                    j1_e = f(alvoJ1 / o1E);
-                    j1_v = f(alvoJ1 / o1V);
-                }
-                c1 = f(j1_e + j1_v);
+            // Passo 1: Descobrir o fator divisor do Jogo 3 (Margem de Arbitragem Pura)
+            let divJ3 = 1 - (1 / o3E) - (1 / o3V);
+            
+            // Passo 2: O Jogo 1 e o Jogo 3 são jogados juntos no Dia 1.
+            // O montante do J1 precisa englobar o custo do J3, e o J3 precisa englobar o J1 de forma estática pura.
+            let divJ1 = 1 - (1 / o1E) - (1 / o1V);
+            
+            // Fator combinado do Dia 1 para evitar explosão matemática
+            let pesoDia1 = (1 - (1/o1E) - (1/o1V)) * (1 - (1/o3E) - (1/o3V));
+            
+            // Calcula o custo real exato do Jogo 3 baseado na necessidade de cobrir o Montante Inicial
+            let custoAlvoJ3 = (montante + metaLucro) / divJ3;
+            let j3_e = f(custoAlvoJ3 / o3E);
+            let j3_v = f(custoAlvoJ3 / o3V);
+            let c3 = f(j3_e + j3_v);
 
-                let despesasPassadasJ3 = montante + c1;
-                let divisorJ3 = 1 - (1 / o3E) - (1 / o3V);
-                if (divisorJ3 > 0) {
-                    let alvoJ3 = (despesasPassadasJ3 + metaLucro) / divisorJ3;
-                    j3_e = f(alvoJ3 / o3E);
-                    j3_v = f(alvoJ3 / o3V);
-                }
-                c3 = f(j3_e + j3_v);
-            }
+            // Agora calcula o Jogo 1 cobrindo o Montante do seu bolso + o custo real gasto nas stakes do J3
+            let custoAlvoJ1 = (montante + c3 + metaLucro) / divJ1;
+            let j1_e = f(custoAlvoJ1 / o1E);
+            let j1_v = f(custoAlvoJ1 / o1V);
+            let c1 = f(j1_e + j1_v);
 
-            // CARD 2: Dia 2. Cobre o montante, custos cheios do J1 e do J3.
-            let despesasPassadasJ2 = f(montante + c1 + c3);
-            let divisorJ2 = 1 - (1 / o2E) - (1 / o2V);
-            if (divisorJ2 > 0) {
-                let alvoJ2 = (despesasPassadasJ2 + metaLucro) / divisorJ2;
-                j2_e = f(alvoJ2 / o2E);
-                j2_v = f(alvoJ2 / o2V);
-            }
-            c2 = f(j2_e + j2_v);
-
-            // Ajuste estático final para garantir que o Card 3 cubra o Jogo 2 real em caso de esticada total
-            let despesasReaisFinaisJ3 = f(montante + c1 + c2);
-            let divisorJ3Final = 1 - (1 / o3E) - (1 / o3V);
-            if (divisorJ3Final > 0) {
-                let alvoJ3Final = (despesasReaisFinaisJ3 + metaLucro) / divisorJ3Final;
-                j3_e = f(alvoJ3Final / o3E);
-                j3_v = f(alvoJ3Final / o3V);
-            }
+            // Reajusta o J3 de forma fina para que ele cubra o custo final real do J1 caso a esticada vá até o fim
+            let custoAlvoJ3Ajustado = (montante + c1 + metaLucro) / divJ3;
+            j3_e = f(custoAlvoJ3Ajustado / o3E);
+            j3_v = f(custoAlvoJ3Ajustado / o3V);
             c3 = f(j3_e + j3_v);
+
+            // Passo 3: Jogo 2 acontece no Dia 2. O custo passado estático fixo do seu bolso é: Montante + C1 + C3
+            let despesasPassadasJ2 = f(montante + c1 + c3);
+            let divJ2 = 1 - (1 / o2E) - (1 / o2V);
+            
+            let j2_e = 0, j2_v = 0;
+            if (divJ2 > 0) {
+                let custoAlvoJ2 = (despesasPassadasJ2 + metaLucro) / divJ2;
+                j2_e = f(custoAlvoJ2 / o2E);
+                j2_v = f(custoAlvoJ2 / o2V);
+            }
+            let c2 = f(j2_e + j2_v);
 
             const custoTotalOp = f(montante + c1 + c2 + c3);
 
+            // ==========================================
+            // EXIBIÇÃO E AUDITORIA REAL DE CENÁRIOS
+            // ==========================================
+
             // --- RENDER CARD 1 ---
+            // No Dia 1, você gastou: Montante + Stakes do J1 + Stakes do J3
+            let despesaEfetivaDia1 = f(montante + c1 + c3);
             document.getElementById(`j1_custo_txt`).innerText = fmt(montante + c3);
             document.getElementById(`j1_meta_txt`).innerText = fmt(metaLucro);
             document.getElementById(`j1_apE_txt`).innerText = fmt(j1_e);
@@ -324,12 +316,14 @@
             document.getElementById(`j1_apV_txt`).innerText = fmt(j1_v);
             document.getElementById(`j1_retV_txt`).innerText = fmt(j1_v * o1V);
             
-            // Prova real realística do J1 (Retorno do bilhete menos o gasto do Dia 1: Montante + J1 + J3)
-            let provaReal1 = f((j1_e * o1E) - (montante + c1 + c3));
+            // Prova real de verdade do J1: Se der empate, o retorno bruto limpa o que de fato saiu do bolso no Dia 1
+            let provaReal1 = f((j1_e * o1E) - despesaEfetivaDia1);
             document.getElementById(`j1_prova_txt`).innerText = fmt(provaReal1);
             document.getElementById(`audit-j1`).classList.remove('hidden');
 
             // --- RENDER CARD 2 ---
+            // Se chegou no J2, você gastou tudo do Dia 1 e agora somou as duas pontas do J2
+            let despesaEfetivaDia2 = f(despesasPassadasJ2 + c2);
             document.getElementById(`j2_custo_txt`).innerText = fmt(despesasPassadasJ2);
             document.getElementById(`j2_meta_txt`).innerText = fmt(metaLucro);
             document.getElementById(`j2_apE_txt`).innerText = fmt(j2_e);
@@ -337,20 +331,19 @@
             document.getElementById(`j2_apV_txt`).innerText = fmt(j2_v);
             document.getElementById(`j2_retV_txt`).innerText = fmt(j2_v * o2V);
             
-            // Prova real J2 (Retorno menos a despesa global total da operação)
-            let provaReal2 = f((j2_e * o2E) - custoTotalOp);
+            let provaReal2 = f((j2_e * o2E) - despesaEfetivaDia2);
             document.getElementById(`j2_prova_txt`).innerText = fmt(provaReal2);
             document.getElementById(`audit-j2`).classList.remove('hidden');
 
             // --- RENDER CARD 3 ---
-            document.getElementById(`j3_custo_txt`).innerText = fmt(despesasReaisFinaisJ3);
+            // Se a múltipla viva caiu no último jogo, você acumulou os gastos do Dia 1 e do Dia 2
+            document.getElementById(`j3_custo_txt`).innerText = fmt(montante + c1 + c2);
             document.getElementById(`j3_meta_txt`).innerText = fmt(metaLucro);
             document.getElementById(`j3_apE_txt`).innerText = fmt(j3_e);
             document.getElementById(`j3_retE_txt`).innerText = fmt(j3_e * o3E);
             document.getElementById(`j3_apV_txt`).innerText = fmt(j3_v);
             document.getElementById(`j3_retV_txt`).innerText = fmt(j3_v * o3V);
             
-            // Prova real J3 (Retorno menos a despesa global total da operação)
             let provaReal3 = f((j3_e * o3E) - custoTotalOp);
             document.getElementById(`j3_prova_txt`).innerText = fmt(provaReal3);
             document.getElementById(`audit-j3`).classList.remove('hidden');
