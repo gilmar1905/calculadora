@@ -21,7 +21,7 @@
             </div>
             <h1 class="text-3xl sm:text-4xl font-black text-white tracking-tight">Calculadora de Apostas</h1>
             <p class="text-zinc-400 mt-2 text-sm max-w-md mx-auto">
-                Sistema original de gestão de apostas com proteção em cascata e ajuste fino de metas.
+                Sistema original de gestão de apostas com proteção cronológica e cobertura cruzada real.
             </p>
         </div>
 
@@ -115,7 +115,7 @@
                 <div class="hidden bg-zinc-950/80 rounded-xl border border-zinc-800/80 overflow-hidden divide-y divide-zinc-800" id="audit-j2">
                     <div class="grid grid-cols-2 divide-x divide-zinc-800 text-xs">
                         <div class="p-3">
-                            <span class="text-zinc-500 uppercase block text-[10px] mb-0.5">Despesas Acumuladas</span>
+                            <span class="text-zinc-500 uppercase block text-[10px] mb-0.5">Despesas Passadas Reais</span>
                             <strong class="text-red-400 font-bold text-sm" id="j2_custo_txt">R$ 0,00</strong>
                         </div>
                         <div class="p-3">
@@ -136,7 +136,7 @@
                         </div>
                     </div>
                     <div class="bg-emerald-500/5 px-4 py-2.5 flex justify-between items-center text-xs font-semibold">
-                        <span class="text-emerald-400 uppercase tracking-wider">✓ Lucro Extra Controlado</span>
+                        <span class="text-emerald-400 uppercase tracking-wider">✓ Prova Real (Lucro Líquido Real)</span>
                         <strong class="text-emerald-400 text-sm" id="j2_prova_txt">R$ 0,00</strong>
                     </div>
                 </div>
@@ -162,7 +162,7 @@
                 <div class="hidden bg-zinc-950/80 rounded-xl border border-zinc-800/80 overflow-hidden divide-y divide-zinc-800" id="audit-j3">
                     <div class="grid grid-cols-2 divide-x divide-zinc-800 text-xs">
                         <div class="p-3">
-                            <span class="text-zinc-500 uppercase block text-[10px] mb-0.5">Despesas Acumuladas</span>
+                            <span class="text-zinc-500 uppercase block text-[10px] mb-0.5">Despesas Passadas Reais</span>
                             <strong class="text-red-400 font-bold text-sm" id="j3_custo_txt">R$ 0,00</strong>
                         </div>
                         <div class="p-3">
@@ -183,7 +183,7 @@
                         </div>
                     </div>
                     <div class="bg-emerald-500/5 px-4 py-2.5 flex justify-between items-center text-xs font-semibold">
-                        <span class="text-emerald-400 uppercase tracking-wider">✓ Lucro Extra Controlado</span>
+                        <span class="text-emerald-400 uppercase tracking-wider">✓ Prova Real (Lucro Líquido Real)</span>
                         <strong class="text-emerald-400 text-sm" id="j3_prova_txt">R$ 0,00</strong>
                     </div>
                 </div>
@@ -223,7 +223,7 @@
         </div>
 
         <div class="text-center mt-8 text-xs text-zinc-600">
-            Proteção em Cascata v1.7 — Ajuste de Estabilidade Geral
+            Proteção em Cascata v2.0 — Sistema Cronológico de Cobertura Cruzada Real
         </div>
     </div>
 
@@ -259,35 +259,52 @@
 
             const retornoMultipla = f(montante * oddPrincipal);
 
-            let c1 = 0, c2 = 0, c3 = 0;
+            // 1. DIA 1 — Jogo 1 e Jogo 3 são apostados inicialmente.
+            // Eles dependem um do outro de forma linear simples para se equilibrarem sem loop circular eterno.
+            let c1 = 0, c3 = 0;
             let j1_e = 0, j1_v = 0;
-            let j2_e = 0, j2_v = 0;
             let j3_e = 0, j3_v = 0;
 
-            // Laço estável em cascata linear — sem divisores que quebram com odds baixas/médias
-            for (let iter = 0; iter < 25; iter++) {
-                // Jogo 1 (Original intacto)
+            for (let iter = 0; iter < 15; iter++) {
                 let baseJ1 = montante + c3;
                 j1_e = f((baseJ1 + metaLucro) / (o1E - 1));
                 j1_v = f((baseJ1 + metaLucro) / (o1V - 1));
                 c1 = f(j1_e + j1_v);
 
-                // Jogo 2 (Soma Montante + Todo o Jogo 1 + Todo o Jogo 3 e calcula de forma estável)
-                let baseJ2 = montante + c1 + c3;
-                j2_e = f((baseJ2 + metaLucro) / (o2E - 1));
-                j2_v = f((baseJ2 + metaLucro) / (o2V - 1));
-                c2 = f(j2_e + j2_v);
-
-                // Jogo 3 (Soma Montante + Todo o Jogo 1 + Todo o Jogo 2 e calcula de forma estável)
-                let baseJ3 = montante + c1 + c2;
+                let baseJ3 = montante + c1;
                 j3_e = f((baseJ3 + metaLucro) / (o3E - 1));
                 j3_v = f((baseJ3 + metaLucro) / (o3V - 1));
                 c3 = f(j3_e + j3_v);
             }
 
+            // 2. DIA 2 — Jogo 2 acontece. O custo do bolso acumulado fixo até aqui é: montante + c1 + c3.
+            // O retorno do Empate do J2 precisa cobrir esse custo total + a aposta do Visitante J2 + Meta.
+            // O retorno do Visitante do J2 precisa cobrir esse custo total + a aposta do Empate J2 + Meta.
+            let despesasPassadasJ2 = f(montante + c1 + c3);
+            let j2_e = 0, j2_v = 0;
+            let divisorJ2 = 1 - (1 / o2E) - (1 / o2V);
+            
+            if (divisorJ2 > 0) {
+                let totalAlvoJ2 = (despesasPassadasJ2 + metaLucro) / divisorJ2;
+                j2_e = f(totalAlvoJ2 / o2E);
+                j2_v = f(totalAlvoJ2 / o2V);
+            }
+            let c2 = f(j2_e + j2_v);
+
+            // 3. DIA 3 — Se chegarmos ao Jogo 3, as despesas passadas reais de fato são: montante + c1 + c2.
+            let despesasPassadasJ3 = f(montante + c1 + c2);
+            let divisorJ3 = 1 - (1 / o3E) - (1 / o3V);
+            if (divisorJ3 > 0) {
+                let totalAlvoJ3 = (despesasPassadasJ3 + metaLucro) / divisorJ3;
+                j3_e = f(totalAlvoJ3 / o3E);
+                j3_v = f(totalAlvoJ3 / o3V);
+            }
+            c3 = f(j3_e + j3_v);
+
+            // Recalcula o custo máximo absoluto global caso a operação passe por todas as proteções possíveis
             const custoTotalOp = f(montante + c1 + c2 + c3);
 
-            // RENDER CARD 1
+            // --- RENDER CARD 1 ---
             document.getElementById(`j1_custo_txt`).innerText = fmt(montante + c3);
             document.getElementById(`j1_meta_txt`).innerText = fmt(metaLucro);
             document.getElementById(`j1_apE_txt`).innerText = fmt(j1_e);
@@ -297,27 +314,32 @@
             document.getElementById(`j1_prova_txt`).innerText = fmt(metaLucro);
             document.getElementById(`audit-j1`).classList.remove('hidden');
 
-            // RENDER CARD 2
-            document.getElementById(`j2_custo_txt`).innerText = fmt(montante + c1 + c3);
+            // --- RENDER CARD 2 (Prova Real Cruzada: Retorno Bruto - Todas as Despesas Reais) ---
+            document.getElementById(`j2_custo_txt`).innerText = fmt(despesasPassadasJ2);
             document.getElementById(`j2_meta_txt`).innerText = fmt(metaLucro);
             document.getElementById(`j2_apE_txt`).innerText = fmt(j2_e);
             document.getElementById(`j2_retE_txt`).innerText = fmt(j2_e * o2E);
             document.getElementById(`j2_apV_txt`).innerText = fmt(j2_v);
             document.getElementById(`j2_retV_txt`).innerText = fmt(j2_v * o2V);
-            document.getElementById(`j2_prova_txt`).innerText = fmt(metaLucro);
+            
+            // Prova real cenário Empate J2: se bater o empate, você ganha (j2_e * o2E) e gastou as despesas passadas + j2_e + j2_v
+            let provaReal2 = f((j2_e * o2E) - despesasPassadasJ2 - c2);
+            document.getElementById(`j2_prova_txt`).innerText = fmt(provaReal2);
             document.getElementById(`audit-j2`).classList.remove('hidden');
 
-            // RENDER CARD 3
-            document.getElementById(`j3_custo_txt`).innerText = fmt(montante + c1 + c2);
+            // --- RENDER CARD 3 (Prova Real Cruzada: Retorno Bruto - Todas as Despesas Reais) ---
+            document.getElementById(`j3_custo_txt`).innerText = fmt(despesasPassadasJ3);
             document.getElementById(`j3_meta_txt`).innerText = fmt(metaLucro);
             document.getElementById(`j3_apE_txt`).innerText = fmt(j3_e);
             document.getElementById(`j3_retE_txt`).innerText = fmt(j3_e * o3E);
             document.getElementById(`j3_apV_txt`).innerText = fmt(j3_v);
             document.getElementById(`j3_retV_txt`).innerText = fmt(j3_v * o3V);
-            document.getElementById(`j3_prova_txt`).innerText = fmt(metaLucro);
+            
+            let provaReal3 = f((j3_e * o3E) - despesasPassadasJ3 - c3);
+            document.getElementById(`j3_prova_txt`).innerText = fmt(provaReal3);
             document.getElementById(`audit-j3`).classList.remove('hidden');
 
-            // Resumo Inferior
+            // Painel Geral Inferior
             document.getElementById('sum_montante').innerText = fmt(montante);
             document.getElementById('sum_retorno').innerText = fmt(retornoMultipla);
             document.getElementById('sum_protecoes').innerText = fmt(c1 + c2 + c3);
