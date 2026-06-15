@@ -48,6 +48,7 @@
 
         <div class="grid grid-cols-1 gap-5 mb-6">
             
+            <!-- JOGO 1 -->
             <div class="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5 sm:p-6 relative overflow-hidden before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-amber-500">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                     <div>
@@ -58,6 +59,7 @@
                         <div class="flex flex-col gap-1">
                             <label class="text-[11px] font-medium text-zinc-400 uppercase">Odd Empate</label>
                             <input type="number" id="j1_oddE" value="3.95" step="0.01" class="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1 text-sm text-white font-semibold focus:outline-none focus:border-amber-500" oninput="limparResultados()">
+                            <!-- Ajuste Individual Empate J1 -->
                             <div class="flex items-center justify-between bg-zinc-950 border border-zinc-800/60 rounded-md p-1 mt-1">
                                 <button onclick="ajustarFator('fatorJ1E', -0.05)" class="w-5 h-5 bg-zinc-900 hover:bg-zinc-800 rounded text-zinc-400 text-xs font-bold transition-colors cursor-pointer">-</button>
                                 <span id="fatorJ1E_txt" class="text-[10px] font-mono text-zinc-300 font-bold">100%</span>
@@ -68,6 +70,7 @@
                         <div class="flex flex-col gap-1">
                             <label class="text-[11px] font-medium text-zinc-400 uppercase">Odd Visitante</label>
                             <input type="number" id="j1_oddV" value="5.5" step="0.01" class="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1 text-sm text-white font-semibold focus:outline-none focus:border-amber-500" oninput="limparResultados()">
+                            <!-- Ajuste Individual Visitante J1 -->
                             <div class="flex items-center justify-between bg-zinc-950 border border-zinc-800/60 rounded-md p-1 mt-1">
                                 <button onclick="ajustarFator('fatorJ1V', -0.05)" class="w-5 h-5 bg-zinc-900 hover:bg-zinc-800 rounded text-zinc-400 text-xs font-bold transition-colors cursor-pointer">-</button>
                                 <span id="fatorJ1V_txt" class="text-[10px] font-mono text-zinc-300 font-bold">100%</span>
@@ -108,6 +111,7 @@
                 </div>
             </div>
 
+            <!-- JOGO 2 -->
             <div class="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5 sm:p-6 relative overflow-hidden before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-blue-500">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                     <div>
@@ -118,6 +122,7 @@
                         <div class="flex flex-col gap-1">
                             <label class="text-[11px] font-medium text-zinc-400 uppercase">Odd Empate</label>
                             <input type="number" id="j2_oddE" value="3.8" step="0.01" class="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1 text-sm text-white font-semibold focus:outline-none focus:border-blue-500" oninput="limparResultados()">
+                            <!-- Ajuste Individual Empate J2 -->
                             <div class="flex items-center justify-between bg-zinc-950 border border-zinc-800/60 rounded-md p-1 mt-1">
                                 <button onclick="ajustarFator('fatorJ2E', -0.05)" class="w-5 h-5 bg-zinc-900 hover:bg-zinc-800 rounded text-zinc-400 text-xs font-bold transition-colors cursor-pointer">-</button>
                                 <span id="fatorJ2E_txt" class="text-[10px] font-mono text-zinc-300 font-bold">100%</span>
@@ -128,6 +133,7 @@
                         <div class="flex flex-col gap-1">
                             <label class="text-[11px] font-medium text-zinc-400 uppercase">Odd Visitante</label>
                             <input type="number" id="j2_oddV" value="4.9" step="0.01" class="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1 text-sm text-white font-semibold focus:outline-none focus:border-blue-500" oninput="limparResultados()">
+                            <!-- Ajuste Individual Visitante J2 -->
                             <div class="flex items-center justify-between bg-zinc-950 border border-zinc-800/60 rounded-md p-1 mt-1">
                                 <button onclick="ajustarFator('fatorJ2V', -0.05)" class="w-5 h-5 bg-zinc-900 hover:bg-zinc-800 rounded text-zinc-400 text-xs font-bold transition-colors cursor-pointer">-</button>
                                 <span id="fatorJ2V_txt" class="text-[10px] font-mono text-zinc-300 font-bold">100%</span>
@@ -168,6 +174,7 @@
                 </div>
             </div>
 
+            <!-- JOGO 3 -->
             <div class="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5 sm:p-6 relative overflow-hidden before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-rose-500">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                     <div>
@@ -178,6 +185,7 @@
                         <div class="flex flex-col gap-1">
                             <label class="text-[11px] font-medium text-zinc-400 uppercase">Odd Empate</label>
                             <input type="number" id="j3_oddE" value="12.24" step="0.01" class="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1 text-sm text-white font-semibold focus:outline-none focus:border-rose-500" oninput="limparResultados()">
+                            <!-- Ajuste Individual Empate J3 -->
                             <div class="flex items-center justify-between bg-zinc-950 border border-zinc-800/60 rounded-md p-1 mt-1">
                                 <button onclick="ajustarFator('fatorJ3E', -0.05)" class="w-5 h-5 bg-zinc-900 hover:bg-zinc-800 rounded text-zinc-400 text-xs font-bold transition-colors cursor-pointer">-</button>
                                 <span id="fatorJ3E_txt" class="text-[10px] font-mono text-zinc-300 font-bold">100%</span>
@@ -188,6 +196,7 @@
                         <div class="flex flex-col gap-1">
                             <label class="text-[11px] font-medium text-zinc-400 uppercase">Odd Visitante</label>
                             <input type="number" id="j3_oddV" value="15.91" step="0.01" class="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1 text-sm text-white font-semibold focus:outline-none focus:border-rose-500" oninput="limparResultados()">
+                            <!-- Ajuste Individual Visitante J3 -->
                             <div class="flex items-center justify-between bg-zinc-950 border border-zinc-800/60 rounded-md p-1 mt-1">
                                 <button onclick="ajustarFator('fatorJ3V', -0.05)" class="w-5 h-5 bg-zinc-900 hover:bg-zinc-800 rounded text-zinc-400 text-xs font-bold transition-colors cursor-pointer">-</button>
                                 <span id="fatorJ3V_txt" class="text-[10px] font-mono text-zinc-300 font-bold">100%</span>
@@ -277,13 +286,11 @@
             const input = document.getElementById(idInput);
             let valorAtual = parseFloat(input.value) || 1.00;
             valorAtual += valorAlteracao;
-            
-            if (valorAtual < 0.05) valorAtual = 0.05; // Trava mínima de segurança (5%)
+            if (valorAtual < 0.05) valorAtual = 0.05;
             
             input.value = valorAtual.toFixed(2);
             document.getElementById(idInput + '_txt').innerText = Math.round(valorAtual * 100) + '%';
             
-            // Recalcula imediatamente ao clicar para dar fluidez
             handleCalculate();
         }
 
@@ -311,7 +318,7 @@
             const o3E = parseFloat(document.getElementById('j3_oddE').value) || 1;
             const o3V = parseFloat(document.getElementById('j3_oddV').value) || 1;
 
-            // Coleta de fatores de ajuste 100% individualizados por mercado
+            // Fatores de ajuste individuais por mercado recuperados com sucesso
             const fatJ1E = parseFloat(document.getElementById('fatorJ1E').value) || 1.00;
             const fatJ1V = parseFloat(document.getElementById('fatorJ1V').value) || 1.00;
             const fatJ2E = parseFloat(document.getElementById('fatorJ2E').value) || 1.00;
@@ -325,23 +332,23 @@
             let j2_apE = 0, j2_apV = 0;
             let j3_apE = 0, j3_apV = 0;
 
-            // Motor de Convergência Iterativa Equilibrada
+            // ORDEM MATEMÁTICA ORIGINAL HOMOLOGADA RESTAURADA
             for (let iter = 0; iter < 30; iter++) {
-                // 1. JOGO 3 (Depende do custo acumulado real caso chegue no Dia 3)
-                const custoAcumuladoJ3 = montante + (j1_apE + j1_apV) + (j2_apE + j2_apV);
-                const denominadorJ3 = (o3E * o3V) - o3V - o3E;
-                j3_apE = f(((o3V * (custoAcumuladoJ3 + metaLucro)) / (denominadorJ3 || 1)) * fatJ3E);
-                j3_apV = f(((o3E * (custoAcumuladoJ3 + metaLucro)) / (denominadorJ3 || 1)) * fatJ3V);
-
-                // 2. JOGO 1 (Acontece no Dia 1 junto com o Jogo 3)
+                // 1. JOGO 1 (Base estrutural)
                 const basePrejuizoE1 = montante + j3_apE + j3_apV;
                 j1_apE = f(((basePrejuizoE1 + metaLucro) / (o1E - 1 - (o1E / o1V))) * fatJ1E);
                 j1_apV = f(((basePrejuizoE1 + j1_apE + metaLucro) / (o1V - 1)) * fatJ1V);
 
-                // 3. JOGO 2 (Só é jogado no Dia 2 se o Mandante do J1 vencer)
+                // 2. JOGO 2 (Dependência do dia seguinte)
                 const basePrejuizoE2 = montante + j1_apE + j1_apV + j3_apE + j3_apV;
                 j2_apE = f(((basePrejuizoE2 + metaLucro) / (o2E - 1 - (o2E / o2V))) * fatJ2E);
                 j2_apV = f(((basePrejuizoE2 + j2_apE + metaLucro) / (o2V - 1)) * fatJ2V);
+
+                // 3. JOGO 3 (Fechamento da malha fina)
+                const custoAcumuladoJ3 = montante + (j1_apE + j1_apV) + (j2_apE + j2_apV);
+                const denominadorJ3 = (o3E * o3V) - o3V - o3E;
+                j3_apE = f(((o3V * (custoAcumuladoJ3 + metaLucro)) / (denominadorJ3 || 1)) * fatJ3E);
+                j3_apV = f(((o3E * (custoAcumuladoJ3 + metaLucro)) / (denominadorJ3 || 1)) * fatJ3V);
             }
 
             document.getElementById('audit-j1').classList.remove('hidden');
