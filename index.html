@@ -3,303 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Corrigido - Múltiplas Condicionais</title>
+    <title>Painel Surebet - Odds Combinadas Diretas</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        body { font-family: 'Arial', sans-serif; background-color: #f3f4f6; color: #1f2937; }
+        body { font-family: 'Arial', sans-serif; background-color: #f3f4f6; }
         .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
     </style>
 </head>
 <body class="p-4 md:p-8">
 
-    <div class="max-w-6xl mx-auto space-y-6">
+    <div class="max-w-5xl mx-auto space-y-6">
         
         <div class="card p-6 border-t-4 border-blue-900">
-            <h1 class="text-xl font-bold text-blue-900 mb-4 flex items-center gap-2">
-                📦 Configuração Estruturada (Equilíbrio de Custo Real)
-            </h1>
+            <h1 class="text-xl font-bold text-blue-900 mb-2">📊 Motor de Distribuição com Odds Combinadas</h1>
+            <p class="text-sm text-gray-600 mb-4">Cálculo exato considerando que as odds digitadas já incluem os empates anteriores.</p>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Nome da Operação</label>
-                    <input type="text" value="Minha Esteira de Odds Altas" class="w-full p-2 border rounded-md bg-gray-50 font-semibold text-gray-800">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Montante na Principal (R$)</label>
+                    <input type="number" id="montante" value="1.00" oninput="calcularOddsDiretas()" class="w-full p-2 border rounded font-bold text-gray-900">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Montante Principal (R$)</label>
-                    <input type="number" id="montantePrincipal" value="1.00" step="1.00" min="0.10" oninput="calcularSistema()" class="w-full p-2 border rounded-md border-blue-500 font-bold text-blue-900 text-lg focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Odd Múltipla Principal (Final)</label>
+                    <input type="number" id="oddP" value="369.32" oninput="calcularOddsDiretas()" class="w-full p-2 border rounded font-bold text-emerald-700">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Odd Total da Principal (Empates)</label>
-                    <input type="number" id="oddPrincipal" value="369.32" step="0.01" oninput="calcularSistema()" class="w-full p-2 border rounded-md bg-gray-50 font-bold text-gray-800 text-lg">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Retorno Alvo das Coberturas (R$)</label>
+                    <input type="number" id="alvo" value="100.00" oninput="calcularOddsDiretas()" class="w-full p-2 border rounded border-blue-500 font-bold text-blue-900">
                 </div>
-            </div>
-            
-            <div class="mt-4 p-4 bg-blue-50 rounded-lg flex justify-between items-center border border-blue-200">
-                <span class="font-medium text-blue-900 text-md">Retorno Bruto Estimado da Múltipla Principal:</span>
-                <span id="retornoPrincipal" class="font-bold text-xl text-blue-900">R$ 369,32</span>
             </div>
         </div>
 
         <div class="space-y-4">
-            <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2 px-1">
-                ⚽ Confrontos e Coberturas do Dia
-            </h2>
-            
-            <div id="containerConfrontos" class="space-y-4">
-                </div>
+            <h2 class="text-md font-bold text-gray-800 px-1">⚽ Linhas de Proteção Baseadas no PDF</h2>
+            <div id="gradeDireta" class="space-y-4"></div>
         </div>
 
-        <div class="card p-6 border-t-4 border-emerald-800">
-            <h2 class="text-xl font-bold text-emerald-900 mb-4 flex items-center gap-2">
-                📊 Auditoria por Etapa & Validação de Segurança
-            </h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <div class="p-4 bg-gray-100 rounded-lg border">
-                    <span class="block text-sm text-gray-600 font-medium">Custo Total Executado (Soma Tudo)</span>
-                    <span id="resumoCustoTotal" class="text-2xl font-bold text-gray-900">R$ 0,00</span>
+        <div class="card p-6 border-t-4 border-gray-850">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">📈 Consolidação Financeira</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                <div class="p-3 bg-gray-100 rounded border">
+                    <span class="block text-xs text-gray-500 font-bold">CUSTO TOTAL DAS COBERTURAS</span>
+                    <span id="resCusto" class="text-xl font-bold text-gray-900">R$ 0,00</span>
                 </div>
-                <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                    <span class="block text-sm text-blue-800 font-medium">Retorno da Múltipla Principal</span>
-                    <span id="resumoRetornoPrincipal" class="text-2xl font-bold text-blue-900">R$ 0,00</span>
+                <div class="p-3 bg-blue-50 rounded border border-blue-200">
+                    <span class="block text-xs text-blue-500 font-bold">RETORNO DA MÚLTIPLA PRINCIPAL</span>
+                    <span id="resRetornoP" class="text-xl font-bold text-blue-900">R$ 0,00</span>
                 </div>
-                <div class="p-4 bg-emerald-50 rounded-lg border border-emerald-200">
-                    <span class="block text-sm text-emerald-800 font-medium">Lucro Líquido no Alvo Máximo</span>
-                    <span id="resumoLucroLiquido" class="text-2xl font-bold text-emerald-900">R$ 0,00</span>
+                <div class="p-3 bg-emerald-50 rounded border border-emerald-200">
+                    <span class="block text-xs text-emerald-800 font-bold">LUCRO LÍQUIDO DA PRINCIPAL</span>
+                    <span id="resLiquidoP" class="text-xl font-bold text-emerald-700">R$ 0,00</span>
                 </div>
-            </div>
-
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-gray-800 text-white text-sm">
-                            <th class="p-3 rounded-l-md">Cenário de Queda</th>
-                            <th class="p-3">Custo Total do Dia</th>
-                            <th class="p-3">Retorno se bater Cobertura A</th>
-                            <th class="p-3 rounded-r-md">Retorno se bater Cobertura B</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabelaAuditoria" class="text-sm divide-y divide-gray-200 font-medium text-gray-700">
-                        </tbody>
-                </table>
             </div>
         </div>
 
     </div>
 
     <script>
-        // Odds originais coletadas do seu PDF 333
-        const dadosJogos = [
-            { id: 1, oddA: 2.45, oddB: 2.70 },
-            { id: 2, oddA: 8.86, oddB: 8.32 },
-            { id: 3, oddA: 21.90, oddB: 28.32 },
-            { id: 4, oddA: 81.84, oddB: 92.11 },
-            { id: 5, oddA: 232.53, oddB: 323.52 }
+        // Suas odds exatas onde cada nível já é a combinação acumulada
+        const nivesCombo = [
+            { id: 1, odA: 2.45, odB: 2.70, desc: "Linhas Secas do Jogo 1" },
+            { id: 2, odA: 8.86, odB: 8.32, desc: "Empate 1 + Linhas do Jogo 2" },
+            { id: 3, odA: 21.90, odB: 28.32, desc: "Empate 1 + Empate 2 + Linhas do Jogo 3" },
+            { id: 4, odA: 81.84, odB: 92.11, desc: "Empate 1 + Empate 2 + Empate 3 + Linhas do Jogo 4" },
+            { id: 5, odA: 232.53, odB: 323.52, desc: "Empate 1 + Empate 2 + Empate 3 + Empate 4 + Linhas do Jogo 5" }
         ];
 
-        let stakesManuais = {};
+        function calcularOddsDiretas() {
+            const montante = parseFloat(document.getElementById('montante').value) || 0;
+            const oddP = parseFloat(document.getElementById('oddP').value) || 0;
+            const alvo = parseFloat(document.getElementById('alvo').value) || 0;
 
-        function inicializarPainel() {
-            const container = document.getElementById('containerConfrontos');
+            const retornoMúltipla = montante * oddP;
+            const container = document.getElementById('gradeDireta');
             container.innerHTML = '';
 
-            dadosJogos.forEach((jogo) => {
-                const card = document.createElement('div');
-                card.className = 'card p-5 border-l-4 border-blue-600 bg-white relative';
-                card.innerHTML = `
-                    <div class="flex justify-between items-center mb-3">
-                        <span class="font-bold text-gray-800 text-md">CONFRONTO ${jogo.id}</span>
-                        <span class="px-2 py-0.5 bg-blue-100 text-blue-800 text-xs font-bold rounded-full">PRÉ-LIVE ATIVO</span>
+            let custoTotalCoberturas = 0;
+
+            // Calcula a soma de todas as stakes necessárias para atingir o Alvo usando as odds diretas do seu PDF
+            nivesCombo.forEach(n => {
+                const stkA = alvo / n.odA;
+                const stkB = alvo / n.odB;
+                custoTotalCoberturas += (stkA + stkB);
+            });
+
+            const investimentoGeral = montante + custoTotalCoberturas;
+
+            nivesCombo.forEach(n => {
+                const stkA = alvo / n.odA;
+                const stkB = alvo / n.odB;
+
+                // Retorno Líquido se a proteção daquela linha vencer isoladamente
+                const liqA = alvo - investimentoGeral;
+                const liqB = alvo - investimentoGeral;
+
+                const div = document.createElement('div');
+                div.className = "card p-5 border-l-4 border-blue-900 bg-white";
+                div.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-gray-800 text-sm">NÍVEL ${n.id}</span>
+                        <span class="text-xs px-2 py-0.5 rounded-full bg-blue-50 font-medium text-blue-800">${n.desc}</span>
                     </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-2">
-                            <div class="flex justify-between items-center">
-                                <label class="text-xs font-semibold text-gray-600">Odd de Linha A</label>
-                                <div class="flex gap-1">
-                                    <button onclick="ajustarOddBotao(${jogo.id}, 'A', -1)" class="px-2 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-xs font-bold">-1</button>
-                                    <button onclick="ajustarOddBotao(${jogo.id}, 'A', 1)" class="px-2 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-xs font-bold">+1</button>
-                                </div>
-                            </div>
-                            <div class="flex gap-2">
-                                <input type="number" id="oddA_${jogo.id}" value="${jogo.oddA.toFixed(2)}" step="0.01" oninput="ajustarOddInput(${jogo.id}, 'A')" class="w-1/2 p-2 border rounded font-bold text-gray-800">
-                                <input type="number" id="stakeA_${jogo.id}" placeholder="Stake A" step="0.01" oninput="alterarStakeManual(${jogo.id}, 'A', this.value)" class="w-1/2 p-2 border rounded font-bold bg-emerald-50 text-emerald-900 border-emerald-300 focus:bg-white">
-                            </div>
-                            <div class="text-xs font-semibold text-gray-500 flex justify-between px-1">
-                                <span>Retorno: <span id="retA_${jogo.id}" class="text-gray-700">R$ 0,00</span></span>
-                                <span>Líquido: <span id="liqA_${jogo.id}" class="text-emerald-700">R$ 0,00</span></span>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-3 bg-gray-50 rounded border">
+                            <span class="block text-xs text-gray-500 font-bold">LINHA A (Odd: ${n.odA.toFixed(2)})</span>
+                            <div class="flex justify-between items-center mt-1">
+                                <span class="text-sm font-medium text-gray-700">Stake: <span class="text-blue-900 font-bold">R$ ${stkA.toFixed(2)}</span></span>
+                                <span class="text-xs font-bold ${liqA >= 0 ? 'text-emerald-700' : 'text-red-650'}">Líq: R$ ${liqA.toFixed(2)}</span>
                             </div>
                         </div>
-
-                        <div class="space-y-2">
-                            <div class="flex justify-between items-center">
-                                <label class="text-xs font-semibold text-gray-600">Odd de Linha B</label>
-                                <div class="flex gap-1">
-                                    <button onclick="ajustarOddBotao(${jogo.id}, 'B', -1)" class="px-2 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-xs font-bold">-1</button>
-                                    <button onclick="ajustarOddBotao(${jogo.id}, 'B', 1)" class="px-2 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-xs font-bold">+1</button>
-                                </div>
-                            </div>
-                            <div class="flex gap-2">
-                                <input type="number" id="oddB_${jogo.id}" value="${jogo.oddB.toFixed(2)}" step="0.01" oninput="ajustarOddInput(${jogo.id}, 'B')" class="w-1/2 p-2 border rounded font-bold text-gray-800">
-                                <input type="number" id="stakeB_${jogo.id}" placeholder="Stake B" step="0.01" oninput="alterarStakeManual(${jogo.id}, 'B', this.value)" class="w-1/2 p-2 border rounded font-bold bg-emerald-50 text-emerald-900 border-emerald-300 focus:bg-white">
-                            </div>
-                            <div class="text-xs font-semibold text-gray-500 flex justify-between px-1">
-                                <span>Retorno: <span id="retB_${jogo.id}" class="text-gray-700">R$ 0,00</span></span>
-                                <span>Líquido: <span id="liqB_${jogo.id}" class="text-emerald-700">R$ 0,00</span></span>
+                        <div class="p-3 bg-gray-50 rounded border">
+                            <span class="block text-xs text-gray-500 font-bold">LINHA B (Odd: ${n.odB.toFixed(2)})</span>
+                            <div class="flex justify-between items-center mt-1">
+                                <span class="text-sm font-medium text-gray-700">Stake: <span class="text-blue-900 font-bold">R$ ${stkB.toFixed(2)}</span></span>
+                                <span class="text-xs font-bold ${liqB >= 0 ? 'text-emerald-700' : 'text-red-650'}">Líq: R$ ${liqB.toFixed(2)}</span>
                             </div>
                         </div>
                     </div>
                 `;
-                container.appendChild(card);
-            });
-        }
-
-        function ajustarOddBotao(jogoId, tipo, direcao) {
-            const input = document.getElementById(`odd${tipo}_${jogoId}`);
-            let val = parseFloat(input.value) || 1.00;
-            val += direcao * 0.01;
-            if (val < 1.01) val = 1.01;
-            input.value = val.toFixed(2);
-            
-            const index = dadosJogos.findIndex(j => j.id === jogoId);
-            if (index !== -1) dadosJogos[index][`odd${tipo}`] = val;
-            
-            calcularSistema();
-        }
-
-        function ajustarOddInput(jogoId, tipo) {
-            const input = document.getElementById(`odd${tipo}_${jogoId}`);
-            let val = parseFloat(input.value) || 1.01;
-            
-            const index = dadosJogos.findIndex(j => j.id === jogoId);
-            if (index !== -1) dadosJogos[index][`odd${tipo}`] = val;
-            
-            calcularSistema();
-        }
-
-        function alterarStakeManual(jogoId, tipo, valor) {
-            const chave = `${jogoId}_${tipo}`;
-            if (valor === '' || isNaN(parseFloat(valor))) {
-                delete stakesManuais[chave];
-            } else {
-                stakesManuais[chave] = parseFloat(valor);
-            }
-            calcularSistema(false);
-        }
-
-        // CORREÇÃO CRÍTICA DO MOTOR: AGORA EQUILIBRA O CUSTO TOTAL COM PRECISÃO
-        function calcularSistema(atualizarInputsDeStake = true) {
-            const montante = parseFloat(document.getElementById('montantePrincipal').value) || 0;
-            const oddPrincipal = parseFloat(document.getElementById('oddPrincipal').value) || 0;
-            
-            const retornoMúltipla = montante * oddPrincipal;
-            document.getElementById('retornoPrincipal').innerText = `R$ ${retornoMúltipla.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-
-            // Fator base calibrado para as proteções iniciais com lucro
-            let fatorAlvoBase = 6.855; 
-            
-            // CORREÇÃO: O novo alvo agora cresce absorvendo diretamente o novo Montante Principal digitado,
-            // garantindo que as stakes de cobertura subam na proporção exata para anular o custo adicionado!
-            let alvoRetornoCobertura = montante * fatorAlvoBase;
-
-            let somatorioCoberturas = 0;
-            let stakesCalculadas = {};
-
-            // Loop 1: Descobre e projeta as stakes equilibradas sobre o novo custo
-            dadosJogos.forEach((jogo) => {
-                const chaveA = `${jogo.id}_A`;
-                const chaveB = `${jogo.id}_B`;
-
-                let sA, sB;
-
-                if (stakesManuais[chaveA] !== undefined) {
-                    sA = stakesManuais[chaveA];
-                } else {
-                    sA = alvoRetornoCobertura / jogo.oddA;
-                }
-
-                if (stakesManuais[chaveB] !== undefined) {
-                    sB = stakesManuais[chaveB];
-                } else {
-                    sB = alvoRetornoCobertura / jogo.oddB;
-                }
-
-                sA = Math.round(sA * 100) / 100;
-                sB = Math.round(sB * 100) / 100;
-
-                somatorioCoberturas += sA + sB;
-                stakesCalculadas[chaveA] = sA;
-                stakesCalculadas[chaveB] = sB;
-
-                if (atualizarInputsDeStake) {
-                    document.getElementById(`stakeA_${jogo.id}`).value = sA.toFixed(2);
-                    document.getElementById(`stakeB_${jogo.id}`).value = sB.toFixed(2);
-                }
+                container.appendChild(div);
             });
 
-            // CORREÇÃO VISUAL: Agora o Custo Total do Dia soma o Montante Principal DE VERDADE na tela!
-            const custoTotalDoDia = montante + somatorioCoberturas;
+            const lucroLiquidoMúltipla = retornoMúltipla - investimentoGeral;
 
-            // Loop 2: Atualiza os retornos e lucros líquidos corrigidos com base no custo real atualizado
-            dadosJogos.forEach((jogo) => {
-                const inputStakeA = parseFloat(document.getElementById(`stakeA_${jogo.id}`).value) || 0;
-                const inputStakeB = parseFloat(document.getElementById(`stakeB_${jogo.id}`).value) || 0;
-
-                const rA = inputStakeA * jogo.oddA;
-                const rB = inputStakeB * jogo.oddB;
-
-                const lA = rA - custoTotalDoDia;
-                const lB = rB - custoTotalDoDia;
-
-                document.getElementById(`retA_${jogo.id}`).innerText = `R$ ${rA.toFixed(2)}`;
-                document.getElementById(`retB_${jogo.id}`).innerText = `R$ ${rB.toFixed(2)}`;
-                
-                const txtLiqA = document.getElementById(`liqA_${jogo.id}`);
-                const txtLiqB = document.getElementById(`liqB_${jogo.id}`);
-                
-                txtLiqA.innerText = `R$ ${lA.toFixed(2)}`;
-                txtLiqB.innerText = `R$ ${lB.toFixed(2)}`;
-
-                txtLiqA.className = lA >= 0 ? "text-emerald-700 font-bold" : "text-red-600 font-bold";
-                txtLiqB.className = lB >= 0 ? "text-emerald-700 font-bold" : "text-red-600 font-bold";
-            });
-
-            // Loop 3: Atualiza a tabela de auditoria com o custo correto injetado
-            const tbody = document.getElementById('tabelaAuditoria');
-            tbody.innerHTML = '';
-
-            dadosJogos.forEach((jogo) => {
-                const inputStakeA = parseFloat(document.getElementById(`stakeA_${jogo.id}`).value) || 0;
-                const inputStakeB = parseFloat(document.getElementById(`stakeB_${jogo.id}`).value) || 0;
-
-                const rA = inputStakeA * jogo.oddA;
-                const rB = inputStakeB * jogo.oddB;
-
-                const lA = rA - custoTotalDoDia;
-                const lB = rB - custoTotalDoDia;
-
-                const linha = document.createElement('tr');
-                linha.className = "hover:bg-gray-50 transition-colors";
-                linha.innerHTML = `
-                    <td class="p-3 font-bold text-gray-900">Se quebrar no Jogo ${jogo.id}</td>
-                    <td class="p-3 text-gray-600 font-bold">R$ ${custoTotalDoDia.toFixed(2)}</td>
-                    <td class="p-3 ${lA >= 0 ? 'text-emerald-700' : 'text-red-600'}">R$ ${rA.toFixed(2)} (Líquido: R$ ${lA.toFixed(2)})</td>
-                    <td class="p-3 ${lB >= 0 ? 'text-emerald-700' : 'text-red-600'}">R$ ${rB.toFixed(2)} (Líquido: R$ ${lB.toFixed(2)})</td>
-                `;
-                tbody.appendChild(linha);
-            });
-
-            // Atualiza os painéis principais de caixa
-            const lucroMaximoLiquido = retornoMúltipla - custoTotalDoDia;
-            document.getElementById('resumoCustoTotal').innerText = `R$ ${custoTotalDoDia.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            document.getElementById('resumoRetornoPrincipal').innerText = `R$ ${retornoMúltipla.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            document.getElementById('resumoLucroLiquido').innerText = `R$ ${lucroMaximoLiquido.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('resCusto').innerText = `R$ ${custoTotalCoberturas.toFixed(2)}`;
+            document.getElementById('resRetornoP').innerText = `R$ ${retornoMúltipla.toFixed(2)}`;
+            
+            const txtLiq = document.getElementById('resLiquidoP');
+            txtLiq.innerText = `R$ ${lucroLiquidoMúltipla.toFixed(2)}`;
+            txtLiq.className = lucroLiquidoMúltipla >= 0 ? "text-xl font-bold text-emerald-700" : "text-xl font-bold text-red-650";
         }
 
-        window.onload = function() {
-            inicializarPainel();
-            calcularSistema();
-        };
+        window.onload = calcularOddsDiretas;
     </script>
 </body>
 </html>
