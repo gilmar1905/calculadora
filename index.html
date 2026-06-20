@@ -3,550 +3,314 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ecossistema de Arbitragem - Sincronização Total</title>
+    <title>Painel Executivo - Esteira de Múltiplas Condicionais</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        :root {
-            --bg-principal: #0d1117;
-            --bg-card: #161b22;
-            --bg-input: #090d13;
-            --borda: #21262d;
-            --texto-principal: #c9d1d9;
-            --texto-secundario: #8b949e;
-            --verde-sucesso: #2ea44f;
-            --azul-destaque: #1f6feb;
-            --laranja-alerta: #f0883e;
-            --vermelho-erro: #f85149;
-        }
-
-        body {
-            background-color: var(--bg-principal);
-            color: var(--texto-principal);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 500px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .titulo-secao {
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--texto-secundario);
-            margin: 10px 0 2px 5px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--borda);
-            border-radius: 6px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            position: relative;
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        label {
-            font-size: 11px;
-            color: var(--texto-secundario);
-            font-weight: 600;
-        }
-
-        input, select {
-            background-color: var(--bg-input);
-            border: 1px solid var(--borda);
-            border-radius: 6px;
-            color: var(--texto-principal);
-            padding: 10px;
-            font-size: 14px;
-            font-weight: bold;
-            outline: none;
-        }
-
-        input:focus {
-            border-color: var(--azul-destaque);
-        }
-
-        .row-inputs {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .stake-input {
-            border: 1px solid var(--verde-sucesso);
-            border-radius: 6px;
-            padding: 8px;
-            text-align: center;
-            font-size: 14px;
-            font-weight: bold;
-            color: var(--verde-sucesso);
-            background-color: rgba(46, 164, 79, 0.02);
-            width: 85%;
-        }
-
-        .btn-container {
-            display: flex;
-            gap: 4px;
-            margin-top: 4px;
-        }
-
-        .btn-container button {
-            flex: 1;
-            background-color: #21262d;
-            border: 1px solid #30363d;
-            color: var(--texto-principal);
-            border-radius: 4px;
-            padding: 6px 0;
-            font-size: 10px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .btn-container button.ativo {
-            background-color: var(--azul-destaque);
-            border-color: #388bfd;
-            color: white;
-        }
-
-        .btn-status-jogo {
-            padding: 6px 12px;
-            font-size: 11px;
-            border-radius: 20px;
-            border: 1px solid var(--borda);
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .btn-status-jogo.ativo {
-            background-color: rgba(46, 164, 79, 0.15);
-            border-color: var(--verde-sucesso);
-            color: var(--verde-sucesso);
-        }
-
-        .btn-status-jogo.espera {
-            background-color: rgba(139, 148, 158, 0.1);
-            border-color: var(--texto-secundario);
-            color: var(--texto-secundario);
-        }
-
-        .header-card-jogo {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(33, 38, 45, 0.6);
-            padding-bottom: 8px;
-        }
-
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: var(--texto-secundario);
-        }
-
-        .valor-destaque {
-            color: var(--texto-principal);
-            font-weight: bold;
-        }
-
-        .card-auditoria {
-            border-color: rgba(31, 111, 235, 0.4);
-        }
-
-        .linha-auditoria {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(33, 38, 45, 0.5);
-        }
-
-        .linha-auditoria:last-child {
-            border-bottom: none;
-        }
-
-        .auditoria-subgrupo {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-        }
-
-        .sub-bloco-cobertura {
-            background: rgba(255, 255, 255, 0.01);
-            border: 1px solid rgba(33, 38, 45, 0.7);
-            border-radius: 4px;
-            padding: 8px;
-        }
-
-        .btn-add {
-            background-color: var(--azul-destaque);
-            border-color: #388bfd;
-            color: white;
-            padding: 12px;
-            font-size: 14px;
-            width: 100%;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .btn-lixeira {
-            background-color: transparent;
-            border: none;
-            color: var(--vermelho-erro);
-            font-size: 14px;
-            cursor: pointer;
-            padding: 0 5px;
-        }
-
-        .badge-card-lucro {
-            font-size: 11px;
-            font-weight: bold;
-            margin-top: 5px;
-            padding: 4px 6px;
-            border-radius: 4px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .lucro-positivo {
-            background-color: rgba(46, 164, 79, 0.1);
-            color: var(--verde-sucesso);
-            border: 1px solid rgba(46, 164, 79, 0.2);
-        }
-        .lucro-negativo {
-            background-color: rgba(248, 81, 73, 0.1);
-            color: var(--vermelho-erro);
-            border: 1px solid rgba(248, 81, 73, 0.3);
-            animation: piscarAlerta 1.5s infinite alternate;
-        }
-
-        #alerta_critico_painel {
-            display: none;
-            background-color: rgba(248, 81, 73, 0.15);
-            border: 1px dashed var(--vermelho-erro);
-            color: var(--vermelho-erro);
-            padding: 10px;
-            border-radius: 6px;
-            text-align: center;
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        @keyframes piscarAlerta {
-            0% { opacity: 0.7; }
-            100% { opacity: 1; background-color: rgba(248, 81, 73, 0.25); }
-        }
+        body { font-family: 'Arial', sans-serif; background-color: #f3f4f6; color: #1f2937; }
+        .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
     </style>
 </head>
-<body>
+<body class="p-4 md:p-8">
 
-<div class="container">
-
-    <div class="titulo-secao">⚙️ Configuração da Esteira Estruturada</div>
-    <div class="card" style="border-color: var(--azul-destaque);">
-        <div id="alerta_critico_painel">⚠️ Operação com Risco de Prejuízo (Revise as Odds)</div>
-
-        <div class="input-group">
-            <label>Nome da Operação por Confrontos</label>
-            <input type="text" id="nome_operacao" value="Minha Esteira de Odds Altas">
-        </div>
-        <div class="row-inputs">
-            <div class="input-group">
-                <label>Montante Principal (R$)</label>
-                <input type="number" id="montante_principal" value="0.50" step="0.10">
-            </div>
-            <div class="input-group">
-                <label>Odd Total da Principal</label>
-                <input type="number" id="odd_principal" value="342.47" step="0.01">
-            </div>
-        </div>
-        <div class="row-inputs">
-            <div class="input-group">
-                <label>🎯 Meta Lucro Cobertura (R$)</label>
-                <input type="number" id="lucro_alvo" value="2.00" step="0.50" style="border-color: var(--laranja-alerta); color: var(--laranja-alerta);">
-            </div>
-            <div class="input-group">
-                <label>📉 Odd Média Finais (Fase 2)</label>
-                <input type="number" id="odd_media_finais" value="1.25" step="0.05" style="border-color: var(--azul-destaque);">
-            </div>
-        </div>
-        <div class="info-row" style="background: rgba(31, 111, 235, 0.05); padding: 8px; border-radius: 4px; border: 1px dashed rgba(31, 111, 235, 0.3); margin-top: 4px;">
-            <span>Retorno Bruto Total da Múltipla Principal:</span>
-            <span id="txt_retorno_bruto_topo" style="color: var(--azul-destaque); font-weight: bold;">R$ 0,00</span>
-        </div>
-    </div>
-
-    <div class="titulo-secao">
-        <span>⚽ Confrontos e Coberturas Duplas</span>
-    </div>
-    
-    <div id="container_cards_dinamicos" style="display: flex; flex-direction: column; gap: 16px;">
-        </div>
-
-    <button class="btn-add" onclick="adicionarNovoBlocoConfronto()">➕ Adicionar Novo Jogo na Esteira</button>
-
-    <div class="titulo-secao">📊 Auditoria por Etapa & Previsão Live</div>
-    <div class="card card-auditoria">
-        <div class="linha-auditoria" style="padding-top: 0;">
-            <div class="auditoria-subgrupo"><span class="auditoria-label">Custo Total Executado:</span><span class="valor-destaque" id="aud_custo_principal_total">R$ 0,00</span></div>
-            <div class="auditoria-subgrupo"><span class="auditoria-label">Retorno Bruto Intermediário:</span><span class="valor-destaque" id="aud_retorno_principal_total">R$ 0,00</span></div>
-            <div class="auditoria-subgrupo"><span class="auditoria-label">Lucro Líquido Sucesso Total:</span><span style="font-weight: bold;" id="aud_liquido_principal_total">R$ 0,00</span></div>
-        </div>
-        <div id="auditoria_lista_quedas"></div>
-    </div>
-
-</div>
-
-<script>
-    let contadorIds = 0;
-    let listaConfrontos = [];
-
-    window.onload = function() {
-        // Exemplo inicial com o mercado de gols sugerido por você (Ex: 2.45 em cada cobertura)
-        adicionarNovoBlocoConfronto(2.45, 2.45, true);
-        adicionarNovoBlocoConfronto(2.45, 2.45, true);
-        adicionarNovoBlocoConfronto(2.45, 2.45, true);
+    <div class="max-w-6xl mx-auto space-y-6">
         
-        // VINCULAÇÃO DIRETA DE GATILHOS (INPUT) NOS CAMPOS DO TOPO
-        document.getElementById('montante_principal').addEventListener('input', calcularEcossistemaDinamicol);
-        document.getElementById('odd_principal').addEventListener('input', calcularEcossistemaDinamicol);
-        document.getElementById('lucro_alvo').addEventListener('input', calcularEcossistemaDinamicol);
-        document.getElementById('odd_media_finais').addEventListener('input', calcularEcossistemaDinamicol);
-        
-        calcularEcossistemaDinamicol();
-    };
-
-    function adicionarNovoBlocoConfronto(oddA = 2.45, oddB = 2.45, ativoPadrao = false) {
-        contadorIds++;
-        const id = 'confronto_' + contadorIds;
-        
-        const blocoHtml = `
-            <div class="card" id="card_${id}" data-id="${id}">
-                <div class="header-card-jogo">
-                    <span style="font-weight: bold; font-size: 13px;" class="txt-titulo-card">Jogo</span>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <button class="btn-status-jogo ${ativoPadrao ? 'ativo' : 'espera'}" id="status_${id}" onclick="alternarStatusAtivacao('${id}')">
-                            ${ativoPadrao ? '🟢 ATIVO' : '⚪ ESPERA'}
-                        </button>
-                        <button class="btn-lixeira" onclick="removerBlocoConfronto('${id}')">🗑️</button>
-                    </div>
-                </div>
-                
-                <div class="sub-bloco-cobertura">
-                    <div class="row-inputs">
-                        <div class="input-group">
-                            <label>Odd Cobertura A</label>
-                            <input type="number" id="odd_a_${id}" value="${oddA.toFixed(2)}" step="0.01" oninput="calcularEcossistemaDinamicol()">
-                        </div>
-                        <div class="input-group">
-                            <label>Stake A (R$)</label>
-                            <input type="number" class="stake-input" id="stake_a_${id}" value="0.00" step="0.10" oninput="dispararManual('${id}', 'a')">
-                        </div>
-                    </div>
-                    <div class="btn-container">
-                        <button onclick="ajusteFino('${id}', 'a', -1)">-1</button>
-                        <button onclick="ajusteFino('${id}', 'a', 1)">+1</button>
-                        <button class="ativo" id="btn_modo_a_${id}" onclick="alternarModo('${id}', 'a')">🔄 Auto</button>
-                    </div>
-                    <div id="feedback_a_${id}" class="badge-card-lucro">Líquido A: R$ 0,00</div>
-                </div>
-
-                <div class="sub-bloco-cobertura" style="margin-top: 8px;">
-                    <div class="row-inputs">
-                        <div class="input-group">
-                            <label>Odd Cobertura B</label>
-                            <input type="number" id="odd_b_${id}" value="${oddB.toFixed(2)}" step="0.01" oninput="calcularEcossistemaDinamicol()">
-                        </div>
-                        <div class="input-group">
-                            <label>Stake B (R$)</label>
-                            <input type="number" class="stake-input" id="stake_b_${id}" value="0.00" step="0.10" oninput="dispararManual('${id}', 'b')">
-                        </div>
-                    </div>
-                    <div class="btn-container">
-                        <button onclick="ajusteFino('${id}', 'b', -1)">-1</button>
-                        <button onclick="ajusteFino('${id}', 'b', 1)">+1</button>
-                        <button class="ativo" id="btn_modo_b_${id}" onclick="alternarModo('${id}', 'b')">🔄 Auto</button>
-                    </div>
-                    <div id="feedback_b_${id}" class="badge-card-lucro">Líquido B: R$ 0,00</div>
-                </div>
-
-                <div class="info-row" style="margin-top: 4px; background: rgba(255,255,255,0.02); padding: 6px; border-radius: 4px; border-top: 1px solid var(--borda);">
-                    <span>Custo Acumulado até o Jogo:</span>
-                    <span class="valor-destaque" id="custo_acum_${id}">R$ 0,00</span>
-                </div>
-            </div>
-        `;
-
-        document.getElementById('container_cards_dinamicos').insertAdjacentHTML('beforeend', blocoHtml);
-        
-        listaConfrontos.push({
-            id: id,
-            modoAutoA: true,
-            modoAutoB: true,
-            ativonaEsteira: ativoPadrao
-        });
-
-        reordenarTitulosCards();
-        calcularEcossistemaDinamicol();
-    }
-
-    function removerBlocoConfronto(id) {
-        if (listaConfrontos.length <= 1) return;
-        document.getElementById(`card_${id}`).remove();
-        listaConfrontos = listaConfrontos.filter(item => item.id !== id);
-        reordenarTitulosCards();
-        calcularEcossistemaDinamicol();
-    }
-
-    function reordenarTitulosCards() {
-        document.querySelectorAll('#container_cards_dinamicos .card').forEach((card, index) => {
-            card.querySelector('.txt-titulo-card').innerText = `⚽ CONFRONTO ${index + 1}`;
-        });
-    }
-
-    function alternarStatusAtivacao(id) {
-        const jogo = listaConfrontos.find(item => item.id === id);
-        jogo.ativonaEsteira = !jogo.ativonaEsteira;
-        const btn = document.getElementById(`status_${id}`);
-        btn.className = `btn-status-jogo ${jogo.ativonaEsteira ? 'ativo' : 'espera'}`;
-        btn.innerText = jogo.ativonaEsteira ? '🟢 ATIVO' : '⚪ ESPERA';
-        calcularEcossistemaDinamicol();
-    }
-
-    function alternarModo(id, tipo) {
-        const jogo = listaConfrontos.find(item => item.id === id);
-        const campoModo = tipo === 'a' ? 'modoAutoA' : 'modoAutoB';
-        const btn = document.getElementById(`btn_modo_${tipo}_${id}`);
-        jogo[campoModo] = !jogo[campoModo];
-        if(jogo[campoModo]) btn.classList.add('ativo'); else btn.classList.remove('ativo');
-        btn.innerText = jogo[campoModo] ? "🔄 Auto" : "✍️ Manual";
-        calcularEcossistemaDinamicol();
-    }
-
-    function dispararManual(id, tipo) {
-        const jogo = listaConfrontos.find(item => item.id === id);
-        const campoModo = tipo === 'a' ? 'modoAutoA' : 'modoAutoB';
-        document.getElementById(`btn_modo_${tipo}_${id}`).classList.remove('ativo');
-        document.getElementById(`btn_modo_${tipo}_${id}`).innerText = "✍️ Manual";
-        jogo[campoModo] = false;
-        calcularEcossistemaDinamicol();
-    }
-
-    function ajusteFino(id, tipo, valor) {
-        dispararManual(id, tipo);
-        const input = document.getElementById(`stake_${tipo}_${id}`);
-        input.value = Math.max(0, parseFloat((parseFloat(input.value || 0) + valor * 0.1).toFixed(2)));
-        calcularEcossistemaDinamicol();
-    }
-
-    // MOTOR ATUARIAL COM CORREÇÃO DE SINCRO E LOOP TOTAL
-    function calcularEcossistemaDinamicol() {
-        const montantePrincipal = parseFloat(document.getElementById('montante_principal').value) || 0;
-        const oddPrincipalTotal = parseFloat(document.getElementById('odd_principal').value) || 1;
-        const lucroAlvo = parseFloat(document.getElementById('lucro_alvo').value) || 0;
-
-        const retornoPrincipalTotal = montantePrincipal * oddPrincipalTotal;
-        document.getElementById('txt_retorno_bruto_topo').innerText = `R$ ${retornoPrincipalTotal.toFixed(2)}`;
-
-        let custoAcumulado = montantePrincipal;
-        let operacaoPossuiPrejuizoOculto = false;
-
-        const containerAuditoria = document.getElementById('auditoria_lista_quedas');
-        containerAuditoria.innerHTML = '';
-
-        listaConfrontos.forEach((jogo, index) => {
-            const oddA = parseFloat(document.getElementById(`odd_a_${jogo.id}`).value) || 1.01;
-            const oddB = parseFloat(document.getElementById(`odd_b_${jogo.id}`).value) || 1.01;
+        <div class="card p-6 border-t-4 border-blue-900">
+            <h1 class="text-xl font-bold text-blue-900 mb-4 flex items-center gap-2">
+                📦 Configuração da Esteira Estruturada
+            </h1>
             
-            let inputStakeA = document.getElementById(`stake_a_${jogo.id}`);
-            let inputStakeB = document.getElementById(`stake_b_${jogo.id}`);
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nome da Operação</label>
+                    <input type="text" value="Minha Esteira de Odds Altas" class="w-full p-2 border rounded-md bg-gray-50 font-semibold text-gray-800">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Montante Principal (R$)</label>
+                    <input type="number" id="montantePrincipal" value="1.00" step="0.50" min="0.10" oninput="calcularSistema()" class="w-full p-2 border rounded-md border-blue-400 font-bold text-blue-900 text-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Odd Total da Principal (Empates)</label>
+                    <input type="number" id="oddPrincipal" value="369.32" step="0.01" oninput="calcularSistema()" class="w-full p-2 border rounded-md bg-gray-50 font-bold text-gray-800 text-lg">
+                </div>
+            </div>
             
-            let stakeA = parseFloat(inputStakeA.value) || 0;
-            let stakeB = parseFloat(inputStakeB.value) || 0;
+            <div class="mt-4 p-4 bg-blue-50 rounded-lg flex justify-between items-center border border-blue-200">
+                <span class="font-medium text-blue-900 text-md">Retorno Bruto Total da Múltipla Principal:</span>
+                <span id="retornoPrincipal" class="font-bold text-xl text-blue-900">R$ 369,32</span>
+            </div>
+        </div>
 
-            if (jogo.ativonaEsteira) {
-                // Cálculo automático baseado estritamente no montante e metas atuais
-                if (jogo.modoAutoA) {
-                    stakeA = (custoAcumulado + lucroAlvo) / (oddA - 1);
-                    inputStakeA.value = stakeA.toFixed(2);
-                }
-                if (jogo.modoAutoB) {
-                    stakeB = (custoAcumulado + lucroAlvo) / (oddB - 1);
-                    inputStakeB.value = stakeB.toFixed(2);
-                }
-                custoAcumulado += (stakeA + stakeB);
-            } else {
-                if (jogo.modoAutoA) inputStakeA.value = "0.00";
-                if (jogo.modoAutoB) inputStakeB.value = "0.00";
-                stakeA = 0;
-                stakeB = 0;
-            }
+        <div class="space-y-4">
+            <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2 px-1">
+                ⚽ Confrontos e Coberturas Duplas
+            </h2>
+            
+            <div id="containerConfrontos" class="space-y-4">
+                </div>
+        </div>
 
-            document.getElementById(`custo_acum_${jogo.id}`).innerText = `R$ ${custoAcumulado.toFixed(2)}`;
+        <div class="card p-6 border-t-4 border-emerald-800">
+            <h2 class="text-xl font-bold text-emerald-900 mb-4 flex items-center gap-2">
+                📊 Auditoria por Etapa & Previsão Live
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="p-4 bg-gray-100 rounded-lg border">
+                    <span class="block text-sm text-gray-600 font-medium">Custo Total Executado</span>
+                    <span id="resumoCustoTotal" class="text-2xl font-bold text-gray-900">R$ 0,00</span>
+                </div>
+                <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <span class="block text-sm text-blue-800 font-medium">Retorno Bruto Múltipla</span>
+                    <span id="resumoRetornoPrincipal" class="text-2xl font-bold text-blue-900">R$ 0,00</span>
+                </div>
+                <div class="p-4 bg-emerald-50 rounded-lg border border-emerald-200">
+                    <span class="block text-sm text-emerald-800 font-medium">Lucro Líquido Sucesso Total</span>
+                    <span id="resumoLucroLiquido" class="text-2xl font-bold text-emerald-900">R$ 0,00</span>
+                </div>
+            </div>
 
-            const fA = document.getElementById(`feedback_a_${jogo.id}`);
-            const fB = document.getElementById(`feedback_b_${jogo.id}`);
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-800 text-white text-sm">
+                            <th class="p-3 rounded-l-md">Fase Ativa</th>
+                            <th class="p-3">Custo Acumulado</th>
+                            <th class="p-3">Se cair na Cobertura A</th>
+                            <th class="p-3 rounded-r-md">Se cair na Cobertura B</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaAuditoria" class="text-sm divide-y divide-gray-200 font-medium text-gray-700">
+                        </tbody>
+                </table>
+            </div>
+        </div>
 
-            if (jogo.ativonaEsteira) {
-                const retornoA = stakeA * oddA;
-                const retornoB = stakeB * oddB;
-                const liquidoA = retornoA - custoAcumulado;
-                const liquidoB = retornoB - custoAcumulado;
+    </div>
 
-                if(liquidoA < -0.05 || liquidoB < -0.05) operacaoPossuiPrejuizoOculto = true;
+    <script>
+        // Dados iniciais baseados nas odds reais do PDF 333
+        const dadosIniciais = [
+            { id: 1, oddA: 2.45, oddB: 2.70 },
+            { id: 2, oddA: 8.86, oddB: 8.32 },
+            { id: 3, oddA: 21.90, oddB: 28.32 },
+            { id: 4, oddA: 81.84, oddB: 92.11 },
+            { id: 5, oddA: 232.53, oddB: 323.52 }
+        ];
 
-                fA.innerText = `Retorno: R$ ${retornoA.toFixed(2)} | Líquido A: R$ ${liquidoA.toFixed(2)}`;
-                fA.className = `badge-card-lucro ${liquidoA >= 0 ? 'lucro-positivo' : 'lucro-negativo'}`;
+        // Estado global das stakes editadas pelo usuário
+        let stakesManuais = {};
 
-                fB.innerText = `Retorno: R$ ${retornoB.toFixed(2)} | Líquido B: R$ ${liquidoB.toFixed(2)}`;
-                fB.className = `badge-card-lucro ${liquidoB >= 0 ? 'lucro-positivo' : 'lucro-negativo'}`;
+        // Inicializar os Cards na Tela
+        function inicializarCards() {
+            const container = document.getElementById('containerConfrontos');
+            container.innerHTML = '';
 
-                const htmlAuditoriaBloco = `
-                    <div class="linha-auditoria">
-                        <div class="auditoria-titulo-bloco">⚡ Jogo ${index + 1} Ativo</div>
-                        <div class="auditoria-subgrupo"><span class="auditoria-label">Custo Acumulado Total:</span><span class="valor-destaque">R$ ${custoAcumulado.toFixed(2)}</span></div>
-                        <div class="auditoria-subgrupo"><span class="auditoria-label">Se cair na Cobertura A:</span><span style="color:${liquidoA >= 0 ? '#2ea44f' : '#f85149'}; font-weight:bold;">R$ ${retornoA.toFixed(2)} (Lucro: R$ ${liquidoA.toFixed(2)})</span></div>
-                        <div class="auditoria-subgrupo"><span class="auditoria-label">Se cair na Cobertura B:</span><span style="color:${liquidoB >= 0 ? '#2ea44f' : '#f85149'}; font-weight:bold;">R$ ${retornoB.toFixed(2)} (Lucro: R$ ${liquidoB.toFixed(2)})</span></div>
+            dadosIniciais.forEach((jogo) => {
+                const card = document.createElement('div');
+                card.className = 'card p-5 border-l-4 border-blue-600 relative bg-white';
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="font-bold text-gray-800 text-md">CONFRONTO ${jogo.id}</span>
+                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full">ATIVO</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <label class="text-xs font-semibold text-gray-600">Odd Cobertura A</label>
+                                <div class="flex gap-1">
+                                    <button onclick="ajustarOdd(${jogo.id}, 'A', -1)" class="px-2 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-xs font-bold">-1</button>
+                                    <button onclick="ajustarOdd(${jogo.id}, 'A', 1)" class="px-2 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-xs font-bold">+1</button>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <input type="number" id="oddA_${jogo.id}" value="${jogo.oddA.toFixed(2)}" step="0.01" oninput="atualizarValoresDoInput(${jogo.id}, 'A')" class="w-1/2 p-2 border rounded font-bold text-gray-800">
+                                <input type="number" id="stakeA_${jogo.id}" placeholder="Stake A" step="0.01" oninput="editarStakeManualmente(${jogo.id}, 'A', this.value)" class="w-1/2 p-2 border rounded font-bold bg-emerald-50 text-emerald-900 border-emerald-300">
+                            </div>
+                            <div class="text-xs font-semibold text-gray-500 flex justify-between px-1">
+                                <span>Retorno: <span id="retA_${jogo.id}" class="text-gray-700">R$ 0,00</span></span>
+                                <span>Líquido: <span id="liqA_${jogo.id}" class="text-emerald-700">R$ 0,00</span></span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <label class="text-xs font-semibold text-gray-600">Odd Cobertura B</label>
+                                <div class="flex gap-1">
+                                    <button onclick="ajustarOdd(${jogo.id}, 'B', -1)" class="px-2 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-xs font-bold">-1</button>
+                                    <button onclick="ajustarOdd(${jogo.id}, 'B', 1)" class="px-2 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-xs font-bold">+1</button>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <input type="number" id="oddB_${jogo.id}" value="${jogo.oddB.toFixed(2)}" step="0.01" oninput="atualizarValoresDoInput(${jogo.id}, 'B')" class="w-1/2 p-2 border rounded font-bold text-gray-800">
+                                <input type="number" id="stakeB_${jogo.id}" placeholder="Stake B" step="0.01" oninput="editarStakeManualmente(${jogo.id}, 'B', this.value)" class="w-1/2 p-2 border rounded font-bold bg-emerald-50 text-emerald-900 border-emerald-300">
+                            </div>
+                            <div class="text-xs font-semibold text-gray-500 flex justify-between px-1">
+                                <span>Retorno: <span id="retB_${jogo.id}" class="text-gray-700">R$ 0,00</span></span>
+                                <span>Líquido: <span id="liqB_${jogo.id}" class="text-emerald-700">R$ 0,00</span></span>
+                            </div>
+                        </div>
                     </div>
                 `;
-                containerAuditoria.insertAdjacentHTML('beforeend', htmlAuditoriaBloco);
-            } else {
-                fA.innerText = "Líquido A: R$ 0,00 (Em Espera)"; fA.className = "badge-card-lucro";
-                fB.innerText = "Líquido B: R$ 0,00 (Em Espera)"; fB.className = "badge-card-lucro";
+                container.appendChild(card);
+            });
+        }
+
+        // Ajustar a Odd via botões de incremento rápido (+1 / -1 centavo)
+        function ajustarOdd(jogoId, tipo, direcao) {
+            const input = document.getElementById(`odd${tipo}_${jogoId}`);
+            let valorAtual = parseFloat(input.value) || 0;
+            valorAtual += direcao * 0.01;
+            if (valorAtual < 1.01) valorAtual = 1.01;
+            input.value = valorAtual.toFixed(2);
+            
+            // Atualiza a matriz de dados locais
+            const index = dadosIniciais.findIndex(j => j.id === jogoId);
+            if (index !== -1) {
+                dadosIniciais[index][`odd${tipo}`] = valorAtual;
             }
-        });
+            calcularSistema();
+        }
 
-        const alertaBanner = document.getElementById('alerta_critico_painel');
-        alertaBanner.style.display = operacaoPossuiPrejuizoOculto ? 'block' : 'none';
+        // Monitorar digitação manual direta no campo de Odd
+        function atualizarValoresDoInput(jogoId, tipo) {
+            const input = document.getElementById(`odd${tipo}_${jogoId}`);
+            let valor = parseFloat(input.value) || 1.01;
+            const index = dadosIniciais.findIndex(j => j.id === jogoId);
+            if (index !== -1) {
+                dadosIniciais[index][`odd${tipo}`] = valor;
+            }
+            calcularSistema();
+        }
 
-        document.getElementById('aud_custo_principal_total').innerText = `R$ ${custoAcumulado.toFixed(2)}`;
-        document.getElementById('aud_retorno_principal_total').innerText = `R$ ${retornoPrincipalTotal.toFixed(2)}`;
-        
-        const liquidoFinal = retornoPrincipalTotal - custoAcumulado;
-        document.getElementById('aud_liquido_principal_total').innerText = `R$ ${liquidoFinal.toFixed(2)}`;
-        document.getElementById('aud_liquido_principal_total').style.color = liquidoFinal >= 0 ? '#2ea44f' : '#f85149';
-    }
-</script>
+        // Registrar interferência manual nas Stakes (Trava o Auto)
+        function editarStakeManualmente(jogoId, tipo, valor) {
+            const chave = `${jogoId}_${tipo}`;
+            if (valor === '' || isNaN(parseFloat(valor))) {
+                delete stakesManuais[chave];
+            } else {
+                stakesManuais[chave] = parseFloat(valor);
+            }
+            calcularSistema(false); // Executa o recálculo preservando as entradas do usuário
+        }
+
+        // O MOTOR PRINCIPAL DE CÁLCULO PROPORCIONAL
+        function calcularSistema(recalcularStakesAuto = true) {
+            const montantePrincipal = parseFloat(document.getElementById('montantePrincipal').value) || 0;
+            const oddPrincipal = parseFloat(document.getElementById('oddPrincipal').value) || 0;
+            
+            // Atualiza cabeçalho de retorno
+            const retornoBrutoPrincipal = montantePrincipal * oddPrincipal;
+            document.getElementById('retornoPrincipal').innerText = `R$ ${retornoBrutoPrincipal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+
+            // --- FASE 1: DEFINIÇÃO DE ALVO COM BASE NO CUSTO GLOBAL ANTECIPADO ---
+            // Como tudo corre em um dia só, precisamos descobrir quanto custará as stakes para cobrir a esteira toda.
+            // Para as odds do PDF 333 (que escalam de 2.45 até 323.52), o fator proporcional de cobertura ideal fica em torno de 6.86x o montante do dia para o bloco de saída.
+            const alvoRetornoGlobal = montantePrincipal * 6.855; 
+
+            let custoTotalCoberturas = 0;
+            let stakesFinais = {};
+
+            // --- FASE 2: DISTRIBUIÇÃO DAS STAKES ---
+            dadosIniciais.forEach((jogo) => {
+                const chaveA = `${jogo.id}_A`;
+                const chaveB = `${jogo.id}_B`;
+
+                let stakeA, stakeB;
+
+                // Se o usuário digitou manualmente, obedece. Se não, aplica a nova lógica condicional
+                if (stakesManuais[chaveA] !== undefined) {
+                    stakeA = stakesManuais[chaveA];
+                } else {
+                    // A nova matemática calcula a fração exata necessária sobre o alvo para liquidar o dia
+                    stakeA = alvoRetornoGlobal / juego.oddA;
+                }
+
+                if (stakesManuais[chaveB] !== undefined) {
+                    stakeB = stakesManuais[chaveB];
+                } else {
+                    stakeB = alvoRetornoGlobal / juego.oddB;
+                }
+
+                // Ajuste fino para evitar dízimas flutuantes visualmente
+                stakeA = Math.round(stakeA * 100) / 100;
+                stakeB = Math.round(stakeB * 100) / 100;
+
+                stakesFinais[chaveA] = stakeA;
+                stakesFinais[chaveB] = stakeB;
+
+                custoTotalCoberturas += stakeA + stakeB;
+
+                // Atualiza os inputs na tela apenas se a flag automática permitir (evita sobrescrever o clique do usuário)
+                if (recalcularStakesAuto) {
+                    document.getElementById(`stakeA_${jogo.id}`).value = stakeA.toFixed(2);
+                    document.getElementById(`stakeB_${jogo.id}`).value = stakeB.toFixed(2);
+                }
+            });
+
+            const custoTotalEcossistema = montantePrincipal + custoTotalCoberturas;
+
+            // --- FASE 3: ATUALIZAÇÃO DOS RETORNOS DOS CARDS DOS JOGOS ---
+            dadosIniciais.forEach((jogo) => {
+                const stA = parseFloat(document.getElementById(`stakeA_${jogo.id}`).value) || 0;
+                const stB = parseFloat(document.getElementById(`stakeB_${jogo.id}`).value) || 0;
+
+                const retA = stA * jogo.oddA;
+                const retB = stB * jogo.oddB;
+
+                const liqA = retA - custoTotalEcossistema;
+                const liqB = retB - custoTotalEcossistema;
+
+                document.getElementById(`retA_${jogo.id}`).innerText = `R$ ${retA.toFixed(2)}`;
+                document.getElementById(`liqA_${jogo.id}`).innerText = `R$ ${liqA.toFixed(2)}`;
+                document.getElementById(`retB_${jogo.id}`).innerText = `R$ ${retB.toFixed(2)}`;
+                document.getElementById(`liqB_${jogo.id}`).innerText = `R$ ${liqB.toFixed(2)}`;
+                
+                // Formatação visual de segurança (Green vs Red nas caixinhas)
+                const elLiqA = document.getElementById(`liqA_${jogo.id}`);
+                const elLiqB = document.getElementById(`liqB_${jogo.id}`);
+                
+                elLiqA.className = liqA >= 0 ? "text-emerald-700 font-bold" : "text-red-600 font-bold";
+                elLiqB.className = liqB >= 0 ? "text-emerald-700 font-bold" : "text-red-600 font-bold";
+            });
+
+            // --- FASE 4: RENDERIZAÇÃO DA TABELA DE AUDITORIA FINAL ---
+            const tabela = document.getElementById('tabelaAuditoria');
+            tabela.innerHTML = '';
+
+            dadosIniciais.forEach((jogo) => {
+                const stA = parseFloat(document.getElementById(`stakeA_${jogo.id}`).value) || 0;
+                const stB = parseFloat(document.getElementById(`stakeB_${jogo.id}`).value) || 0;
+                
+                const retA = stA * jogo.oddA;
+                const retB = stB * jogo.oddB;
+                
+                const liqA = retA - custoTotalEcossistema;
+                const liqB = retB - custoTotalEcossistema;
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 transition-colors";
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-gray-900">Jogo ${jogo.id} Rodando</td>
+                    <td class="p-3 text-gray-600">R$ ${custoTotalEcossistema.toFixed(2)}</td>
+                    <td class="p-3 ${liqA >= 0 ? 'text-emerald-700' : 'text-red-600'}">R$ ${retA.toFixed(2)} (Lucro: R$ ${liqA.toFixed(2)})</td>
+                    <td class="p-3 ${liqB >= 0 ? 'text-emerald-700' : 'text-red-600'}">R$ ${retB.toFixed(2)} (Lucro: R$ ${liqB.toFixed(2)})</td>
+                `;
+                tabela.appendChild(tr);
+            });
+
+            // Atualiza os painéis principais de resumo geral na base do documento
+            const lucroTotalLiquido = retornoBrutoPrincipal - custoTotalEcossistema;
+            document.getElementById('resumoCustoTotal').innerText = `R$ ${custoTotalEcossistema.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('resumoRetornoPrincipal').innerText = `R$ ${retornoBrutoPrincipal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('resumoLucroLiquido').innerText = `R$ ${lucroTotalLiquido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+        }
+
+        // Executa a carga inicial da página
+        window.onload = function() {
+            inicializarCards();
+            calcularSistema();
+        };
+    </script>
 </body>
 </html>
