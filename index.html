@@ -126,97 +126,51 @@
 
     </div>
 
+    <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Motor Surebet Executivo - Blindado</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        body { font-family: 'Arial', sans-serif; background-color: #0f172a; color: #f1f5f9; }
+    </style>
+</head>
+<body class="p-4">
+    <div class="max-w-7xl mx-auto space-y-6">
+        <div class="bg-slate-950 p-6 rounded-xl border border-slate-800 shadow-xl">
+            <h1 class="text-xl font-black text-white">MOTOR SUREBET EXECUTIVO - VERSÃO BLINDADA</h1>
+            <div class="grid grid-cols-2 gap-4 mt-4">
+                <input type="number" id="mstkApostaPrincipal" value="30.00" oninput="processarCalculosGlobais()" class="bg-slate-900 p-2 border border-slate-700 rounded text-emerald-400 font-bold">
+                <input type="number" id="moddTotalPrincipal" value="369.32" oninput="processarCalculosGlobais()" class="bg-slate-900 p-2 border border-slate-700 rounded text-indigo-400 font-bold">
+            </div>
+        </div>
+
+        <button onclick="adicionarNovoCardJogo()" class="bg-emerald-600 text-white font-bold py-2 px-4 rounded">➕ Adicionar Card</button>
+
+        <div id="mGradeConfrontos" class="space-y-4"></div>
+    </div>
+
     <script>
-        // Dados mestre na memória para inicialização padrão se não houver cache
         let bancoJogosInstanciados = [
-            { id: 1, ativo: true, timeHome: "Jogo 1", timeAway: "Linha Seca", oddA: 2.45, oddB: 2.70, stakeA: 0, stakeB: 0 },
-            { id: 2, ativo: true, timeHome: "Jogo 2", timeAway: "Combo Aumentado", oddA: 8.86, oddB: 8.32, stakeA: 0, stakeB: 0 },
-            { id: 3, ativo: false, timeHome: "Jogo 3", timeAway: "Combo Aumentado", oddA: 21.90, oddB: 28.32, stakeA: 0, stakeB: 0 },
-            { id: 4, ativo: false, timeHome: "Jogo 4", timeAway: "Combo Aumentado", oddA: 81.84, oddB: 92.11, stakeA: 0, stakeB: 0 },
-            { id: 5, ativo: false, timeHome: "Jogo 5", timeAway: "Combo Aumentado", oddA: 232.53, oddB: 323.52, stakeA: 0, stakeB: 0 }
+            { id: 1, ativo: true, oddA: 2.45, oddB: 2.70, stakeA: 0, stakeB: 0 },
+            { id: 2, ativo: true, oddA: 8.86, oddB: 8.32, stakeA: 0, stakeB: 0 }
         ];
 
-        // Função para carregar dados do LocalStorage ao iniciar a aplicação
-        function inicializarSistemaOperacional() {
-            const cacheGravado = localStorage.getItem('surebet_cenario_executivo');
-            if(cacheGravado) {
-                try {
-                    const dadosObtidos = JSON.parse(cacheGravado);
-                    document.getElementById('cfgNomeCenário').value = dadosObtidos.nomeCenário || "Rodada Salva";
-                    document.getElementById('mstkApostaPrincipal').value = dadosObtidos.stakePrincipal || 30.00;
-                    document.getElementById('moddTotalPrincipal').value = dadosObtidos.oddPrincipal || 369.32;
-                    
-                    if(dadosObtidos.modo) {
-                        document.querySelector(`input[name="modoCalculo"][value="${dadosObtidos.modo}"]`).checked = true;
-                    }
-                    
-                    bancoJogosInstanciados = dadosObtidos.jogos || [];
-                } catch (e) {
-                    console.log("Erro ao processar cache local, restaurando padrão.");
-                }
-            }
-            gerarLayoutDosCards();
-        }
-
-        // Grava as informações em pedra no navegador
-        function salvarCenárioNoSistema() {
-            sincronizarCamposDomParaMemoria();
-            const modoSelecionado = document.querySelector('input[name="modoCalculo"]:checked').value;
-            const payload = {
-                nomeCenário: document.getElementById('cfgNomeCenário').value,
-                stakePrincipal: parseFloat(document.getElementById('mstkApostaPrincipal').value) || 0,
-                oddPrincipal: parseFloat(document.getElementById('moddTotalPrincipal').value) || 0,
-                modo: modoSelecionado,
-                jogos: bancoJogosInstanciados
-            };
-            localStorage.setItem('surebet_cenario_executivo', JSON.stringify(payload));
-            alert("✅ Cenário executivo salvo com sucesso no LocalStorage!");
-        }
-
-        function limparEResetarPainel() {
-            if(confirm("Deseja apagar os dados do painel e voltar para a configuração padrão?")) {
-                localStorage.removeItem('surebet_cenario_executivo');
-                location.reload();
-            }
-        }
-
-        // Adiciona um novo card dinâmico na tabela
         function adicionarNovoCardJogo() {
-            sincronizarCamposDomParaMemoria();
-            const novoId = bancoJogosInstanciados.length > 0 ? Math.max(...bancoJogosInstanciados.map(j => j.id)) + 1 : 1;
-            bancoJogosInstanciados.push({
-                id: novoId,
-                ativo: true,
-                timeHome: `Jogo ${novoId}`,
-                timeAway: "Novo Confronto",
-                oddA: 2.00,
-                oddB: 2.00,
-                stakeA: 0.00,
-                stakeB: 0.00
-            });
+            const novoId = bancoJogosInstanciados.length + 1;
+            bancoJogosInstanciados.push({ id: novoId, ativo: true, oddA: 2.00, oddB: 2.00, stakeA: 0, stakeB: 0 });
             gerarLayoutDosCards();
         }
 
-        // Deleta um card específico da árvore
-        function deletarCardJogo(idAlvo) {
-            bancoJogosInstanciados = bancoJogosInstanciados.filter(j => j.id !== idAlvo);
-            gerarLayoutDosCards();
-        }
-
-        // Sincroniza o que o usuário digitou no DOM para a nossa lista na memória antes de qualquer render parcial
         function sincronizarCamposDomParaMemoria() {
             bancoJogosInstanciados.forEach(j => {
                 const elAtivo = document.getElementById(`chk_ativo_${j.id}`);
-                const elHome = document.getElementById(`txt_home_${j.id}`);
-                const elAway = document.getElementById(`txt_away_${j.id}`);
                 const elOddA = document.getElementById(`num_oddA_${j.id}`);
                 const elOddB = document.getElementById(`num_oddB_${j.id}`);
                 const elStkA = document.getElementById(`num_stkA_${j.id}`);
                 const elStkB = document.getElementById(`num_stkB_${j.id}`);
-
                 if(elAtivo) j.ativo = elAtivo.checked;
-                if(elHome) j.timeHome = elHome.value;
-                if(elAway) j.timeAway = elAway.value;
                 if(elOddA) j.oddA = parseFloat(elOddA.value) || 0;
                 if(elOddB) j.oddB = parseFloat(elOddB.value) || 0;
                 if(elStkA) j.stakeA = parseFloat(elStkA.value) || 0;
@@ -224,248 +178,65 @@
             });
         }
 
-        // Constrói visualmente os cards com base na memória
         function gerarLayoutDosCards() {
             const grade = document.getElementById('mGradeConfrontos');
             grade.innerHTML = '';
-
-            let totalAtivos = 0;
-
-            bancoJogosInstanciados.forEach((j, index) => {
-                if(j.ativo) totalAtivos++;
+            bancoJogosInstanciados.forEach(j => {
                 const card = document.createElement('div');
-                card.id = `card_bloco_${j.id}`;
-                card.className = `p-4 rounded-xl border transition shadow-xl ${j.ativo ? 'bg-slate-950 border-slate-800' : 'bg-slate-950/40 border-slate-900 opacity-40'}`;
-                
+                card.className = "bg-slate-900 p-4 rounded border border-slate-700";
                 card.innerHTML = `
-                    <div class="flex flex-wrap justify-between items-center border-b border-slate-800 pb-2 mb-4 gap-2">
-                        <div class="flex items-center gap-3">
-                            <input type="checkbox" id="chk_ativo_${j.id}" ${j.ativo ? 'checked' : ''} onchange="alternarEstadoCard(${j.id})" class="w-4 h-4 text-emerald-500 bg-slate-900 border-slate-700 rounded focus:ring-0 cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                <span class="text-xs font-black text-slate-400">CARD #${j.id}</span>
-                                <input type="text" id="txt_home_${j.id}" value="${j.timeHome}" oninput="marcarAlteracaoSemRecalculo()" class="bg-transparent border-b border-transparent hover:border-slate-700 focus:border-indigo-500 focus:outline-none font-bold text-xs text-white px-1 w-20 text-center">
-                                <span class="text-slate-600 text-xs font-bold">vs</span>
-                                <input type="text" id="txt_away_${j.id}" value="${j.timeAway}" oninput="marcarAlteracaoSemRecalculo()" class="bg-transparent border-b border-transparent hover:border-slate-700 focus:border-indigo-500 focus:outline-none font-bold text-xs text-white px-1 w-24 text-center">
-                            </div>
-                        </div>
-                        <button onclick="deletarCardJogo(${j.id})" class="text-[10px] font-bold text-red-400 bg-red-950/40 border border-red-900/60 px-2 py-0.5 rounded-md hover:bg-red-900 hover:text-white transition cursor-pointer">
-                            Remover Card
-                        </button>
+                    <div class="flex gap-4 items-center mb-2">
+                        <input type="checkbox" id="chk_ativo_${j.id}" ${j.ativo ? 'checked' : ''} onchange="processarCalculosGlobais()">
+                        <span class="font-bold">CARD ${j.id}</span>
+                        <input type="number" id="num_oddA_${j.id}" value="${j.oddA}" oninput="processarCalculosGlobais()" class="w-16 bg-slate-800 text-center">
+                        <input type="number" id="num_oddB_${j.id}" value="${j.oddB}" oninput="processarCalculosGlobais()" class="w-16 bg-slate-800 text-center">
                     </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        
-                        <div class="bg-slate-900 p-3 rounded-lg border border-slate-800/80">
-                            <div class="flex justify-between items-center mb-1.5">
-                                <span class="text-[10px] font-bold text-slate-400 uppercase">ODD DA LINHA A</span>
-                                <input type="number" id="num_oddA_${j.id}" value="${j.oddA}" step="0.01" oninput="processarCalculosGlobais()" class="w-14 bg-slate-950 text-center border border-slate-700 text-xs font-bold text-indigo-300 py-0.5 rounded">
-                            </div>
-                            <div class="flex items-center gap-1 bg-slate-950 p-1.5 rounded-md border border-slate-800">
-                                <button onclick="ajustarMecanicamente(${j.id}, 'A', -1.00)" ${!j.ativo ? 'disabled' : ''} class="px-2 py-1 bg-slate-800 hover:bg-slate-700 rounded font-black text-slate-300 text-xs transition cursor-pointer">-1</button>
-                                <button onclick="ajustarMecanicamente(${j.id}, 'A', -0.10)" ${!j.ativo ? 'disabled' : ''} class="px-1.5 py-1 bg-slate-800 hover:bg-slate-700 rounded font-black text-slate-300 text-[10px] transition cursor-pointer">-0.1</button>
-                                <input type="number" id="num_stkA_${j.id}" value="${j.stakeA.toFixed(2)}" step="0.01" oninput="processarCalculosGlobais()" ${!j.ativo ? 'disabled' : ''} class="w-full text-center bg-slate-900 font-bold text-sm text-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 rounded py-0.5">
-                                <button onclick="ajustarMecanicamente(${j.id}, 'A', 0.10)" ${!j.ativo ? 'disabled' : ''} class="px-1.5 py-1 bg-slate-800 hover:bg-slate-700 rounded font-black text-slate-300 text-[10px] transition cursor-pointer">+0.1</button>
-                                <button onclick="ajustarMecanicamente(${j.id}, 'A', 1.00)" ${!j.ativo ? 'disabled' : ''} class="px-2 py-1 bg-slate-800 hover:bg-slate-700 rounded font-black text-slate-300 text-xs transition cursor-pointer">+1</button>
-                            </div>
-                        </div>
-
-                        <div class="bg-slate-900 p-3 rounded-lg border border-slate-800/80">
-                            <div class="flex justify-between items-center mb-1.5">
-                                <span class="text-[10px] font-bold text-slate-400 uppercase">ODD DA LINHA B</span>
-                                <input type="number" id="num_oddB_${j.id}" value="${j.oddB}" step="0.01" oninput="processarCalculosGlobais()" class="w-14 bg-slate-950 text-center border border-slate-700 text-xs font-bold text-indigo-300 py-0.5 rounded">
-                            </div>
-                            <div class="flex items-center gap-1 bg-slate-950 p-1.5 rounded-md border border-slate-800">
-                                <button onclick="ajustarMecanicamente(${j.id}, 'B', -1.00)" ${!j.ativo ? 'disabled' : ''} class="px-2 py-1 bg-slate-800 hover:bg-slate-700 rounded font-black text-slate-300 text-xs transition cursor-pointer">-1</button>
-                                <button onclick="ajustarMecanicamente(${j.id}, 'B', -0.10)" ${!j.ativo ? 'disabled' : ''} class="px-1.5 py-1 bg-slate-800 hover:bg-slate-700 rounded font-black text-slate-300 text-[10px] transition cursor-pointer">-0.1</button>
-                                <input type="number" id="num_stkB_${j.id}" value="${j.stakeB.toFixed(2)}" step="0.01" oninput="processarCalculosGlobais()" ${!j.ativo ? 'disabled' : ''} class="w-full text-center bg-slate-900 font-bold text-sm text-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 rounded py-0.5">
-                                <button onclick="ajustarMecanicamente(${j.id}, 'B', 0.10)" ${!j.ativo ? 'disabled' : ''} class="px-1.5 py-1 bg-slate-800 hover:bg-slate-700 rounded font-black text-slate-300 text-[10px] transition cursor-pointer">+0.1</button>
-                                <button onclick="ajustarMecanicamente(${j.id}, 'B', 1.00)" ${!j.ativo ? 'disabled' : ''} class="px-2 py-1 bg-slate-800 hover:bg-slate-700 rounded font-black text-slate-300 text-xs transition cursor-pointer">+1</button>
-                            </div>
-                        </div>
-
+                    <div class="flex gap-2">
+                        <input type="number" id="num_stkA_${j.id}" value="${j.stakeA}" oninput="processarCalculosGlobais()" class="w-full bg-slate-950 p-1 text-emerald-400">
+                        <input type="number" id="num_stkB_${j.id}" value="${j.stakeB}" oninput="processarCalculosGlobais()" class="w-full bg-slate-950 p-1 text-emerald-400">
                     </div>
-
-                    <div class="mt-3 pt-2.5 border-t border-slate-900/80 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-[11px] font-bold">
-                        <div class="p-1.5 bg-slate-900 rounded border border-slate-850">
-                            <span class="block text-[9px] text-slate-500 uppercase">Custo na Rota</span>
-                            <span id="lbl_custoRota_${j.id}" class="text-slate-300">R$ 0,00</span>
-                        </div>
-                        <div class="p-1.5 bg-slate-900 rounded border border-slate-850">
-                            <span class="block text-[9px] text-slate-500 uppercase">Retorno Alvo</span>
-                            <span id="lbl_retornoAlvo_${j.id}" class="text-slate-300">R$ 0,00</span>
-                        </div>
-                        <div class="p-1.5 bg-slate-900 rounded border border-slate-850">
-                            <span class="block text-[9px] text-slate-500 uppercase">Líquido Linha A</span>
-                            <span id="lbl_liqA_${j.id}" class="text-slate-300">R$ 0,00</span>
-                        </div>
-                        <div class="p-1.5 bg-slate-900 rounded border border-slate-850">
-                            <span class="block text-[9px] text-slate-500 uppercase">Líquido Linha B</span>
-                            <span id="lbl_liqB_${j.id}" class="text-slate-300">R$ 0,00</span>
-                        </div>
+                    <div class="flex justify-between mt-2 text-xs">
+                        <span>Custo na Rota: <b id="lbl_custoRota_${j.id}">R$ 0,00</b></span>
+                        <span>Liq A: <b id="lbl_liqA_${j.id}">R$ 0,00</b></span>
+                        <span>Liq B: <b id="lbl_liqB_${j.id}">R$ 0,00</b></span>
                     </div>
                 `;
                 grade.appendChild(card);
             });
-
-            document.getElementById('mtxtTotalCardsAtivos').innerText = `${totalAtivos} Ativos / ${bancoJogosInstanciados.length} Totais`;
-            
-            // Força a primeira carga distributiva automática inteligente baseada no teto
-            distribuirValoresIniciaisAutomaticos();
-        }
-
-        // Chamado quando ativa/desativa a checkbox do card
-        function alternarEstadoCard(id) {
-            sincronizarCamposDomParaMemoria();
-            const jogo = bancoJogosInstanciados.find(j => j.id === id);
-            if(jogo) {
-                // Se o usuário está desativando o card, limpamos as stakes dele
-                if(!jogo.ativo) {
-                    jogo.stakeA = 0;
-                    jogo.stakeB = 0;
-                }
-            }
-            gerarLayoutDosCards();
-        }
-
-        // Função de marcação de texto simples para evitar re-render que trava o foco do input de texto
-        function marcarAlteracaoSemRecalculo() {
-            sincronizarCamposDomParaMemoria();
-        }
-
-        // Botões rápidos de ajuste (+1, -1, etc)
-        function ajustarMecanicamente(id, linha, delta) {
-            const input = document.getElementById(`num_stk${linha}_${id}`);
-            if(input) {
-                let valor = parseFloat(input.value) || 0;
-                valor += delta;
-                if(valor < 0) valor = 0;
-                input.value = valor.toFixed(2);
-                processarCalculosGlobais();
-            }
-        }
-
-        // Preenche de forma inteligente as caixas de manhã baseado no teto do prêmio da principal para o cliente não iniciar no escuro
-        function distribuirValoresIniciaisAutomaticos() {
-            const stakePrincipal = parseFloat(document.getElementById('mstkApostaPrincipal').value) || 0;
-            const oddPrincipal = parseFloat(document.getElementById('moddTotalPrincipal').value) || 0;
-            const tetoPremioMaximo = stakePrincipal * oddPrincipal;
-
-            let somaFatoresInversos = 0;
-            bancoJogosInstanciados.forEach(j => {
-                if(j.ativo) {
-                    somaFatoresInversos += (1 / j.oddA) + (1 / j.oddB);
-                }
-            });
-
-            // Alvo base seguro ajustado para não quebrar o teto da principal de manhã
-            const alvoSeguroProporcional = tetoPremioMaximo / (1 + (somaFatoresInversos * 0.95));
-
-            bancoJogosInstanciados.forEach(j => {
-                if(j.ativo) {
-                    const elA = document.getElementById(`num_stkA_${j.id}`);
-                    const elB = document.getElementById(`num_stkB_${j.id}`);
-                    
-                    // Coloca a sugestão inicial se a caixa estiver zerada ou recém criada
-                    if(elA && (parseFloat(elA.value) === 0 || elA.value === "")) elA.value = (alvoSeguroProporcional / j.oddA).toFixed(2);
-                    if(elB && (parseFloat(elB.value) === 0 || elB.value === "")) elB.value = (alvoSeguroProporcional / j.oddB).toFixed(2);
-                }
-            });
-
             processarCalculosGlobais();
         }
 
-        // NÚCLEO DO MOTOR MATEMÁTICO - EXECUTA A SUA POLÍTICA DE AUDITORIA DE CENÁRIO
         function processarCalculosGlobais() {
             sincronizarCamposDomParaMemoria();
-
             const stakePrincipal = parseFloat(document.getElementById('mstkApostaPrincipal').value) || 0;
-            const oddPrincipal = parseFloat(document.getElementById('moddTotalPrincipal').value) || 0;
-            const prêmioMúltiplaMãe = stakePrincipal * oddPrincipal;
-
-            document.getElementById('mtxtPremioMaximoPrincipal').innerText = `R$ ${prêmioMúltiplaMãe.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-            document.getElementById('mtxtAuditoriaRetornoPrincipal').innerText = `R$ ${prêmioMúltiplaMãe.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-
-            const modoSelecionado = document.querySelector('input[name="modoCalculo"]:checked').value;
-
-            // Passo 1: Somador de custos absolutos que saíram do bolso de manhã pré-live
-            let custoTotalDeManha = stakePrincipal;
-            bancoJogosInstanciados.forEach(j => {
-                if(j.ativo) {
-                    custoTotalDeManha += (j.stakeA + j.stakeB);
-                }
-            });
-
-            document.getElementById('mtxtAuditoriaCustoTotal').innerText = `R$ ${custoTotalDeManha.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-
-            // Lucro final da Principal se passar liso por todas as etapas
-            const liquidoMúltiplaPrincipal = prêmioMúltiplaMãe - custoTotalDeManha;
-            const lblLucroP = document.getElementById('mtxtAuditoriaLucroLiquidoPrincipal');
-            lblLucroP.innerText = `R$ ${liquidoMúltiplaPrincipal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-            
-            if(liquidoMúltiplaPrincipal >= 0) {
-                lblLucroP.className = "text-xl font-black text-emerald-400";
-            } else {
-                lblLucroP.className = "text-xl font-black text-red-500";
-            }
-
-            // Passo 2: Varre card por card calculando as auditorias individuais por cenário
-            let custoPassadoAcumulado = stakePrincipal;
+            let dividaAcumulada = stakePrincipal; 
 
             bancoJogosInstanciados.forEach(j => {
                 const elCustoRota = document.getElementById(`lbl_custoRota_${j.id}`);
-                const elRetornoAlvo = document.getElementById(`lbl_retornoAlvo_${j.id}`);
                 const elLiqA = document.getElementById(`lbl_liqA_${j.id}`);
                 const elLiqB = document.getElementById(`lbl_liqB_${j.id}`);
 
-                if(!elLiqA) return; // Pula se o card não foi printado
-
                 if(!j.ativo) {
-                    // Card inativo fica zerado na auditoria interna
-                    elCustoRota.innerText = "R$ 0,00";
-                    elRetornoAlvo.innerText = "R$ 0,00";
-                    elLiqA.innerText = "R$ 0,00"; elLiqA.className = "text-slate-500";
-                    elLiqB.innerText = "R$ 0,00"; elLiqB.className = "text-slate-500";
+                    if(elCustoRota) elCustoRota.innerText = "R$ 0,00";
                     return;
                 }
 
-                // MATEMÁTICA DA GAVETA DE CENÁRIO PROPÓSITA POR VOCÊ:
-                // Se estiver no Modo Pré-Live, o custo do cenário é o investimento total feito de manhã.
-                // Se for por Etapas (antigo), o custo é o acumulado somando em cascata conforme os jogos avançam.
-                let custoDesteCenário = (modoSelecionado === 'prelive') ? custoTotalDeManha : (custoPassadoAcumulado + j.stakeA + j.stakeB);
-                
-                // Acumula o custo para a próxima iteração se estiver no modo progressivo por etapas
-                custoPassadoAcumulado += (j.stakeA + j.stakeB);
-
-                const brutoA = j.stakeA * j.oddA;
-                const brutoB = j.stakeB * j.oddB;
-                
-                // O retorno alvo que essa linha tenta buscar para pagar as contas
-                const prêmioAlvoCenário = Math.max(brutoA, brutoB);
-
-                const liquidoCenárioA = brutoA - custoDesteCenário;
-                const liquidoCenárioB = brutoB - custoDesteCenário;
-
-                // Escreve os dados auditados no rodapé do card
+                let custoDesteCenário = dividaAcumulada + j.stakeA + j.stakeB;
                 elCustoRota.innerText = `R$ ${custoDesteCenário.toFixed(2)}`;
-                elRetornoAlvo.innerText = `R$ ${prêmioAlvoCenário.toFixed(2)}`;
 
-                // Formata cores e textos dos líquidos do cenário
-                const estilizarIndicador = (el, val) => {
-                    el.innerText = `R$ ${val.toFixed(2)}`;
-                    if(val >= 0) {
-                        el.className = "text-emerald-400 font-bold";
-                    } else {
-                        el.className = "text-red-400 font-bold";
-                    }
-                };
+                const liquidoA = (j.stakeA * j.oddA) - custoDesteCenário;
+                const liquidoB = (j.stakeB * j.oddB) - custoDesteCenário;
 
-                estilizarIndicador(elLiqA, liquidoCenárioA);
-                estilizarIndicador(elLiqB, liquidoCenárioB);
+                elLiqA.innerText = `R$ ${liquidoA.toFixed(2)}`;
+                elLiqA.className = liquidoA >= 0 ? "text-emerald-400" : "text-red-400";
+                elLiqB.innerText = `R$ ${liquidoB.toFixed(2)}`;
+                elLiqB.className = liquidoB >= 0 ? "text-emerald-400" : "text-red-400";
+
+                dividaAcumulada += (j.stakeA + j.stakeB);
             });
         }
 
-        // Gatilho de inicialização do painel executivo
-        window.onload = inicializarSistemaOperacional;
+        gerarLayoutDosCards();
     </script>
 </body>
 </html>
