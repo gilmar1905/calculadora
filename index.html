@@ -2,244 +2,132 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Executivo Surebet - Sistema Avançado de Coberturas</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Motor Surebet Executivo - Versão Final Unificada</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: 'Arial', sans-serif; background-color: #0f172a; }
-        input[type="number"]::-webkit-inner-spin-button, 
-        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
-    </style>
-</head>
-<body class="text-slate-100 p-3 md:p-6 custom-scrollbar">
-
-    <div class="max-w-7xl mx-auto space-y-6">
-        
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center bg-slate-950 p-4 rounded-xl border border-slate-800 gap-4 shadow-xl">
-            <div>
-                <h1 class="text-2xl font-black text-white tracking-wide flex items-center gap-2">
-                    <span class="text-emerald-500">⚡</span> MOTOR SUREBET EXECUTIVO
-                </h1>
-                <p class="text-xs text-slate-400 font-medium uppercase tracking-wider">Gestão Computacional de Múltiplas e Coberturas em Cadeia</p>
-            </div>
-            
-            <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
-                <input type="text" id="cfgNomeCenário" value="Rodada Final de Semana" class="bg-slate-900 border border-slate-700 text-xs font-bold text-white px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 w-full sm:w-48">
-                <button onclick="salvarCenárioNoSistema()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2 rounded-lg transition shadow-lg flex items-center gap-1.5 cursor-pointer">
-                    💾 Salvar Cenário
-                </button>
-                <button onclick="limparEResetarPainel()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs px-3 py-2 rounded-lg transition border border-slate-700 cursor-pointer">
-                    Resetar
-                </button>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <div class="lg:col-span-2 bg-slate-950 p-5 rounded-xl border border-slate-800 shadow-2xl flex flex-col justify-between">
-                <div>
-                    <h2 class="text-sm font-bold text-slate-300 uppercase tracking-widest border-b border-slate-800 pb-2 mb-4">
-                        📊 Configuração da Múltipla Principal (Teto do Dia)
-                    </h2>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
-                            <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Aposta na Principal (R$)</label>
-                            <input type="number" id="mstkApostaPrincipal" value="30.00" step="0.01" oninput="processarCalculosGlobais()" class="w-full bg-slate-950 border border-slate-700 text-xl font-black text-emerald-400 px-3 py-2 rounded-lg focus:outline-none focus:border-emerald-500">
-                        </div>
-                        <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
-                            <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Odd Acumulada da Principal</label>
-                            <input type="number" id="moddTotalPrincipal" value="369.32" step="0.01" oninput="processarCalculosGlobais()" class="w-full bg-slate-950 border border-slate-700 text-xl font-black text-indigo-400 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-4 bg-slate-900/60 p-3 rounded-lg border border-slate-800/80 flex justify-between items-center">
-                    <span class="text-xs font-bold text-slate-400 uppercase">Retorno Bruto Limite:</span>
-                    <span id="mtxtPremioMaximoPrincipal" class="text-xl font-black text-white tracking-wide">R$ 0,00</span>
-                </div>
-            </div>
-
-            <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 shadow-2xl flex flex-col justify-between">
-                <div>
-                    <h2 class="text-sm font-bold text-slate-300 uppercase tracking-widest border-b border-slate-800 pb-2 mb-3">
-                        ⚙️ Modo de Cálculo Matemático
-                    </h2>
-                    <p class="text-xs text-slate-400 mb-4 leading-relaxed">
-                        Escolha se o painel deve calcular o custo saindo todo do seu bolso de manhã ou descontando o avanço por etapas.
-                    </p>
-                    
-                    <div class="space-y-2">
-                        <label class="flex items-center gap-3 p-3 bg-slate-900 rounded-lg border border-slate-800 cursor-pointer hover:border-slate-700 transition">
-                            <input type="radio" name="modoCalculo" value="prelive" checked onchange="processarCalculosGlobais()" class="w-4 h-4 text-emerald-500 bg-slate-950 border-slate-700 focus:ring-0">
-                            <div>
-                                <span class="block text-xs font-bold text-white uppercase">Modo 1: Pré-Live (Tudo de Manhã)</span>
-                                <span class="block text-[10px] text-slate-400">Desconta as coberturas direto do prêmio da Principal.</span>
-                            </div>
-                        </label>
-                        <label class="flex items-center gap-3 p-3 bg-slate-900 rounded-lg border border-slate-800 cursor-pointer hover:border-slate-700 transition">
-                            <input type="radio" name="modoCalculo" value="etapas" onchange="processarCalculosGlobais()" class="w-4 h-4 text-indigo-500 bg-slate-950 border-slate-700 focus:ring-0">
-                            <div>
-                                <span class="block text-xs font-bold text-white uppercase">Modo 2: Por Etapas (Fluxo Vivo)</span>
-                                <span class="block text-[10px] text-slate-400">Usa os lucros dos jogos passados para aliviar os seguintes.</span>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="mt-4 flex gap-2">
-                    <button onclick="adicionarNovoCardJogo()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 px-3 rounded-lg shadow transition text-center uppercase cursor-pointer">
-                        ➕ Adicionar Card
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div class="flex justify-between items-center px-1">
-            <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">📋 Árvore Estatística de Coberturas</h3>
-            <span id="mtxtTotalCardsAtivos" class="text-xs font-bold text-indigo-400 bg-indigo-950/50 border border-indigo-900 px-2 py-0.5 rounded-full">0 Jogos Carregados</span>
-        </div>
-
-        <div id="mGradeConfrontos" class="space-y-4"></div>
-
-        <div class="bg-slate-950 p-6 rounded-xl border border-slate-800 shadow-2xl">
-            <h2 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 border-b border-slate-800 pb-2">
-                📊 Consolidação Geral da Auditoria de Risco
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                <div class="p-3 bg-slate-900 rounded-xl border border-slate-800">
-                    <span class="block text-[10px] text-slate-400 font-bold uppercase mb-1">CUSTO DO INVESTIMENTO GERAL</span>
-                    <span id="mtxtAuditoriaCustoTotal" class="text-xl font-black text-white">R$ 0,00</span>
-                </div>
-                <div class="p-3 bg-slate-900 rounded-xl border border-slate-800">
-                    <span class="block text-[10px] text-slate-400 font-bold uppercase mb-1">RETORNO DA PRINCIPAL</span>
-                    <span id="mtxtAuditoriaRetornoPrincipal" class="text-xl font-black text-indigo-400">R$ 0,00</span>
-                </div>
-                <div class="p-3 bg-slate-900/40 rounded-xl border border-slate-800">
-                    <span class="block text-[10px] text-slate-400 font-bold uppercase mb-1">LUCRO LÍQUIDO DA PRINCIPAL</span>
-                    <span id="mtxtAuditoriaLucroLiquidoPrincipal" class="text-xl font-black text-emerald-400">R$ 0,00</span>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>Motor Surebet Executivo - Blindado</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <style>
-        body { font-family: 'Arial', sans-serif; background-color: #0f172a; color: #f1f5f9; }
+        body { background-color: #020617; color: #f1f5f9; font-family: Arial, sans-serif; }
     </style>
 </head>
 <body class="p-4">
-    <div class="max-w-7xl mx-auto space-y-6">
-        <div class="bg-slate-950 p-6 rounded-xl border border-slate-800 shadow-xl">
-            <h1 class="text-xl font-black text-white">MOTOR SUREBET EXECUTIVO - VERSÃO BLINDADA</h1>
-            <div class="grid grid-cols-2 gap-4 mt-4">
-                <input type="number" id="mstkApostaPrincipal" value="30.00" oninput="processarCalculosGlobais()" class="bg-slate-900 p-2 border border-slate-700 rounded text-emerald-400 font-bold">
-                <input type="number" id="moddTotalPrincipal" value="369.32" oninput="processarCalculosGlobais()" class="bg-slate-900 p-2 border border-slate-700 rounded text-indigo-400 font-bold">
+    <div class="max-w-4xl mx-auto space-y-6">
+        <div class="bg-slate-950 p-6 rounded-xl border border-slate-800">
+            <h1 class="text-xl font-black text-white mb-4">MOTOR SUREBET EXECUTIVO</h1>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="text-[10px] text-slate-400">APOSTA PRINCIPAL (R$)</label>
+                    <input type="number" id="mstkApostaPrincipal" value="30.00" oninput="processarCalculos()" class="w-full bg-slate-900 border border-slate-700 p-2 text-emerald-400 font-bold rounded">
+                </div>
+                <div>
+                    <label class="text-[10px] text-slate-400">ODD ACUMULADA</label>
+                    <input type="number" id="moddTotalPrincipal" value="369.32" oninput="processarCalculos()" class="w-full bg-slate-900 border border-slate-700 p-2 text-indigo-400 font-bold rounded">
+                </div>
             </div>
         </div>
 
-        <button onclick="adicionarNovoCardJogo()" class="bg-emerald-600 text-white font-bold py-2 px-4 rounded">➕ Adicionar Card</button>
+        <button onclick="adicionarCard()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded w-full">➕ ADICIONAR CARD</button>
 
-        <div id="mGradeConfrontos" class="space-y-4"></div>
+        <div id="containerCards" class="space-y-4"></div>
     </div>
 
     <script>
-        let bancoJogosInstanciados = [
-    { id: 1, ativo: true, oddA: 2.45, oddB: 2.70, stakeA: 0, stakeB: 0 },
-    { id: 2, ativo: true, oddA: 8.86, oddB: 8.32, stakeA: 0, stakeB: 0 },
-    { id: 3, ativo: true, oddA: 21.90, oddB: 28.32, stakeA: 0, stakeB: 0 },
-    { id: 4, ativo: true, oddA: 81.84, oddB: 92.11, stakeA: 0, stakeB: 0 },
-    { id: 5, ativo: true, oddA: 232.53, oddB: 323.52, stakeA: 0, stakeB: 0 }
-];
+        let cards = [
+            { id: 1, ativo: true, oddA: 2.45, oddB: 2.70, stakeA: 0, stakeB: 0 },
+            { id: 2, ativo: true, oddA: 8.86, oddB: 8.32, stakeA: 0, stakeB: 0 },
+            { id: 3, ativo: true, oddA: 21.90, oddB: 28.32, stakeA: 0, stakeB: 0 },
+            { id: 4, ativo: true, oddA: 81.84, oddB: 92.11, stakeA: 0, stakeB: 0 },
+            { id: 5, ativo: true, oddA: 232.53, oddB: 323.52, stakeA: 0, stakeB: 0 }
+        ];
 
-        function adicionarNovoCardJogo() {
-            const novoId = bancoJogosInstanciados.length + 1;
-            bancoJogosInstanciados.push({ id: novoId, ativo: true, oddA: 2.00, oddB: 2.00, stakeA: 0, stakeB: 0 });
-            gerarLayoutDosCards();
+        function adicionarCard() {
+            const id = cards.length > 0 ? Math.max(...cards.map(c => c.id)) + 1 : 1;
+            cards.push({ id, ativo: true, oddA: 2.00, oddB: 2.00, stakeA: 0, stakeB: 0 });
+            renderizar();
         }
 
-        function sincronizarCamposDomParaMemoria() {
-            bancoJogosInstanciados.forEach(j => {
-                const elAtivo = document.getElementById(`chk_ativo_${j.id}`);
-                const elOddA = document.getElementById(`num_oddA_${j.id}`);
-                const elOddB = document.getElementById(`num_oddB_${j.id}`);
-                const elStkA = document.getElementById(`num_stkA_${j.id}`);
-                const elStkB = document.getElementById(`num_stkB_${j.id}`);
-                if(elAtivo) j.ativo = elAtivo.checked;
-                if(elOddA) j.oddA = parseFloat(elOddA.value) || 0;
-                if(elOddB) j.oddB = parseFloat(elOddB.value) || 0;
-                if(elStkA) j.stakeA = parseFloat(elStkA.value) || 0;
-                if(elStkB) j.stakeB = parseFloat(elStkB.value) || 0;
-            });
+        function excluirCard(id) {
+            cards = cards.filter(c => c.id !== id);
+            renderizar();
         }
 
-        function gerarLayoutDosCards() {
-            const grade = document.getElementById('mGradeConfrontos');
-            grade.innerHTML = '';
-            bancoJogosInstanciados.forEach(j => {
-                const card = document.createElement('div');
-                card.className = "bg-slate-900 p-4 rounded border border-slate-700";
-                card.innerHTML = `
-                    <div class="flex gap-4 items-center mb-2">
-                        <input type="checkbox" id="chk_ativo_${j.id}" ${j.ativo ? 'checked' : ''} onchange="processarCalculosGlobais()">
-                        <span class="font-bold">CARD ${j.id}</span>
-                        <input type="number" id="num_oddA_${j.id}" value="${j.oddA}" oninput="processarCalculosGlobais()" class="w-16 bg-slate-800 text-center">
-                        <input type="number" id="num_oddB_${j.id}" value="${j.oddB}" oninput="processarCalculosGlobais()" class="w-16 bg-slate-800 text-center">
+        function ajustar(id, campo, delta) {
+            const card = cards.find(c => c.id === id);
+            if (campo === 'A') card.stakeA = Math.max(0, card.stakeA + delta);
+            if (campo === 'B') card.stakeB = Math.max(0, card.stakeB + delta);
+            renderizar();
+        }
+
+        function renderizar() {
+            const container = document.getElementById('containerCards');
+            container.innerHTML = '';
+            
+            cards.forEach(c => {
+                const div = document.createElement('div');
+                div.className = "bg-slate-900 p-4 rounded border border-slate-700";
+                div.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" ${c.ativo ? 'checked' : ''} onchange="cards.find(x=>x.id==${c.id}).ativo=this.checked; processarCalculos()">
+                            <span class="font-bold">CARD ${c.id}</span>
+                        </div>
+                        <button onclick="excluirCard(${c.id})" class="text-red-400 text-xs font-bold">EXCLUIR</button>
                     </div>
-                    <div class="flex gap-2">
-                        <input type="number" id="num_stkA_${j.id}" value="${j.stakeA}" oninput="processarCalculosGlobais()" class="w-full bg-slate-950 p-1 text-emerald-400">
-                        <input type="number" id="num_stkB_${j.id}" value="${j.stakeB}" oninput="processarCalculosGlobais()" class="w-full bg-slate-950 p-1 text-emerald-400">
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <input type="number" value="${c.oddA}" oninput="cards.find(x=>x.id==${c.id}).oddA=parseFloat(this.value); processarCalculos()" class="bg-slate-800 p-1 text-center text-xs">
+                        <input type="number" value="${c.oddB}" oninput="cards.find(x=>x.id==${c.id}).oddB=parseFloat(this.value); processarCalculos()" class="bg-slate-800 p-1 text-center text-xs">
                     </div>
-                    <div class="flex justify-between mt-2 text-xs">
-                        <span>Custo na Rota: <b id="lbl_custoRota_${j.id}">R$ 0,00</b></span>
-                        <span>Liq A: <b id="lbl_liqA_${j.id}">R$ 0,00</b></span>
-                        <span>Liq B: <b id="lbl_liqB_${j.id}">R$ 0,00</b></span>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="flex gap-1 items-center">
+                            <button onclick="ajustar(${c.id}, 'A', -1)" class="bg-slate-700 px-2 rounded">-1</button>
+                            <input type="number" value="${c.stakeA}" oninput="cards.find(x=>x.id==${c.id}).stakeA=parseFloat(this.value); processarCalculos()" class="w-full bg-slate-950 p-1 text-emerald-400 text-center">
+                            <button onclick="ajustar(${c.id}, 'A', 1)" class="bg-slate-700 px-2 rounded">+1</button>
+                        </div>
+                        <div class="flex gap-1 items-center">
+                            <button onclick="ajustar(${c.id}, 'B', -1)" class="bg-slate-700 px-2 rounded">-1</button>
+                            <input type="number" value="${c.stakeB}" oninput="cards.find(x=>x.id==${c.id}).stakeB=parseFloat(this.value); processarCalculos()" class="w-full bg-slate-950 p-1 text-emerald-400 text-center">
+                            <button onclick="ajustar(${c.id}, 'B', 1)" class="bg-slate-700 px-2 rounded">+1</button>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex justify-between text-[10px] uppercase font-bold text-slate-500">
+                        <span>Custo na Rota: <span id="custo_${c.id}" class="text-white">R$ 0,00</span></span>
+                        <span>Liq A: <span id="liqA_${c.id}" class="text-white">R$ 0,00</span></span>
+                        <span>Liq B: <span id="liqB_${c.id}" class="text-white">R$ 0,00</span></span>
                     </div>
                 `;
-                grade.appendChild(card);
+                container.appendChild(div);
             });
-            processarCalculosGlobais();
+            processarCalculos();
         }
 
-        function processarCalculosGlobais() {
-            sincronizarCamposDomParaMemoria();
-            const stakePrincipal = parseFloat(document.getElementById('mstkApostaPrincipal').value) || 0;
-            let dividaAcumulada = stakePrincipal; 
+        function processarCalculos() {
+            let divida = parseFloat(document.getElementById('mstkApostaPrincipal').value) || 0;
+            
+            cards.forEach(c => {
+                const elCusto = document.getElementById(`custo_${c.id}`);
+                const elLiqA = document.getElementById(`liqA_${c.id}`);
+                const elLiqB = document.getElementById(`liqB_${c.id}`);
 
-            bancoJogosInstanciados.forEach(j => {
-                const elCustoRota = document.getElementById(`lbl_custoRota_${j.id}`);
-                const elLiqA = document.getElementById(`lbl_liqA_${j.id}`);
-                const elLiqB = document.getElementById(`lbl_liqB_${j.id}`);
-
-                if(!j.ativo) {
-                    if(elCustoRota) elCustoRota.innerText = "R$ 0,00";
+                if (!c.ativo) {
+                    elCusto.innerText = "R$ 0,00";
                     return;
                 }
 
-                let custoDesteCenário = dividaAcumulada + j.stakeA + j.stakeB;
-                elCustoRota.innerText = `R$ ${custoDesteCenário.toFixed(2)}`;
+                let custoTotalDesteCenario = divida + c.stakeA + c.stakeB;
+                elCusto.innerText = `R$ ${custoTotalDesteCenario.toFixed(2)}`;
 
-                const liquidoA = (j.stakeA * j.oddA) - custoDesteCenário;
-                const liquidoB = (j.stakeB * j.oddB) - custoDesteCenário;
+                let liqA = (c.stakeA * c.oddA) - custoTotalDesteCenario;
+                let liqB = (c.stakeB * c.oddB) - custoTotalDesteCenario;
 
-                elLiqA.innerText = `R$ ${liquidoA.toFixed(2)}`;
-                elLiqA.className = liquidoA >= 0 ? "text-emerald-400" : "text-red-400";
-                elLiqB.innerText = `R$ ${liquidoB.toFixed(2)}`;
-                elLiqB.className = liquidoB >= 0 ? "text-emerald-400" : "text-red-400";
+                elLiqA.innerText = `R$ ${liqA.toFixed(2)}`;
+                elLiqA.className = liqA >= 0 ? "text-emerald-400 font-bold" : "text-red-400 font-bold";
+                
+                elLiqB.innerText = `R$ ${liqB.toFixed(2)}`;
+                elLiqB.className = liqB >= 0 ? "text-emerald-400 font-bold" : "text-red-400 font-bold";
 
-                dividaAcumulada += (j.stakeA + j.stakeB);
+                divida += (c.stakeA + c.stakeB);
             });
         }
 
-        gerarLayoutDosCards();
+        renderizar();
     </script>
 </body>
 </html>
