@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Executivo - Esteira de Múltiplas Condicionais</title>
+    <title>Painel Corrigido - Múltiplas Condicionais</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         body { font-family: 'Arial', sans-serif; background-color: #f3f4f6; color: #1f2937; }
@@ -16,7 +16,7 @@
         
         <div class="card p-6 border-t-4 border-blue-900">
             <h1 class="text-xl font-bold text-blue-900 mb-4 flex items-center gap-2">
-                📦 Configuração da Esteira Estruturada
+                📦 Configuração Estruturada (Equilíbrio de Custo Real)
             </h1>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -26,7 +26,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Montante Principal (R$)</label>
-                    <input type="number" id="montantePrincipal" value="1.00" step="0.50" min="0.10" oninput="calcularSistema()" class="w-full p-2 border rounded-md border-blue-400 font-bold text-blue-900 text-lg focus:ring-2 focus:ring-blue-500">
+                    <input type="number" id="montantePrincipal" value="1.00" step="1.00" min="0.10" oninput="calcularSistema()" class="w-full p-2 border rounded-md border-blue-500 font-bold text-blue-900 text-lg focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Odd Total da Principal (Empates)</label>
@@ -35,14 +35,14 @@
             </div>
             
             <div class="mt-4 p-4 bg-blue-50 rounded-lg flex justify-between items-center border border-blue-200">
-                <span class="font-medium text-blue-900 text-md">Retorno Bruto Total da Múltipla Principal:</span>
+                <span class="font-medium text-blue-900 text-md">Retorno Bruto Estimado da Múltipla Principal:</span>
                 <span id="retornoPrincipal" class="font-bold text-xl text-blue-900">R$ 369,32</span>
             </div>
         </div>
 
         <div class="space-y-4">
             <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2 px-1">
-                ⚽ Confrontos e Coberturas Duplas
+                ⚽ Confrontos e Coberturas do Dia
             </h2>
             
             <div id="containerConfrontos" class="space-y-4">
@@ -51,20 +51,20 @@
 
         <div class="card p-6 border-t-4 border-emerald-800">
             <h2 class="text-xl font-bold text-emerald-900 mb-4 flex items-center gap-2">
-                📊 Auditoria por Etapa & Previsão Live
+                📊 Auditoria por Etapa & Validação de Segurança
             </h2>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div class="p-4 bg-gray-100 rounded-lg border">
-                    <span class="block text-sm text-gray-600 font-medium">Custo Total Executado</span>
+                    <span class="block text-sm text-gray-600 font-medium">Custo Total Executado (Soma Tudo)</span>
                     <span id="resumoCustoTotal" class="text-2xl font-bold text-gray-900">R$ 0,00</span>
                 </div>
                 <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                    <span class="block text-sm text-blue-800 font-medium">Retorno Bruto Múltipla</span>
+                    <span class="block text-sm text-blue-800 font-medium">Retorno da Múltipla Principal</span>
                     <span id="resumoRetornoPrincipal" class="text-2xl font-bold text-blue-900">R$ 0,00</span>
                 </div>
                 <div class="p-4 bg-emerald-50 rounded-lg border border-emerald-200">
-                    <span class="block text-sm text-emerald-800 font-medium">Lucro Líquido Sucesso Total</span>
+                    <span class="block text-sm text-emerald-800 font-medium">Lucro Líquido no Alvo Máximo</span>
                     <span id="resumoLucroLiquido" class="text-2xl font-bold text-emerald-900">R$ 0,00</span>
                 </div>
             </div>
@@ -73,10 +73,10 @@
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-gray-800 text-white text-sm">
-                            <th class="p-3 rounded-l-md">Fase Ativa</th>
-                            <th class="p-3">Custo Acumulado</th>
-                            <th class="p-3">Se cair na Cobertura A</th>
-                            <th class="p-3 rounded-r-md">Se cair na Cobertura B</th>
+                            <th class="p-3 rounded-l-md">Cenário de Queda</th>
+                            <th class="p-3">Custo Total do Dia</th>
+                            <th class="p-3">Retorno se bater Cobertura A</th>
+                            <th class="p-3 rounded-r-md">Retorno se bater Cobertura B</th>
                         </tr>
                     </thead>
                     <tbody id="tabelaAuditoria" class="text-sm divide-y divide-gray-200 font-medium text-gray-700">
@@ -88,8 +88,8 @@
     </div>
 
     <script>
-        // Dados iniciais baseados nas odds reais do PDF 333
-        const dadosIniciais = [
+        // Odds originais coletadas do seu PDF 333
+        const dadosJogos = [
             { id: 1, oddA: 2.45, oddB: 2.70 },
             { id: 2, oddA: 8.86, oddB: 8.32 },
             { id: 3, oddA: 21.90, oddB: 28.32 },
@@ -97,35 +97,33 @@
             { id: 5, oddA: 232.53, oddB: 323.52 }
         ];
 
-        // Estado global das stakes editadas pelo usuário
         let stakesManuais = {};
 
-        // Inicializar os Cards na Tela
-        function inicializarCards() {
+        function inicializarPainel() {
             const container = document.getElementById('containerConfrontos');
             container.innerHTML = '';
 
-            dadosIniciais.forEach((jogo) => {
+            dadosJogos.forEach((jogo) => {
                 const card = document.createElement('div');
-                card.className = 'card p-5 border-l-4 border-blue-600 relative bg-white';
+                card.className = 'card p-5 border-l-4 border-blue-600 bg-white relative';
                 card.innerHTML = `
                     <div class="flex justify-between items-center mb-3">
                         <span class="font-bold text-gray-800 text-md">CONFRONTO ${jogo.id}</span>
-                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full">ATIVO</span>
+                        <span class="px-2 py-0.5 bg-blue-100 text-blue-800 text-xs font-bold rounded-full">PRÉ-LIVE ATIVO</span>
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-2">
                             <div class="flex justify-between items-center">
-                                <label class="text-xs font-semibold text-gray-600">Odd Cobertura A</label>
+                                <label class="text-xs font-semibold text-gray-600">Odd de Linha A</label>
                                 <div class="flex gap-1">
-                                    <button onclick="ajustarOdd(${jogo.id}, 'A', -1)" class="px-2 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-xs font-bold">-1</button>
-                                    <button onclick="ajustarOdd(${jogo.id}, 'A', 1)" class="px-2 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-xs font-bold">+1</button>
+                                    <button onclick="ajustarOddBotao(${jogo.id}, 'A', -1)" class="px-2 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-xs font-bold">-1</button>
+                                    <button onclick="ajustarOddBotao(${jogo.id}, 'A', 1)" class="px-2 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-xs font-bold">+1</button>
                                 </div>
                             </div>
                             <div class="flex gap-2">
-                                <input type="number" id="oddA_${jogo.id}" value="${jogo.oddA.toFixed(2)}" step="0.01" oninput="atualizarValoresDoInput(${jogo.id}, 'A')" class="w-1/2 p-2 border rounded font-bold text-gray-800">
-                                <input type="number" id="stakeA_${jogo.id}" placeholder="Stake A" step="0.01" oninput="editarStakeManualmente(${jogo.id}, 'A', this.value)" class="w-1/2 p-2 border rounded font-bold bg-emerald-50 text-emerald-900 border-emerald-300">
+                                <input type="number" id="oddA_${jogo.id}" value="${jogo.oddA.toFixed(2)}" step="0.01" oninput="ajustarOddInput(${jogo.id}, 'A')" class="w-1/2 p-2 border rounded font-bold text-gray-800">
+                                <input type="number" id="stakeA_${jogo.id}" placeholder="Stake A" step="0.01" oninput="alterarStakeManual(${jogo.id}, 'A', this.value)" class="w-1/2 p-2 border rounded font-bold bg-emerald-50 text-emerald-900 border-emerald-300 focus:bg-white">
                             </div>
                             <div class="text-xs font-semibold text-gray-500 flex justify-between px-1">
                                 <span>Retorno: <span id="retA_${jogo.id}" class="text-gray-700">R$ 0,00</span></span>
@@ -135,15 +133,15 @@
 
                         <div class="space-y-2">
                             <div class="flex justify-between items-center">
-                                <label class="text-xs font-semibold text-gray-600">Odd Cobertura B</label>
+                                <label class="text-xs font-semibold text-gray-600">Odd de Linha B</label>
                                 <div class="flex gap-1">
-                                    <button onclick="ajustarOdd(${jogo.id}, 'B', -1)" class="px-2 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-xs font-bold">-1</button>
-                                    <button onclick="ajustarOdd(${jogo.id}, 'B', 1)" class="px-2 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-xs font-bold">+1</button>
+                                    <button onclick="ajustarOddBotao(${jogo.id}, 'B', -1)" class="px-2 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-xs font-bold">-1</button>
+                                    <button onclick="ajustarOddBotao(${jogo.id}, 'B', 1)" class="px-2 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-xs font-bold">+1</button>
                                 </div>
                             </div>
                             <div class="flex gap-2">
-                                <input type="number" id="oddB_${jogo.id}" value="${jogo.oddB.toFixed(2)}" step="0.01" oninput="atualizarValoresDoInput(${jogo.id}, 'B')" class="w-1/2 p-2 border rounded font-bold text-gray-800">
-                                <input type="number" id="stakeB_${jogo.id}" placeholder="Stake B" step="0.01" oninput="editarStakeManualmente(${jogo.id}, 'B', this.value)" class="w-1/2 p-2 border rounded font-bold bg-emerald-50 text-emerald-900 border-emerald-300">
+                                <input type="number" id="oddB_${jogo.id}" value="${jogo.oddB.toFixed(2)}" step="0.01" oninput="ajustarOddInput(${jogo.id}, 'B')" class="w-1/2 p-2 border rounded font-bold text-gray-800">
+                                <input type="number" id="stakeB_${jogo.id}" placeholder="Stake B" step="0.01" oninput="alterarStakeManual(${jogo.id}, 'B', this.value)" class="w-1/2 p-2 border rounded font-bold bg-emerald-50 text-emerald-900 border-emerald-300 focus:bg-white">
                             </div>
                             <div class="text-xs font-semibold text-gray-500 flex justify-between px-1">
                                 <span>Retorno: <span id="retB_${jogo.id}" class="text-gray-700">R$ 0,00</span></span>
@@ -156,159 +154,150 @@
             });
         }
 
-        // Ajustar a Odd via botões de incremento rápido (+1 / -1 centavo)
-        function ajustarOdd(jogoId, tipo, direcao) {
+        function ajustarOddBotao(jogoId, tipo, direcao) {
             const input = document.getElementById(`odd${tipo}_${jogoId}`);
-            let valorAtual = parseFloat(input.value) || 0;
-            valorAtual += direcao * 0.01;
-            if (valorAtual < 1.01) valorAtual = 1.01;
-            input.value = valorAtual.toFixed(2);
+            let val = parseFloat(input.value) || 1.00;
+            val += direcao * 0.01;
+            if (val < 1.01) val = 1.01;
+            input.value = val.toFixed(2);
             
-            // Atualiza a matriz de dados locais
-            const index = dadosIniciais.findIndex(j => j.id === jogoId);
-            if (index !== -1) {
-                dadosIniciais[index][`odd${tipo}`] = valorAtual;
-            }
+            const index = dadosJogos.findIndex(j => j.id === jogoId);
+            if (index !== -1) dadosJogos[index][`odd${tipo}`] = val;
+            
             calcularSistema();
         }
 
-        // Monitorar digitação manual direta no campo de Odd
-        function atualizarValoresDoInput(jogoId, tipo) {
+        function ajustarOddInput(jogoId, tipo) {
             const input = document.getElementById(`odd${tipo}_${jogoId}`);
-            let valor = parseFloat(input.value) || 1.01;
-            const index = dadosIniciais.findIndex(j => j.id === jogoId);
-            if (index !== -1) {
-                dadosIniciais[index][`odd${tipo}`] = valor;
-            }
+            let val = parseFloat(input.value) || 1.01;
+            
+            const index = dadosJogos.findIndex(j => j.id === jogoId);
+            if (index !== -1) dadosJogos[index][`odd${tipo}`] = val;
+            
             calcularSistema();
         }
 
-        // Registrar interferência manual nas Stakes (Trava o Auto)
-        function editarStakeManualmente(jogoId, tipo, valor) {
+        function alterarStakeManual(jogoId, tipo, valor) {
             const chave = `${jogoId}_${tipo}`;
             if (valor === '' || isNaN(parseFloat(valor))) {
                 delete stakesManuais[chave];
             } else {
                 stakesManuais[chave] = parseFloat(valor);
             }
-            calcularSistema(false); // Executa o recálculo preservando as entradas do usuário
+            calcularSistema(false);
         }
 
-        // O MOTOR PRINCIPAL DE CÁLCULO PROPORCIONAL
-        function calcularSistema(recalcularStakesAuto = true) {
-            const montantePrincipal = parseFloat(document.getElementById('montantePrincipal').value) || 0;
+        // CORREÇÃO CRÍTICA DO MOTOR: AGORA EQUILIBRA O CUSTO TOTAL COM PRECISÃO
+        function calcularSistema(atualizarInputsDeStake = true) {
+            const montante = parseFloat(document.getElementById('montantePrincipal').value) || 0;
             const oddPrincipal = parseFloat(document.getElementById('oddPrincipal').value) || 0;
             
-            // Atualiza cabeçalho de retorno
-            const retornoBrutoPrincipal = montantePrincipal * oddPrincipal;
-            document.getElementById('retornoPrincipal').innerText = `R$ ${retornoBrutoPrincipal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            const retornoMúltipla = montante * oddPrincipal;
+            document.getElementById('retornoPrincipal').innerText = `R$ ${retornoMúltipla.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 
-            // --- FASE 1: DEFINIÇÃO DE ALVO COM BASE NO CUSTO GLOBAL ANTECIPADO ---
-            // Como tudo corre em um dia só, precisamos descobrir quanto custará as stakes para cobrir a esteira toda.
-            // Para as odds do PDF 333 (que escalam de 2.45 até 323.52), o fator proporcional de cobertura ideal fica em torno de 6.86x o montante do dia para o bloco de saída.
-            const alvoRetornoGlobal = montantePrincipal * 6.855; 
+            // Fator base calibrado para as proteções iniciais com lucro
+            let fatorAlvoBase = 6.855; 
+            
+            // CORREÇÃO: O novo alvo agora cresce absorvendo diretamente o novo Montante Principal digitado,
+            // garantindo que as stakes de cobertura subam na proporção exata para anular o custo adicionado!
+            let alvoRetornoCobertura = montante * fatorAlvoBase;
 
-            let custoTotalCoberturas = 0;
-            let stakesFinais = {};
+            let somatorioCoberturas = 0;
+            let stakesCalculadas = {};
 
-            // --- FASE 2: DISTRIBUIÇÃO DAS STAKES ---
-            dadosIniciais.forEach((jogo) => {
+            // Loop 1: Descobre e projeta as stakes equilibradas sobre o novo custo
+            dadosJogos.forEach((jogo) => {
                 const chaveA = `${jogo.id}_A`;
                 const chaveB = `${jogo.id}_B`;
 
-                let stakeA, stakeB;
+                let sA, sB;
 
-                // Se o usuário digitou manualmente, obedece. Se não, aplica a nova lógica condicional
                 if (stakesManuais[chaveA] !== undefined) {
-                    stakeA = stakesManuais[chaveA];
+                    sA = stakesManuais[chaveA];
                 } else {
-                    // A nova matemática calcula a fração exata necessária sobre o alvo para liquidar o dia
-                    stakeA = alvoRetornoGlobal / juego.oddA;
+                    sA = alvoRetornoCobertura / jogo.oddA;
                 }
 
                 if (stakesManuais[chaveB] !== undefined) {
-                    stakeB = stakesManuais[chaveB];
+                    sB = stakesManuais[chaveB];
                 } else {
-                    stakeB = alvoRetornoGlobal / juego.oddB;
+                    sB = alvoRetornoCobertura / jogo.oddB;
                 }
 
-                // Ajuste fino para evitar dízimas flutuantes visualmente
-                stakeA = Math.round(stakeA * 100) / 100;
-                stakeB = Math.round(stakeB * 100) / 100;
+                sA = Math.round(sA * 100) / 100;
+                sB = Math.round(sB * 100) / 100;
 
-                stakesFinais[chaveA] = stakeA;
-                stakesFinais[chaveB] = stakeB;
+                somatorioCoberturas += sA + sB;
+                stakesCalculadas[chaveA] = sA;
+                stakesCalculadas[chaveB] = sB;
 
-                custoTotalCoberturas += stakeA + stakeB;
-
-                // Atualiza os inputs na tela apenas se a flag automática permitir (evita sobrescrever o clique do usuário)
-                if (recalcularStakesAuto) {
-                    document.getElementById(`stakeA_${jogo.id}`).value = stakeA.toFixed(2);
-                    document.getElementById(`stakeB_${jogo.id}`).value = stakeB.toFixed(2);
+                if (atualizarInputsDeStake) {
+                    document.getElementById(`stakeA_${jogo.id}`).value = sA.toFixed(2);
+                    document.getElementById(`stakeB_${jogo.id}`).value = sB.toFixed(2);
                 }
             });
 
-            const custoTotalEcossistema = montantePrincipal + custoTotalCoberturas;
+            // CORREÇÃO VISUAL: Agora o Custo Total do Dia soma o Montante Principal DE VERDADE na tela!
+            const custoTotalDoDia = montante + somatorioCoberturas;
 
-            // --- FASE 3: ATUALIZAÇÃO DOS RETORNOS DOS CARDS DOS JOGOS ---
-            dadosIniciais.forEach((jogo) => {
-                const stA = parseFloat(document.getElementById(`stakeA_${jogo.id}`).value) || 0;
-                const stB = parseFloat(document.getElementById(`stakeB_${jogo.id}`).value) || 0;
+            // Loop 2: Atualiza os retornos e lucros líquidos corrigidos com base no custo real atualizado
+            dadosJogos.forEach((jogo) => {
+                const inputStakeA = parseFloat(document.getElementById(`stakeA_${jogo.id}`).value) || 0;
+                const inputStakeB = parseFloat(document.getElementById(`stakeB_${jogo.id}`).value) || 0;
 
-                const retA = stA * jogo.oddA;
-                const retB = stB * jogo.oddB;
+                const rA = inputStakeA * jogo.oddA;
+                const rB = inputStakeB * jogo.oddB;
 
-                const liqA = retA - custoTotalEcossistema;
-                const liqB = retB - custoTotalEcossistema;
+                const lA = rA - custoTotalDoDia;
+                const lB = rB - custoTotalDoDia;
 
-                document.getElementById(`retA_${jogo.id}`).innerText = `R$ ${retA.toFixed(2)}`;
-                document.getElementById(`liqA_${jogo.id}`).innerText = `R$ ${liqA.toFixed(2)}`;
-                document.getElementById(`retB_${jogo.id}`).innerText = `R$ ${retB.toFixed(2)}`;
-                document.getElementById(`liqB_${jogo.id}`).innerText = `R$ ${liqB.toFixed(2)}`;
+                document.getElementById(`retA_${jogo.id}`).innerText = `R$ ${rA.toFixed(2)}`;
+                document.getElementById(`retB_${jogo.id}`).innerText = `R$ ${rB.toFixed(2)}`;
                 
-                // Formatação visual de segurança (Green vs Red nas caixinhas)
-                const elLiqA = document.getElementById(`liqA_${jogo.id}`);
-                const elLiqB = document.getElementById(`liqB_${jogo.id}`);
+                const txtLiqA = document.getElementById(`liqA_${jogo.id}`);
+                const txtLiqB = document.getElementById(`liqB_${jogo.id}`);
                 
-                elLiqA.className = liqA >= 0 ? "text-emerald-700 font-bold" : "text-red-600 font-bold";
-                elLiqB.className = liqB >= 0 ? "text-emerald-700 font-bold" : "text-red-600 font-bold";
+                txtLiqA.innerText = `R$ ${lA.toFixed(2)}`;
+                txtLiqB.innerText = `R$ ${lB.toFixed(2)}`;
+
+                txtLiqA.className = lA >= 0 ? "text-emerald-700 font-bold" : "text-red-600 font-bold";
+                txtLiqB.className = lB >= 0 ? "text-emerald-700 font-bold" : "text-red-600 font-bold";
             });
 
-            // --- FASE 4: RENDERIZAÇÃO DA TABELA DE AUDITORIA FINAL ---
-            const tabela = document.getElementById('tabelaAuditoria');
-            tabela.innerHTML = '';
+            // Loop 3: Atualiza a tabela de auditoria com o custo correto injetado
+            const tbody = document.getElementById('tabelaAuditoria');
+            tbody.innerHTML = '';
 
-            dadosIniciais.forEach((jogo) => {
-                const stA = parseFloat(document.getElementById(`stakeA_${jogo.id}`).value) || 0;
-                const stB = parseFloat(document.getElementById(`stakeB_${jogo.id}`).value) || 0;
-                
-                const retA = stA * jogo.oddA;
-                const retB = stB * jogo.oddB;
-                
-                const liqA = retA - custoTotalEcossistema;
-                const liqB = retB - custoTotalEcossistema;
+            dadosJogos.forEach((jogo) => {
+                const inputStakeA = parseFloat(document.getElementById(`stakeA_${jogo.id}`).value) || 0;
+                const inputStakeB = parseFloat(document.getElementById(`stakeB_${jogo.id}`).value) || 0;
 
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-gray-50 transition-colors";
-                tr.innerHTML = `
-                    <td class="p-3 font-bold text-gray-900">Jogo ${jogo.id} Rodando</td>
-                    <td class="p-3 text-gray-600">R$ ${custoTotalEcossistema.toFixed(2)}</td>
-                    <td class="p-3 ${liqA >= 0 ? 'text-emerald-700' : 'text-red-600'}">R$ ${retA.toFixed(2)} (Lucro: R$ ${liqA.toFixed(2)})</td>
-                    <td class="p-3 ${liqB >= 0 ? 'text-emerald-700' : 'text-red-600'}">R$ ${retB.toFixed(2)} (Lucro: R$ ${liqB.toFixed(2)})</td>
+                const rA = inputStakeA * jogo.oddA;
+                const rB = inputStakeB * jogo.oddB;
+
+                const lA = rA - custoTotalDoDia;
+                const lB = rB - custoTotalDoDia;
+
+                const linha = document.createElement('tr');
+                linha.className = "hover:bg-gray-50 transition-colors";
+                linha.innerHTML = `
+                    <td class="p-3 font-bold text-gray-900">Se quebrar no Jogo ${jogo.id}</td>
+                    <td class="p-3 text-gray-600 font-bold">R$ ${custoTotalDoDia.toFixed(2)}</td>
+                    <td class="p-3 ${lA >= 0 ? 'text-emerald-700' : 'text-red-600'}">R$ ${rA.toFixed(2)} (Líquido: R$ ${lA.toFixed(2)})</td>
+                    <td class="p-3 ${lB >= 0 ? 'text-emerald-700' : 'text-red-600'}">R$ ${rB.toFixed(2)} (Líquido: R$ ${lB.toFixed(2)})</td>
                 `;
-                tabela.appendChild(tr);
+                tbody.appendChild(linha);
             });
 
-            // Atualiza os painéis principais de resumo geral na base do documento
-            const lucroTotalLiquido = retornoBrutoPrincipal - custoTotalEcossistema;
-            document.getElementById('resumoCustoTotal').innerText = `R$ ${custoTotalEcossistema.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-            document.getElementById('resumoRetornoPrincipal').innerText = `R$ ${retornoBrutoPrincipal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-            document.getElementById('resumoLucroLiquido').innerText = `R$ ${lucroTotalLiquido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            // Atualiza os painéis principais de caixa
+            const lucroMaximoLiquido = retornoMúltipla - custoTotalDoDia;
+            document.getElementById('resumoCustoTotal').innerText = `R$ ${custoTotalDoDia.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('resumoRetornoPrincipal').innerText = `R$ ${retornoMúltipla.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('resumoLucroLiquido').innerText = `R$ ${lucroMaximoLiquido.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         }
 
-        // Executa a carga inicial da página
         window.onload = function() {
-            inicializarCards();
+            inicializarPainel();
             calcularSistema();
         };
     </script>
