@@ -3,50 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Executivo Surebet - Sistema Oficial</title>
+    <title>Painel Executivo Surebet - Corrigido</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         body { font-family: 'Arial', sans-serif; background-color: #0f172a; }
-        input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        input { background: #1e293b !important; color: white !important; }
     </style>
 </head>
-<body class="text-slate-100 p-6 custom-scrollbar">
-
+<body class="text-slate-100 p-6">
 <div class="max-w-7xl mx-auto space-y-6">
-    <div class="flex justify-between items-center bg-slate-950 p-6 rounded-xl border border-slate-800 shadow-xl">
-        <h1 class="text-2xl font-black text-white">⚡ MOTOR SUREBET EXECUTIVO</h1>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="bg-slate-950 p-6 rounded-xl border border-slate-800">
-            <h2 class="text-xs font-bold uppercase mb-4 text-slate-400">Principal (Aposta Mãe)</h2>
-            <input type="number" id="mstkApostaPrincipal" value="1.00" step="0.01" oninput="processarCalculos()" class="w-full bg-slate-900 p-3 rounded font-black text-emerald-400 text-xl border border-slate-700">
-        </div>
-        <div class="bg-slate-950 p-6 rounded-xl border border-slate-800">
-            <h2 class="text-xs font-bold uppercase mb-4 text-slate-400">Ação</h2>
-            <button onclick="adicionarCard()" class="w-full bg-emerald-700 p-3 rounded font-bold text-xs uppercase">Adicionar Card de Proteção</button>
-        </div>
+    <div class="bg-slate-950 p-6 rounded-xl border border-slate-800">
+        <h1 class="text-2xl font-black">⚡ MOTOR SUREBET EXECUTIVO</h1>
+        <button onclick="adicionarCard()" class="mt-4 bg-emerald-700 p-3 rounded w-full font-bold uppercase text-xs">Adicionar Novo Card (Proteção)</button>
     </div>
 
     <div id="mGrade" class="space-y-4"></div>
 
     <div class="bg-slate-950 p-6 rounded-xl border border-slate-800">
         <h2 class="text-xs font-bold uppercase mb-4">Consolidação: Custo Acumulado Total</h2>
-        <span id="mtxtCustoTotal" class="text-3xl font-black text-white">R$ 0,00</span>
+        <span id="mtxtCustoTotal" class="text-3xl font-black">R$ 0,00</span>
     </div>
 </div>
 
 <script>
-    let banco = [
-        { id: 1, ativo: true, oddA: 2.45, oddB: 2.70, stakeA: 11.5, stakeB: 10.0 },
-        { id: 2, ativo: true, oddA: 8.86, oddB: 8.32, stakeA: 3.8, stakeB: 4.0 },
-        { id: 3, ativo: true, oddA: 21.90, oddB: 28.32, stakeA: 2.5, stakeB: 2.0 },
-        { id: 4, ativo: true, oddA: 81.84, oddB: 92.11, stakeA: 3.0, stakeB: 3.0 },
-        { id: 5, ativo: true, oddA: 232.53, oddB: 323.52, stakeA: 1.0, stakeB: 1.0 }
-    ];
+    let banco = [];
+
+    function adicionarCard() {
+        // Agora o card nasce com valores padrão para não quebrar o cálculo
+        banco.push({ id: Date.now(), oddA: 2.0, oddB: 2.0, stakeA: 0, stakeB: 0 });
+        renderizar();
+    }
 
     function renderizar() {
         const grade = document.getElementById('mGrade');
@@ -54,52 +40,40 @@
         banco.forEach(j => {
             grade.innerHTML += `
             <div class="bg-slate-950 p-4 rounded border border-slate-800">
-                <div class="flex justify-between mb-2 text-xs font-bold text-slate-400">
-                    <span>CARD #${j.id}</span>
-                    <button onclick="banco=banco.filter(x=>x.id!=${j.id}); renderizar()" class="text-red-500">EXCLUIR</button>
-                </div>
                 <div class="grid grid-cols-4 gap-2">
-                    <input type="number" value="${j.oddA}" oninput="banco.find(x=>x.id==${j.id}).oddA=parseFloat(this.value); processarCalculos()" class="bg-slate-900 p-1 text-center">
-                    <input type="number" value="${j.oddB}" oninput="banco.find(x=>x.id==${j.id}).oddB=parseFloat(this.value); processarCalculos()" class="bg-slate-900 p-1 text-center">
-                    <input type="number" value="${j.stakeA}" oninput="banco.find(x=>x.id==${j.id}).stakeA=parseFloat(this.value); processarCalculos()" class="bg-slate-900 p-1 text-center text-emerald-400 font-bold">
-                    <input type="number" value="${j.stakeB}" oninput="banco.find(x=>x.id==${j.id}).stakeB=parseFloat(this.value); processarCalculos()" class="bg-slate-900 p-1 text-center text-emerald-400 font-bold">
+                    <input type="number" placeholder="Odd A" value="${j.oddA}" oninput="banco.find(x=>x.id==${j.id}).oddA=parseFloat(this.value)||0; processarCalculos()" class="p-2 text-center">
+                    <input type="number" placeholder="Odd B" value="${j.oddB}" oninput="banco.find(x=>x.id==${j.id}).oddB=parseFloat(this.value)||0; processarCalculos()" class="p-2 text-center">
+                    <input type="number" placeholder="Stake A" value="${j.stakeA}" oninput="banco.find(x=>x.id==${j.id}).stakeA=parseFloat(this.value)||0; processarCalculos()" class="p-2 text-center text-emerald-400 font-bold">
+                    <input type="number" placeholder="Stake B" value="${j.stakeB}" oninput="banco.find(x=>x.id==${j.id}).stakeB=parseFloat(this.value)||0; processarCalculos()" class="p-2 text-center text-emerald-400 font-bold">
                 </div>
-                <div class="text-[10px] mt-2">Custo Acumulado: <span id="c_${j.id}" class="text-white">0</span> | Liq A: <span id="la_${j.id}">0</span> | Liq B: <span id="lb_${j.id}">0</span></div>
+                <div class="text-[10px] mt-2 text-slate-400">
+                    Custo Acumulado: <span id="c_${j.id}" class="text-white">0</span> | 
+                    Liq A: <span id="la_${j.id}">0</span> | 
+                    Liq B: <span id="lb_${j.id}">0</span>
+                </div>
             </div>`;
         });
         processarCalculos();
     }
 
     function processarCalculos() {
-        let custoAcumulado = parseFloat(document.getElementById('mstkApostaPrincipal').value) || 0;
+        let custoAcumulado = 0; // Se quiser considerar a Aposta Mãe, inicie aqui
 
         banco.forEach(j => {
-            if(!j.ativo) return;
-            
-            // O custo deste card é o acumulado anterior + o que está sendo investido agora
             custoAcumulado += (j.stakeA + j.stakeB);
             
             document.getElementById('c_'+j.id).innerText = `R$ ${custoAcumulado.toFixed(2)}`;
             
-            // O Liq A/B subtrai este custo acumulado atual
-            let liqA = (j.stakeA * j.oddA) - custoAcumulado;
-            let liqB = (j.stakeB * j.oddB) - custoAcumulado;
+            // Tratamento: só calcula se a odd for maior que zero para não dar erro
+            let liqA = j.oddA > 0 ? (j.stakeA * j.oddA) - custoAcumulado : 0;
+            let liqB = j.oddB > 0 ? (j.stakeB * j.oddB) - custoAcumulado : 0;
             
             document.getElementById('la_'+j.id).innerText = liqA.toFixed(2);
-            document.getElementById('la_'+j.id).className = liqA >= 0 ? "text-emerald-400" : "text-red-400";
             document.getElementById('lb_'+j.id).innerText = liqB.toFixed(2);
-            document.getElementById('lb_'+j.id).className = liqB >= 0 ? "text-emerald-400" : "text-red-400";
         });
 
         document.getElementById('mtxtCustoTotal').innerText = `R$ ${custoAcumulado.toFixed(2)}`;
     }
-
-    function adicionarCard() {
-        banco.push({ id: banco.length + 1, ativo: true, oddA: 2.0, oddB: 2.0, stakeA: 0, stakeB: 0 });
-        renderizar();
-    }
-
-    renderizar();
 </script>
 </body>
 </html>
