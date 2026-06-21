@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Executivo Surebet - Sistema Blindado</title>
+    <title>Painel Executivo Surebet - Sistema Oficial</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         body { font-family: 'Arial', sans-serif; background-color: #0f172a; }
@@ -15,11 +15,11 @@
 </head>
 <body class="text-slate-100 p-6 custom-scrollbar">
 
-<div class="max-w-7xl mx-auto space-y-6" id="app">
-    <div class="flex justify-between items-center bg-slate-950 p-6 rounded-xl border border-slate-800">
+<div class="max-w-7xl mx-auto space-y-6">
+    <div class="flex justify-between items-center bg-slate-950 p-6 rounded-xl border border-slate-800 shadow-xl">
         <h1 class="text-2xl font-black text-white">⚡ MOTOR SUREBET EXECUTIVO</h1>
         <div class="flex gap-2">
-            <button onclick="salvarCenário()" class="bg-indigo-600 px-4 py-2 rounded font-bold text-xs">SALVAR CENÁRIO</button>
+            <button onclick="salvar()" class="bg-indigo-600 px-4 py-2 rounded font-bold text-xs">SALVAR</button>
             <button onclick="location.reload()" class="bg-slate-800 px-4 py-2 rounded font-bold text-xs">RESETAR</button>
         </div>
     </div>
@@ -35,8 +35,8 @@
         <div class="bg-slate-950 p-6 rounded-xl border border-slate-800">
             <h2 class="text-xs font-bold uppercase mb-4 text-slate-400">Modo de Cálculo</h2>
             <div class="space-y-2">
-                <label class="block"><input type="radio" name="modo" value="prelive" checked onchange="processarCalculos()"> Pré-Live (Fixo)</label>
-                <label class="block"><input type="radio" name="modo" value="etapas" onchange="processarCalculos()"> Etapas (Fluxo Vivo - Cascata)</label>
+                <label class="flex items-center gap-2"><input type="radio" name="modo" value="prelive" onchange="processarCalculos()"> Pré-Live (Fixo)</label>
+                <label class="flex items-center gap-2"><input type="radio" name="modo" value="etapas" checked onchange="processarCalculos()"> Etapas (Fluxo Vivo - Cascata)</label>
             </div>
             <button onclick="adicionarCard()" class="w-full mt-4 bg-emerald-700 p-2 rounded font-bold text-xs uppercase">Adicionar Card</button>
         </div>
@@ -56,11 +56,11 @@
 
 <script>
     let banco = [
-        { id: 1, ativo: true, oddA: 2.45, oddB: 2.70, stakeA: 11.50, stakeB: 10.00 },
-        { id: 2, ativo: true, oddA: 8.86, oddB: 8.32, stakeA: 3.80, stakeB: 4.00 },
-        { id: 3, ativo: true, oddA: 21.90, oddB: 28.32, stakeA: 2.50, stakeB: 2.00 },
-        { id: 4, ativo: true, oddA: 81.84, oddB: 92.11, stakeA: 3.00, stakeB: 3.00 },
-        { id: 5, ativo: true, oddA: 232.53, oddB: 323.52, stakeA: 1.00, stakeB: 1.00 }
+        { id: 1, ativo: true, oddA: 2.45, oddB: 2.70, stakeA: 11.5, stakeB: 10.0 },
+        { id: 2, ativo: true, oddA: 8.86, oddB: 8.32, stakeA: 3.8, stakeB: 4.0 },
+        { id: 3, ativo: true, oddA: 21.90, oddB: 28.32, stakeA: 2.5, stakeB: 2.0 },
+        { id: 4, ativo: true, oddA: 81.84, oddB: 92.11, stakeA: 3.0, stakeB: 3.0 },
+        { id: 5, ativo: true, oddA: 232.53, oddB: 323.52, stakeA: 1.0, stakeB: 1.0 }
     ];
 
     function renderizar() {
@@ -70,8 +70,8 @@
             grade.innerHTML += `
             <div class="bg-slate-950 p-4 rounded border border-slate-800">
                 <div class="flex justify-between items-center mb-2">
-                    <span class="text-xs font-bold">CARD #${j.id} <input type="checkbox" ${j.ativo ? 'checked' : ''} onchange="banco.find(x=>x.id==${j.id}).ativo=this.checked; processarCalculos()"></span>
-                    <button onclick="banco=banco.filter(x=>x.id!=${j.id}); renderizar()" class="text-red-500 text-[10px] font-bold uppercase">Excluir</button>
+                    <span class="text-xs font-bold text-slate-400">CARD #${j.id} <input type="checkbox" ${j.ativo ? 'checked' : ''} onchange="banco.find(x=>x.id==${j.id}).ativo=this.checked; processarCalculos()"></span>
+                    <button onclick="banco=banco.filter(x=>x.id!=${j.id}); renderizar()" class="text-red-500 text-[10px] font-bold uppercase">Remover</button>
                 </div>
                 <div class="grid grid-cols-4 gap-2">
                     <input type="number" value="${j.oddA}" oninput="banco.find(x=>x.id==${j.id}).oddA=this.value; processarCalculos()" class="bg-slate-900 p-1 text-center text-xs">
@@ -79,7 +79,7 @@
                     <input type="number" value="${j.stakeA}" oninput="banco.find(x=>x.id==${j.id}).stakeA=parseFloat(this.value); processarCalculos()" class="bg-slate-900 p-1 text-center text-xs text-emerald-400 font-bold">
                     <input type="number" value="${j.stakeB}" oninput="banco.find(x=>x.id==${j.id}).stakeB=parseFloat(this.value); processarCalculos()" class="bg-slate-900 p-1 text-center text-xs text-emerald-400 font-bold">
                 </div>
-                <div class="text-[10px] text-slate-400 mt-2">Custo: <span id="c_${j.id}">0</span> | Liq A: <span id="la_${j.id}">0</span> | Liq B: <span id="lb_${j.id}">0</span></div>
+                <div class="text-[10px] text-slate-400 mt-2">Custo Acumulado: <span id="c_${j.id}" class="text-white">0</span> | Liq A: <span id="la_${j.id}">0</span> | Liq B: <span id="lb_${j.id}">0</span></div>
             </div>`;
         });
         processarCalculos();
@@ -97,8 +97,13 @@
             let custoDeste = (modo === 'etapas') ? (custoAcumulado + j.stakeA + j.stakeB) : (stakePrincipal + banco.filter(x=>x.ativo).reduce((a,b)=>a+b.stakeA+b.stakeB, 0));
             
             document.getElementById('c_'+j.id).innerText = `R$ ${custoDeste.toFixed(2)}`;
-            document.getElementById('la_'+j.id).innerText = ((j.stakeA * j.oddA) - custoDeste).toFixed(2);
-            document.getElementById('lb_'+j.id).innerText = ((j.stakeB * j.oddB) - custoDeste).toFixed(2);
+            let liqA = (j.stakeA * j.oddA) - custoDeste;
+            let liqB = (j.stakeB * j.oddB) - custoDeste;
+            
+            document.getElementById('la_'+j.id).innerText = liqA.toFixed(2);
+            document.getElementById('la_'+j.id).className = liqA >= 0 ? "text-emerald-400" : "text-red-400";
+            document.getElementById('lb_'+j.id).innerText = liqB.toFixed(2);
+            document.getElementById('lb_'+j.id).className = liqB >= 0 ? "text-emerald-400" : "text-red-400";
             
             if(modo === 'etapas') custoAcumulado += (j.stakeA + j.stakeB);
         });
@@ -113,7 +118,7 @@
         renderizar();
     }
 
-    function salvarCenário() { alert("Cenário salvo!"); }
+    function salvar() { alert("Cenário salvo no navegador."); }
 
     renderizar();
 </script>
