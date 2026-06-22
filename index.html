@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Painel Executivo de Recuperação Surebet</title>
+    <title>Painel Executivo: Múltipla Principal + Cascata</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         body { background-color: #020617; color: #f1f5f9; font-family: sans-serif; }
@@ -12,42 +12,56 @@
 </head>
 <body class="p-6">
     <div class="max-w-6xl mx-auto space-y-6">
-        <h1 class="text-2xl font-black text-white text-center uppercase tracking-widest">⚡ Painel Executivo Surebet + 5 Cards de Recuperação</h1>
+        <h1 class="text-2xl font-black text-white text-center uppercase tracking-widest">⚡ Painel Executivo: Controle de Múltipla Principal</h1>
+
+        <div class="grid grid-cols-3 gap-4 bg-indigo-950 p-4 rounded-xl border border-indigo-800">
+            <div>
+                <p class="text-[10px] text-indigo-300 uppercase font-bold">Investimento Total (Cards)</p>
+                <div id="mCustoTotal" class="text-lg font-black text-white">R$ 0,00</div>
+            </div>
+            <div>
+                <p class="text-[10px] text-indigo-300 uppercase font-bold">Retorno Múltipla</p>
+                <div id="mRetornoPrincipal" class="text-lg font-black text-emerald-400">R$ 0,00</div>
+            </div>
+            <div>
+                <p class="text-[10px] text-indigo-300 uppercase font-bold">Líquido Final (Dia)</p>
+                <div id="mLiquidoFinal" class="text-lg font-black text-white">R$ 0,00</div>
+            </div>
+        </div>
 
         <div class="card border-l-4 border-l-indigo-500">
-            <h2 class="font-bold text-indigo-400 mb-4">SUREBET BASE (Jogo 1 + Jogo 2)</h2>
-            <div class="grid grid-cols-4 gap-4">
-                <input type="number" id="montanteTotal" placeholder="Montante Total" oninput="processar()" class="input-box border-emerald-500">
-                <input type="number" id="oddDupla" placeholder="Odd Dupla (J1)" oninput="processar()" class="input-box">
-                <input type="number" id="oddProtA" placeholder="Odd Prot A (J2)" oninput="processar()" class="input-box">
-                <input type="number" id="oddProtB" placeholder="Odd Prot B (J2)" oninput="processar()" class="input-box">
+            <h2 class="font-bold text-indigo-400 mb-4">MÚLTIPLA PRINCIPAL (A Base do Lucro)</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <input type="number" id="mstk" placeholder="Stake Múltipla (R$)" oninput="processar()" class="input-box border-indigo-500">
+                <input type="number" id="modd" placeholder="Odd Acumulada" oninput="processar()" class="input-box border-indigo-500">
             </div>
-            <div class="mt-4 grid grid-cols-3 gap-4 text-xs font-bold text-emerald-400" id="resSurebet"></div>
+        </div>
+
+        <div class="card border-l-4 border-l-emerald-500">
+            <h2 class="font-bold text-emerald-400 mb-4">SUREBET DINÂMICA (Base 1 e 2)</h2>
+            <div class="grid grid-cols-3 gap-4">
+                <input type="number" id="montanteSurebet" placeholder="Montante Surebet" oninput="processar()" class="input-box">
+                <input type="number" id="oddSurebetA" placeholder="Odd A" oninput="processar()" class="input-box">
+                <input type="number" id="oddSurebetB" placeholder="Odd B" oninput="processar()" class="input-box">
+            </div>
         </div>
 
         <div id="mGrade" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
     </div>
 
 <script>
-    let recuperacoes = [2, 3, 4, 5, 6];
+    let recuperacoes = [3, 4, 5, 6, 7];
 
     function processar() {
-        const total = parseFloat(document.getElementById('montanteTotal').value) || 0;
-        const oD = parseFloat(document.getElementById('oddDupla').value) || 1;
-        const oA = parseFloat(document.getElementById('oddProtA').value) || 1;
-        const oB = parseFloat(document.getElementById('oddProtB').value) || 1;
-
-        // Distribuição simples (1/3 para cada)
-        const stake = total / 3;
-        const retD = (stake * oD) - total;
-        const retA = (stake * oA) - total;
-        const retB = (stake * oB) - total;
-
-        document.getElementById('resSurebet').innerHTML = 
-            `<div>Líq Dupla: R$ ${retD.toFixed(2)}</div><div>Líq Prot A: R$ ${retA.toFixed(2)}</div><div>Líq Prot B: R$ ${retB.toFixed(2)}</div>`;
-
-        let custoAcumulado = total;
+        const mstk = parseFloat(document.getElementById('mstk').value) || 0;
+        const modd = parseFloat(document.getElementById('modd').value) || 0;
+        const montanteS = parseFloat(document.getElementById('montanteSurebet').value) || 0;
         
+        const retornoPrincipal = mstk * modd;
+        
+        let custoAcumulado = montanteS;
+        
+        // Processa cards de recuperação
         recuperacoes.forEach(id => {
             const sA = parseFloat(document.getElementById(`stkA_${id}`).value) || 0;
             const sB = parseFloat(document.getElementById(`stkB_${id}`).value) || 0;
@@ -60,6 +74,10 @@
 
             document.getElementById(`res_${id}`).innerText = `Líq A: ${liqA.toFixed(2)} | Líq B: ${liqB.toFixed(2)}`;
         });
+
+        document.getElementById('mCustoTotal').innerText = `R$ ${custoAcumulado.toFixed(2)}`;
+        document.getElementById('mRetornoPrincipal').innerText = `R$ ${retornoPrincipal.toFixed(2)}`;
+        document.getElementById('mLiquidoFinal').innerText = `R$ ${(retornoPrincipal - custoAcumulado).toFixed(2)}`;
     }
 
     function renderizar() {
@@ -67,7 +85,7 @@
         recuperacoes.forEach(id => {
             grade.innerHTML += `
             <div class="card">
-                <div class="font-bold mb-2">RECUPERAÇÃO CARD ${id-1}</div>
+                <div class="font-bold mb-2 text-slate-400">RECUPERAÇÃO CARD ${id-2}</div>
                 <div class="grid grid-cols-2 gap-2 mb-2">
                     <input type="number" id="oddA_${id}" placeholder="Odd A" oninput="processar()" class="input-box">
                     <input type="number" id="oddB_${id}" placeholder="Odd B" oninput="processar()" class="input-box">
