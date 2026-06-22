@@ -2,26 +2,30 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Painel Surebet - Motor de Desconto no Líquido</title>
+    <title>Painel Executivo Surebet - Motor de Desconto</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body class="bg-slate-900 text-white p-6">
     <div class="max-w-7xl mx-auto space-y-6">
-        <div class="bg-slate-950 p-6 rounded-xl border border-slate-800">
-            <h1 class="text-xl font-black">⚡ MOTOR DE DESCONTO NO LÍQUIDO</h1>
+        <div class="bg-slate-950 p-6 rounded-xl border border-slate-800 shadow-xl">
+            <h1 class="text-xl font-black text-white">⚡ MOTOR DE DESCONTO NO LÍQUIDO</h1>
             <div class="grid grid-cols-2 gap-4 mt-4">
                 <div>
-                    <label class="text-[10px] text-slate-400">Aposta Principal</label>
-                    <input type="number" id="mstk" value="30.00" oninput="processar()" class="w-full bg-slate-900 p-2">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase">Aposta Principal (R$)</label>
+                    <input type="number" id="mstk" value="30.00" oninput="processar()" class="w-full bg-slate-900 p-2 rounded text-emerald-400 font-black">
                 </div>
                 <div>
-                    <label class="text-[10px] text-slate-400">Odd Principal</label>
-                    <input type="number" id="modd" value="369.32" oninput="processar()" class="w-full bg-slate-900 p-2">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase">Odd Principal</label>
+                    <input type="number" id="modd" value="369.32" oninput="processar()" class="w-full bg-slate-900 p-2 rounded text-indigo-400 font-black">
                 </div>
             </div>
-            <div class="mt-4 text-emerald-400 font-bold">Líquido Base: R$ <span id="liqBase">0</span></div>
+            <div class="mt-4 p-3 bg-slate-900 rounded border border-slate-800 text-center">
+                <span class="text-[10px] font-bold text-slate-400 uppercase">Líquido Disponível Após Coberturas:</span>
+                <div id="liqDisponivel" class="text-2xl font-black text-emerald-400">R$ 0,00</div>
+            </div>
         </div>
-        <div id="mGrade" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+
+        <div id="mGrade" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
     </div>
 
 <script>
@@ -36,38 +40,46 @@
     function processar() {
         const mStk = parseFloat(document.getElementById('mstk').value) || 0;
         const mOdd = parseFloat(document.getElementById('modd').value) || 0;
-        const lucroBrutoPrincipal = (mStk * mOdd) - mStk;
         
-        let liquidoDisponivel = lucroBrutoPrincipal;
-        document.getElementById('liqBase').innerText = liquidoDisponivel.toFixed(2);
-
-        banco.forEach((j, index) => {
-            // Regra: Cards 1 e 2 abatem do líquido principal. Cards 3+ abatem do líquido restante.
-            let desconto = (j.stakeA + j.stakeB);
-            liquidoDisponivel -= desconto;
-
-            document.getElementById(`info_${j.id}`).innerText = `Líquido após desconto: R$ ${liquidoDisponivel.toFixed(2)}`;
+        // Lucro máximo da principal (o seu "pote")
+        let lucroBruto = (mStk * mOdd) - mStk;
+        
+        banco.forEach(j => {
+            // Pega os valores dos inputs de cada card
+            j.oddA = parseFloat(document.getElementById(`oddA_${j.id}`).value) || 0;
+            j.oddB = parseFloat(document.getElementById(`oddB_${j.id}`).value) || 0;
+            j.stakeA = parseFloat(document.getElementById(`stkA_${j.id}`).value) || 0;
+            j.stakeB = parseFloat(document.getElementById(`stkB_${j.id}`).value) || 0;
             
-            // O cálculo de cobertura agora reflete a capacidade de pagamento do líquido restante
-            let capacidadeA = (j.stakeA * j.oddA) - j.stakeA;
-            let capacidadeB = (j.stakeB * j.oddB) - j.stakeB;
+            // Abate o custo de cada card do lucro principal
+            lucroBruto -= (j.stakeA + j.stakeB);
             
-            document.getElementById(`capA_${j.id}`).innerText = `Retorno A: ${capacidadeA.toFixed(2)}`;
-            document.getElementById(`capB_${j.id}`).innerText = `Retorno B: ${capacidadeB.toFixed(2)}`;
+            // Calcula o retorno individual de cada lado do card
+            let retA = (j.stakeA * j.oddA) - j.stakeA;
+            let retB = (j.stakeB * j.oddB) - j.stakeB;
+            
+            document.getElementById(`retA_${j.id}`).innerText = `Ret. A: ${retA.toFixed(2)}`;
+            document.getElementById(`retB_${j.id}`).innerText = `Ret. B: ${retB.toFixed(2)}`;
         });
+        
+        document.getElementById('liqDisponivel').innerText = `R$ ${lucroBruto.toFixed(2)}`;
     }
 
     function renderizar() {
         const grade = document.getElementById('mGrade');
+        grade.innerHTML = '';
         banco.forEach(j => {
             grade.innerHTML += `
-            <div class="bg-slate-950 p-4 border border-slate-800">
-                <div class="font-bold">CARD ${j.id}</div>
-                <input type="number" value="${j.stakeA}" oninput="banco.find(x=>x.id==${j.id}).stakeA=parseFloat(this.value); processar()" class="bg-slate-900 w-20">
-                <input type="number" value="${j.stakeB}" oninput="banco.find(x=>x.id==${j.id}).stakeB=parseFloat(this.value); processar()" class="bg-slate-900 w-20">
-                <div class="text-[10px] mt-2" id="info_${j.id}"></div>
-                <div class="text-[10px]" id="capA_${j.id}"></div>
-                <div class="text-[10px]" id="capB_${j.id}"></div>
+            <div class="bg-slate-950 p-4 border border-slate-800 rounded-lg">
+                <div class="font-bold mb-2">CARD ${j.id}</div>
+                <div class="grid grid-cols-2 gap-2 mb-2">
+                    <input type="number" id="oddA_${j.id}" value="${j.oddA}" oninput="processar()" class="bg-slate-900 p-1 text-center text-xs" placeholder="Odd A">
+                    <input type="number" id="oddB_${j.id}" value="${j.oddB}" oninput="processar()" class="bg-slate-900 p-1 text-center text-xs" placeholder="Odd B">
+                    <input type="number" id="stkA_${j.id}" value="${j.stakeA}" oninput="processar()" class="bg-slate-900 p-1 text-center text-xs text-emerald-400" placeholder="Stk A">
+                    <input type="number" id="stkB_${j.id}" value="${j.stakeB}" oninput="processar()" class="bg-slate-900 p-1 text-center text-xs text-emerald-400" placeholder="Stk B">
+                </div>
+                <div class="text-[10px] font-bold text-slate-500" id="retA_${j.id}">Ret. A: 0</div>
+                <div class="text-[10px] font-bold text-slate-500" id="retB_${j.id}">Ret. B: 0</div>
             </div>`;
         });
         processar();
