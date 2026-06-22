@@ -3,129 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Executivo Surebet - Sistema Oficial Completo</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Painel Executivo Surebet - Sistema Avançado de Coberturas</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         body { font-family: 'Arial', sans-serif; background-color: #0f172a; }
-        input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"]::-webkit-inner-spin-button, 
+        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
     </style>
 </head>
-<body class="text-slate-100 p-6 custom-scrollbar">
-
-<div class="max-w-7xl mx-auto space-y-6">
-    <div class="bg-slate-950 p-6 rounded-xl border border-slate-800 shadow-xl">
-        <h1 class="text-2xl font-black text-white">⚡ MOTOR SUREBET EXECUTIVO</h1>
-        <div class="grid grid-cols-2 gap-4 mt-4">
+<body class="text-slate-100 p-3 md:p-6 custom-scrollbar">
+    <div class="max-w-7xl mx-auto space-y-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center bg-slate-950 p-4 rounded-xl border border-slate-800 gap-4 shadow-xl">
             <div>
-                <label class="text-[10px] font-bold text-slate-400 uppercase">Aposta Principal (R$)</label>
-                <input type="number" id="mstkApostaPrincipal" value="1.00" step="0.01" oninput="processar()" class="w-full bg-slate-900 p-2 rounded text-emerald-400 font-black">
+                <h1 class="text-2xl font-black text-white tracking-wide flex items-center gap-2">
+                    <span class="text-emerald-500">⚡</span> MOTOR SUREBET EXECUTIVO
+                </h1>
+                <p class="text-xs text-slate-400 font-medium uppercase tracking-wider">Gestão Computacional de Múltiplas e Coberturas em Cadeia</p>
             </div>
-            <div>
-                <label class="text-[10px] font-bold text-slate-400 uppercase">Odd Principal</label>
-                <input type="number" id="moddTotalPrincipal" value="369.32" step="0.01" oninput="processar()" class="w-full bg-slate-900 p-2 rounded text-indigo-400 font-black">
+            <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                <input type="text" id="cfgNomeCenário" value="Rodada Final de Semana" class="bg-slate-900 border border-slate-700 text-xs font-bold text-white px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 w-full sm:w-48">
+                <button onclick="salvarCenárioNoSistema()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2 rounded-lg transition shadow-lg flex items-center gap-1.5 cursor-pointer">💾 Salvar Cenário</button>
+                <button onclick="limparEResetarPainel()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs px-3 py-2 rounded-lg transition border border-slate-700 cursor-pointer">Resetar</button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 bg-slate-950 p-5 rounded-xl border border-slate-800 shadow-2xl flex flex-col justify-between">
+                <div>
+                    <h2 class="text-sm font-bold text-slate-300 uppercase tracking-widest border-b border-slate-800 pb-2 mb-4">📊 Configuração da Múltipla Principal (Teto do Dia)</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Aposta na Principal (R$)</label>
+                            <input type="number" id="mstkApostaPrincipal" value="30.00" step="0.01" oninput="processarCalculosGlobais()" class="w-full bg-slate-950 border border-slate-700 text-xl font-black text-emerald-400 px-3 py-2 rounded-lg focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Odd Acumulada da Principal</label>
+                            <input type="number" id="moddTotalPrincipal" value="369.32" step="0.01" oninput="processarCalculosGlobais()" class="w-full bg-slate-950 border border-slate-700 text-xl font-black text-indigo-400 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500">
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 bg-slate-900/60 p-3 rounded-lg border border-slate-800/80 flex justify-between items-center">
+                    <span class="text-xs font-bold text-slate-400 uppercase">Retorno Bruto Limite:</span>
+                    <span id="mtxtPremioMaximoPrincipal" class="text-xl font-black text-white tracking-wide">R$ 0,00</span>
+                </div>
+            </div>
+            <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 shadow-2xl flex flex-col justify-between">
+                <div>
+                    <h2 class="text-sm font-bold text-slate-300 uppercase tracking-widest border-b border-slate-800 pb-2 mb-3">⚙️ Modo de Cálculo Matemático</h2>
+                    <div class="space-y-2">
+                        <label class="flex items-center gap-3 p-3 bg-slate-900 rounded-lg border border-slate-800 cursor-pointer hover:border-slate-700 transition">
+                            <input type="radio" name="modoCalculo" value="prelive" checked onchange="processarCalculosGlobais()" class="w-4 h-4 text-emerald-500">
+                            <div><span class="block text-xs font-bold text-white uppercase">Modo 1: Pré-Live (Tudo de Manhã)</span></div>
+                        </label>
+                        <label class="flex items-center gap-3 p-3 bg-slate-900 rounded-lg border border-slate-800 cursor-pointer hover:border-slate-700 transition">
+                            <input type="radio" name="modoCalculo" value="etapas" onchange="processarCalculosGlobais()" class="w-4 h-4 text-indigo-500">
+                            <div><span class="block text-xs font-bold text-white uppercase">Modo 2: Por Etapas (Fluxo Vivo)</span></div>
+                        </label>
+                    </div>
+                </div>
+                <div class="mt-4 flex gap-2">
+                    <button onclick="adicionarNovoCardJogo()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 px-3 rounded-lg shadow transition text-center uppercase cursor-pointer">➕ Adicionar Card</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mGradeConfrontos" class="space-y-4"></div>
+
+        <div class="bg-slate-950 p-6 rounded-xl border border-slate-800 shadow-2xl">
+            <h2 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 border-b border-slate-800 pb-2">📊 Consolidação Geral da Auditoria de Risco</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                <div class="p-3 bg-slate-900 rounded-xl border border-slate-800">
+                    <span class="block text-[10px] text-slate-400 font-bold uppercase mb-1">CUSTO DO INVESTIMENTO GERAL</span>
+                    <span id="mtxtAuditoriaCustoTotal" class="text-xl font-black text-white">R$ 0,00</span>
+                </div>
+                <div class="p-3 bg-slate-900 rounded-xl border border-slate-800">
+                    <span class="block text-[10px] text-slate-400 font-bold uppercase mb-1">RETORNO DA PRINCIPAL</span>
+                    <span id="mtxtAuditoriaRetornoPrincipal" class="text-xl font-black text-indigo-400">R$ 0,00</span>
+                </div>
+                <div class="p-3 bg-slate-900/40 rounded-xl border border-slate-800">
+                    <span class="block text-[10px] text-slate-400 font-bold uppercase mb-1">LUCRO LÍQUIDO DA PRINCIPAL</span>
+                    <span id="mtxtAuditoriaLucroLiquidoPrincipal" class="text-xl font-black text-emerald-400">R$ 0,00</span>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="mGrade" class="space-y-4"></div>
+    <script>
+        let bancoJogosInstanciados = [
+            { id: 1, ativo: true, timeHome: "Jogo 1", timeAway: "Linha Seca", oddA: 2.45, oddB: 2.70, stakeA: 11.5, stakeB: 10.0 },
+            { id: 2, ativo: true, timeHome: "Jogo 2", timeAway: "Combo Aumentado", oddA: 8.86, oddB: 8.32, stakeA: 3.8, stakeB: 4.0 },
+            { id: 3, ativo: false, timeHome: "Jogo 3", timeAway: "Combo Aumentado", oddA: 21.90, oddB: 28.32, stakeA: 2.5, stakeB: 2.0 },
+            { id: 4, ativo: false, timeHome: "Jogo 4", timeAway: "Combo Aumentado", oddA: 81.84, oddB: 92.11, stakeA: 3.0, stakeB: 3.0 },
+            { id: 5, ativo: false, timeHome: "Jogo 5", timeAway: "Combo Aumentado", oddA: 232.53, oddB: 323.52, stakeA: 1.0, stakeB: 1.0 }
+        ];
 
-    <button onclick="adicionarCard()" class="w-full bg-emerald-700 p-4 rounded font-bold text-xs uppercase hover:bg-emerald-600 transition">Adicionar Card de Proteção</button>
+        function sincronizarCamposDomParaMemoria() {
+            bancoJogosInstanciados.forEach(j => {
+                const elAtivo = document.getElementById(`chk_ativo_${j.id}`);
+                if(elAtivo) {
+                    j.ativo = elAtivo.checked;
+                    j.oddA = parseFloat(document.getElementById(`num_oddA_${j.id}`).value) || 0;
+                    j.oddB = parseFloat(document.getElementById(`num_oddB_${j.id}`).value) || 0;
+                    j.stakeA = parseFloat(document.getElementById(`num_stkA_${j.id}`).value) || 0;
+                    j.stakeB = parseFloat(document.getElementById(`num_stkB_${j.id}`).value) || 0;
+                }
+            });
+        }
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
-            <span class="block text-[10px] text-slate-400 font-bold uppercase">Custo Total</span>
-            <span id="mtxtCustoTotal" class="text-xl font-black">R$ 0,00</span>
-        </div>
-        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
-            <span class="block text-[10px] text-slate-400 font-bold uppercase">Retorno Principal</span>
-            <span id="mtxtRetornoPrincipal" class="text-xl font-black text-indigo-400">R$ 0,00</span>
-        </div>
-        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
-            <span class="block text-[10px] text-slate-400 font-bold uppercase">Lucro Líquido Final</span>
-            <span id="mtxtLucroFinal" class="text-xl font-black text-emerald-400">R$ 0,00</span>
-        </div>
-    </div>
-</div>
-
-<script>
-    let banco = [
-        { id: 1, oddA: 2.45, oddB: 2.70, stakeA: 11.5, stakeB: 10.0 },
-        { id: 2, oddA: 8.86, oddB: 8.32, stakeA: 3.8, stakeB: 4.0 },
-        { id: 3, oddA: 21.90, oddB: 28.32, stakeA: 2.5, stakeB: 2.0 },
-        { id: 4, oddA: 81.84, oddB: 92.11, stakeA: 3.0, stakeB: 3.0 },
-        { id: 5, oddA: 232.53, oddB: 323.52, stakeA: 1.0, stakeB: 1.0 }
-    ];
-
-    function renderizar() {
-        const grade = document.getElementById('mGrade');
-        grade.innerHTML = '';
-        banco.forEach(j => {
-            grade.innerHTML += `
-            <div class="bg-slate-950 p-4 rounded border border-slate-800">
-                <div class="flex justify-between text-[10px] mb-2 font-bold text-slate-400">
-                    <span>CARD #${j.id}</span>
-                    <button onclick="deletarCard(${j.id})" class="text-red-500 hover:text-red-300">EXCLUIR</button>
-                </div>
-                <div class="grid grid-cols-4 gap-2">
-                    <input type="number" value="${j.oddA}" oninput="banco.find(x=>x.id==${j.id}).oddA=parseFloat(this.value)||0; processar()" class="bg-slate-900 p-2 text-center text-xs">
-                    <input type="number" value="${j.oddB}" oninput="banco.find(x=>x.id==${j.id}).oddB=parseFloat(this.value)||0; processar()" class="bg-slate-900 p-2 text-center text-xs">
-                    <input type="number" value="${j.stakeA}" oninput="banco.find(x=>x.id==${j.id}).stakeA=parseFloat(this.value)||0; processar()" class="bg-slate-900 p-2 text-center text-xs text-emerald-400 font-bold">
-                    <input type="number" value="${j.stakeB}" oninput="banco.find(x=>x.id==${j.id}).stakeB=parseFloat(this.value)||0; processar()" class="bg-slate-900 p-2 text-center text-xs text-emerald-400 font-bold">
-                </div>
-                <div class="text-[10px] text-slate-400 mt-2">
-                    Custo Acumulado: <span id="c_${j.id}" class="text-white">0</span> | 
-                    Liq A: <span id="la_${j.id}">0</span> | 
-                    Liq B: <span id="lb_${j.id}">0</span>
-                </div>
-            </div>`;
-        });
-        processar();
-    }
-
-    function processar() {
-        const stakeM = parseFloat(document.getElementById('mstkApostaPrincipal').value) || 0;
-        const oddM = parseFloat(document.getElementById('moddTotalPrincipal').value) || 0;
-        
-        let custoAcumulado = stakeM;
-        
-        banco.forEach(j => {
-            custoAcumulado += (j.stakeA + j.stakeB);
+        function processarCalculosGlobais() {
+            sincronizarCamposDomParaMemoria();
+            const stakePrincipal = parseFloat(document.getElementById('mstkApostaPrincipal').value) || 0;
+            const oddPrincipal = parseFloat(document.getElementById('moddTotalPrincipal').value) || 0;
+            const modo = document.querySelector('input[name="modoCalculo"]:checked').value;
             
-            document.getElementById('c_'+j.id).innerText = `R$ ${custoAcumulado.toFixed(2)}`;
+            let custoAcumuladoCascata = stakePrincipal;
+            let custoTotalGlobal = stakePrincipal;
             
-            let liqA = (j.stakeA * j.oddA) - custoAcumulado;
-            let liqB = (j.stakeB * j.oddB) - custoAcumulado;
-            
-            document.getElementById('la_'+j.id).innerText = liqA.toFixed(2);
-            document.getElementById('la_'+j.id).className = liqA >= 0 ? "text-emerald-400 font-bold" : "text-red-400 font-bold";
-            document.getElementById('lb_'+j.id).innerText = liqB.toFixed(2);
-            document.getElementById('lb_'+j.id).className = liqB >= 0 ? "text-emerald-400 font-bold" : "text-red-400 font-bold";
-        });
-        
-        document.getElementById('mtxtCustoTotal').innerText = `R$ ${custoAcumulado.toFixed(2)}`;
-        
-        let retornoPrincipal = stakeM * oddM;
-        document.getElementById('mtxtRetornoPrincipal').innerText = `R$ ${retornoPrincipal.toFixed(2)}`;
-        
-        let lucroFinal = retornoPrincipal - custoAcumulado;
-        document.getElementById('mtxtLucroFinal').innerText = `R$ ${lucroFinal.toFixed(2)}`;
-        document.getElementById('mtxtLucroFinal').className = lucroFinal >= 0 ? "text-xl font-black text-emerald-400" : "text-xl font-black text-red-500";
-    }
+            bancoJogosInstanciados.forEach(j => { if(j.ativo) custoTotalGlobal += (j.stakeA + j.stakeB); });
 
-    function adicionarCard() {
-        banco.push({ id: Date.now(), oddA: 2.0, oddB: 2.0, stakeA: 0, stakeB: 0 });
-        renderizar();
-    }
+            bancoJogosInstanciados.forEach(j => {
+                if(j.ativo) {
+                    custoAcumuladoCascata += (j.stakeA + j.stakeB);
+                    let custoVigente = (modo === 'prelive') ? custoTotalGlobal : custoAcumuladoCascata;
+                    
+                    document.getElementById(`lbl_custoRota_${j.id}`).innerText = `R$ ${custoVigente.toFixed(2)}`;
+                    let liqA = (j.stakeA * j.oddA) - custoVigente;
+                    let liqB = (j.stakeB * j.oddB) - custoVigente;
+                    
+                    document.getElementById(`lbl_liqA_${j.id}`).innerText = `R$ ${liqA.toFixed(2)}`;
+                    document.getElementById(`lbl_liqB_${j.id}`).innerText = `R$ ${liqB.toFixed(2)}`;
+                }
+            });
 
-    function deletarCard(id) {
-        banco = banco.filter(x => x.id !== id);
-        renderizar();
-    }
+            document.getElementById('mtxtAuditoriaCustoTotal').innerText = `R$ ${custoTotalGlobal.toFixed(2)}`;
+            document.getElementById('mtxtAuditoriaLucroLiquidoPrincipal').innerText = `R$ ${( (stakePrincipal * oddPrincipal) - custoTotalGlobal ).toFixed(2)}`;
+        }
 
-    renderizar();
-</script>
+        function gerarLayoutDosCards() {
+            const grade = document.getElementById('mGradeConfrontos');
+            grade.innerHTML = '';
+            bancoJogosInstanciados.forEach(j => {
+                grade.innerHTML += `<div class="p-4 bg-slate-950 rounded-xl border border-slate-800">
+                    <input type="checkbox" id="chk_ativo_${j.id}" ${j.ativo ? 'checked' : ''} onchange="processarCalculosGlobais()"> 
+                    Card #${j.id} | OddA: <input type="number" id="num_oddA_${j.id}" value="${j.oddA}" oninput="processarCalculosGlobais()">
+                    OddB: <input type="number" id="num_oddB_${j.id}" value="${j.oddB}" oninput="processarCalculosGlobais()">
+                    Stk A: <input type="number" id="num_stkA_${j.id}" value="${j.stakeA}" oninput="processarCalculosGlobais()">
+                    Stk B: <input type="number" id="num_stkB_${j.id}" value="${j.stakeB}" oninput="processarCalculosGlobais()">
+                    <div id="lbl_custoRota_${j.id}">R$ 0,00</div>
+                    <div id="lbl_liqA_${j.id}">R$ 0,00</div>
+                    <div id="lbl_liqB_${j.id}">R$ 0,00</div>
+                </div>`;
+            });
+            processarCalculosGlobais();
+        }
+
+        gerarLayoutDosCards();
+    </script>
 </body>
 </html>
