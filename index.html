@@ -2,85 +2,94 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Painel Executivo Surebet - Motor de Desconto</title>
+    <title>Motor Executivo: Surebet Dinâmica + Cascata de Proteção</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        body { font-family: 'Arial', sans-serif; background-color: #0f172a; color: #f1f5f9; }
+        input { background-color: #1e293b; border: 1px solid #334155; padding: 4px; text-align: center; border-radius: 4px; color: #f8fafc; }
+        .card { background-color: #020617; border: 1px solid #1e293b; padding: 16px; border-radius: 12px; }
+    </style>
 </head>
-<body class="bg-slate-900 text-white p-6">
+<body class="p-6">
     <div class="max-w-7xl mx-auto space-y-6">
-        <div class="bg-slate-950 p-6 rounded-xl border border-slate-800 shadow-xl">
-            <h1 class="text-xl font-black text-white">⚡ MOTOR DE DESCONTO NO LÍQUIDO</h1>
-            <div class="grid grid-cols-2 gap-4 mt-4">
-                <div>
-                    <label class="text-[10px] font-bold text-slate-400 uppercase">Aposta Principal (R$)</label>
-                    <input type="number" id="mstk" value="30.00" oninput="processar()" class="w-full bg-slate-900 p-2 rounded text-emerald-400 font-black">
-                </div>
-                <div>
-                    <label class="text-[10px] font-bold text-slate-400 uppercase">Odd Principal</label>
-                    <input type="number" id="modd" value="369.32" oninput="processar()" class="w-full bg-slate-900 p-2 rounded text-indigo-400 font-black">
-                </div>
-            </div>
-            <div class="mt-4 p-3 bg-slate-900 rounded border border-slate-800 text-center">
-                <span class="text-[10px] font-bold text-slate-400 uppercase">Líquido Disponível Após Coberturas:</span>
-                <div id="liqDisponivel" class="text-2xl font-black text-emerald-400">R$ 0,00</div>
-            </div>
-        </div>
+        <h1 class="text-3xl font-black text-white uppercase text-center">⚡ MOTOR EXECUTIVO SUREBET DINÂMICA</h1>
+        
+        <div id="mGrade" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
-        <div id="mGrade" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        <div class="bg-indigo-950 p-6 rounded-xl border border-indigo-800 text-center">
+            <h2 class="text-sm font-bold text-indigo-300 uppercase">Resumo da Auditoria</h2>
+            <div id="mAuditoria" class="text-2xl font-black mt-2 text-white">R$ 0,00</div>
+        </div>
     </div>
 
 <script>
+    // Estrutura: Card 1 é a Dupla (Base), Card 2 é Proteção A/B, Cards 3+ são Cascata
     let banco = [
-        { id: 1, oddA: 2.45, oddB: 2.70, stakeA: 11.5, stakeB: 10.0 },
-        { id: 2, oddA: 8.86, oddB: 8.32, stakeA: 3.8, stakeB: 4.0 },
-        { id: 3, oddA: 21.90, oddB: 28.32, stakeA: 2.5, stakeB: 2.0 },
-        { id: 4, oddA: 81.84, oddB: 92.11, stakeA: 3.0, stakeB: 3.0 },
-        { id: 5, oddA: 232.53, oddB: 323.52, stakeA: 1.0, stakeB: 1.0 }
+        { id: 1, tipo: 'dupla', odd: 1.65, stake: 30.0 },
+        { id: 2, tipo: 'protecao', oddA: 2.45, oddB: 2.70, stakeA: 11.5, stakeB: 10.0 },
+        { id: 3, tipo: 'protecao', oddA: 8.86, oddB: 8.32, stakeA: 3.8, stakeB: 4.0 },
+        { id: 4, tipo: 'protecao', oddA: 21.90, oddB: 28.32, stakeA: 2.5, stakeB: 2.0 },
+        { id: 5, tipo: 'protecao', oddA: 81.84, oddB: 92.11, stakeA: 3.0, stakeB: 3.0 }
     ];
 
     function processar() {
-        const mStk = parseFloat(document.getElementById('mstk').value) || 0;
-        const mOdd = parseFloat(document.getElementById('modd').value) || 0;
+        let custoAcumulado = 0;
         
-        // Lucro máximo da principal (o seu "pote")
-        let lucroBruto = (mStk * mOdd) - mStk;
-        
-        banco.forEach(j => {
-            // Pega os valores dos inputs de cada card
-            j.oddA = parseFloat(document.getElementById(`oddA_${j.id}`).value) || 0;
-            j.oddB = parseFloat(document.getElementById(`oddB_${j.id}`).value) || 0;
-            j.stakeA = parseFloat(document.getElementById(`stkA_${j.id}`).value) || 0;
-            j.stakeB = parseFloat(document.getElementById(`stkB_${j.id}`).value) || 0;
+        // 1. Calcular Custo do Bloco Inicial (Card 1 + 2)
+        let stk1 = parseFloat(document.getElementById(`stk_1`).value) || 0;
+        let stk2A = parseFloat(document.getElementById(`stkA_2`).value) || 0;
+        let stk2B = parseFloat(document.getElementById(`stkB_2`).value) || 0;
+        let custoBlocoInicial = stk1 + stk2A + stk2B;
+
+        banco.forEach((j) => {
+            let resDisplay = document.getElementById(`res_${j.id}`);
             
-            // Abate o custo de cada card do lucro principal
-            lucroBruto -= (j.stakeA + j.stakeB);
-            
-            // Calcula o retorno individual de cada lado do card
-            let retA = (j.stakeA * j.oddA) - j.stakeA;
-            let retB = (j.stakeB * j.oddB) - j.stakeB;
-            
-            document.getElementById(`retA_${j.id}`).innerText = `Ret. A: ${retA.toFixed(2)}`;
-            document.getElementById(`retB_${j.id}`).innerText = `Ret. B: ${retB.toFixed(2)}`;
+            if (j.tipo === 'dupla') {
+                let o = parseFloat(document.getElementById(`odd_${j.id}`).value) || 0;
+                let s = parseFloat(document.getElementById(`stk_${j.id}`).value) || 0;
+                let ret = (s * o) - custoBlocoInicial;
+                resDisplay.innerHTML = `Líquido Bloco: <span class="${ret>=0?'text-emerald-400':'text-red-400'}">R$ ${ret.toFixed(2)}</span>`;
+            } 
+            else if (j.id === 2) {
+                let oA = parseFloat(document.getElementById(`oddA_2`).value) || 0;
+                let oB = parseFloat(document.getElementById(`oddB_2`).value) || 0;
+                let retA = (stk2A * oA) - custoBlocoInicial;
+                let retB = (stk2B * oB) - custoBlocoInicial;
+                resDisplay.innerHTML = `Líq A: ${retA.toFixed(2)} | Líq B: ${retB.toFixed(2)}`;
+            }
+            else {
+                // Cascata: Pega o custo dele próprio e soma o que já passou
+                let sA = parseFloat(document.getElementById(`stkA_${j.id}`).value) || 0;
+                let sB = parseFloat(document.getElementById(`stkB_${j.id}`).value) || 0;
+                custoAcumulado += (sA + sB);
+                
+                let oA = parseFloat(document.getElementById(`oddA_${j.id}`).value) || 0;
+                let oB = parseFloat(document.getElementById(`oddB_${j.id}`).value) || 0;
+                
+                resDisplay.innerHTML = `Líq A: ${(sA * oA - (custoBlocoInicial + custoAcumulado)).toFixed(2)} | Líq B: ${(sB * oB - (custoBlocoInicial + custoAcumulado)).toFixed(2)}`;
+            }
         });
-        
-        document.getElementById('liqDisponivel').innerText = `R$ ${lucroBruto.toFixed(2)}`;
     }
 
     function renderizar() {
         const grade = document.getElementById('mGrade');
         grade.innerHTML = '';
         banco.forEach(j => {
-            grade.innerHTML += `
-            <div class="bg-slate-950 p-4 border border-slate-800 rounded-lg">
-                <div class="font-bold mb-2">CARD ${j.id}</div>
-                <div class="grid grid-cols-2 gap-2 mb-2">
-                    <input type="number" id="oddA_${j.id}" value="${j.oddA}" oninput="processar()" class="bg-slate-900 p-1 text-center text-xs" placeholder="Odd A">
-                    <input type="number" id="oddB_${j.id}" value="${j.oddB}" oninput="processar()" class="bg-slate-900 p-1 text-center text-xs" placeholder="Odd B">
-                    <input type="number" id="stkA_${j.id}" value="${j.stakeA}" oninput="processar()" class="bg-slate-900 p-1 text-center text-xs text-emerald-400" placeholder="Stk A">
-                    <input type="number" id="stkB_${j.id}" value="${j.stakeB}" oninput="processar()" class="bg-slate-900 p-1 text-center text-xs text-emerald-400" placeholder="Stk B">
-                </div>
-                <div class="text-[10px] font-bold text-slate-500" id="retA_${j.id}">Ret. A: 0</div>
-                <div class="text-[10px] font-bold text-slate-500" id="retB_${j.id}">Ret. B: 0</div>
-            </div>`;
+            let html = `<div class="card">
+                <div class="font-black mb-3 border-b border-slate-800 pb-2">${j.tipo === 'dupla' ? 'CARD 1: DUPLA (ORIGEM)' : 'CARD ' + j.id + (j.id===2?' (PROTEÇÃO INICIAL)':' (CASCATA)')}</div>`;
+            
+            if (j.tipo === 'dupla') {
+                html += `<input type="number" id="odd_${j.id}" value="${j.odd}" oninput="processar()" placeholder="Odd">
+                         <input type="number" id="stk_${j.id}" value="${j.stake}" oninput="processar()" placeholder="Stake">`;
+            } else {
+                html += `<div class="grid grid-cols-2 gap-2">
+                         <input type="number" id="oddA_${j.id}" value="${j.oddA}" oninput="processar()" placeholder="Odd A">
+                         <input type="number" id="oddB_${j.id}" value="${j.oddB}" oninput="processar()" placeholder="Odd B">
+                         <input type="number" id="stkA_${j.id}" value="${j.stakeA}" oninput="processar()" placeholder="Stk A">
+                         <input type="number" id="stkB_${j.id}" value="${j.stakeB}" oninput="processar()" placeholder="Stk B"></div>`;
+            }
+            html += `<div class="mt-4 text-xs font-bold" id="res_${j.id}"></div></div>`;
+            grade.innerHTML += html;
         });
         processar();
     }
