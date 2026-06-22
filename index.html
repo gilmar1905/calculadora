@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Painel Executivo: Surebet Dinâmica + Múltipla</title>
+    <title>Painel Executivo Final</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         body { background-color: #020617; color: #f1f5f9; font-family: sans-serif; }
@@ -12,48 +12,37 @@
 </head>
 <body class="p-6">
     <div class="max-w-6xl mx-auto space-y-6">
-        <h1 class="text-2xl font-black text-white text-center uppercase tracking-widest">⚡ PAINEL EXECUTIVO COMPLETO</h1>
+        <h1 class="text-2xl font-black text-white text-center uppercase tracking-widest">⚡ PAINEL EXECUTIVO: AUDITORIA TOTAL</h1>
 
-        <!-- 1. AUDITORIA GLOBAL -->
         <div class="grid grid-cols-3 gap-4 bg-indigo-950 p-4 rounded-xl border border-indigo-800">
-            <div>
-                <p class="text-[10px] text-indigo-300 uppercase font-bold">Investimento Total (Dia)</p>
-                <div id="mCustoTotal" class="text-lg font-black text-white">R$ 0,00</div>
+            <div><p class="text-[10px] text-indigo-300 uppercase font-bold">Investimento Total</p><div id="mCustoTotal" class="text-lg font-black text-white">R$ 0,00</div></div>
+            <div><p class="text-[10px] text-indigo-300 uppercase font-bold">Retorno Total</p><div id="mRetornoTotal" class="text-lg font-black text-emerald-400">R$ 0,00</div></div>
+            <div><p class="text-[10px] text-indigo-300 uppercase font-bold">Líquido Final</p><div id="mLiquidoFinal" class="text-lg font-black text-white">R$ 0,00</div></div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div class="card border-l-4 border-l-indigo-500">
+                <h2 class="font-bold text-indigo-400 mb-2">MÚLTIPLA PRINCIPAL</h2>
+                <input type="number" id="mstk" placeholder="Stake" oninput="processar()" class="input-box mb-2">
+                <input type="number" id="modd" placeholder="Odd" oninput="processar()" class="input-box">
             </div>
-            <div>
-                <p class="text-[10px] text-indigo-300 uppercase font-bold">Retorno Múltipla</p>
-                <div id="mRetornoPrincipal" class="text-lg font-black text-emerald-400">R$ 0,00</div>
-            </div>
-            <div>
-                <p class="text-[10px] text-indigo-300 uppercase font-bold">Líquido Final</p>
-                <div id="mLiquidoFinal" class="text-lg font-black text-white">R$ 0,00</div>
+            <div class="card border-l-4 border-l-blue-500">
+                <h2 class="font-bold text-blue-400 mb-2">DUPLA (JOGO 1)</h2>
+                <input type="number" id="stkDupla" placeholder="Stake Dupla" oninput="processar()" class="input-box mb-2">
+                <input type="number" id="oddDupla" placeholder="Odd Dupla" oninput="processar()" class="input-box">
             </div>
         </div>
 
-        <!-- 2. MÚLTIPLA PRINCIPAL -->
-        <div class="card border-l-4 border-l-indigo-500">
-            <h2 class="font-bold text-indigo-400 mb-4">MÚLTIPLA PRINCIPAL</h2>
-            <div class="grid grid-cols-2 gap-4">
-                <input type="number" id="mstk" placeholder="Stake Múltipla (R$)" oninput="processar()" class="input-box">
-                <input type="number" id="modd" placeholder="Odd Acumulada" oninput="processar()" class="input-box">
-            </div>
-        </div>
-
-        <!-- 3. SUREBET DINÂMICA (Com Montante e Auditoria) -->
         <div class="card border-l-4 border-l-emerald-500">
-            <h2 class="font-bold text-emerald-400 mb-4">SUREBET DINÂMICA</h2>
-            <div class="grid grid-cols-3 gap-4">
-                <input type="number" id="montanteSurebet" placeholder="Montante Surebet (R$)" oninput="processar()" class="input-box border-emerald-500">
-                <input type="number" id="oddSurebetA" placeholder="Odd A" oninput="processar()" class="input-box">
-                <input type="number" id="oddSurebetB" placeholder="Odd B" oninput="processar()" class="input-box">
-            </div>
-            <div class="mt-4 grid grid-cols-2 gap-4 text-xs font-bold text-emerald-400" id="resSurebet">
-                <div>Líq A: R$ 0,00</div>
-                <div>Líq B: R$ 0,00</div>
+            <h2 class="font-bold text-emerald-400 mb-4">SUREBET (PROTEÇÃO JOGO 2)</h2>
+            <div class="grid grid-cols-4 gap-4">
+                <input type="number" id="stkA_Sure" placeholder="Stk Prot A" oninput="processar()" class="input-box">
+                <input type="number" id="oddA_Sure" placeholder="Odd Prot A" oninput="processar()" class="input-box">
+                <input type="number" id="stkB_Sure" placeholder="Stk Prot B" oninput="processar()" class="input-box">
+                <input type="number" id="oddB_Sure" placeholder="Odd Prot B" oninput="processar()" class="input-box">
             </div>
         </div>
 
-        <!-- 4. 5 CARDS DE RECUPERAÇÃO -->
         <div id="mGrade" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
     </div>
 
@@ -61,23 +50,17 @@
     let recuperacoes = [3, 4, 5, 6, 7];
 
     function processar() {
-        // Dados da Múltipla
         const mstk = parseFloat(document.getElementById('mstk').value) || 0;
         const modd = parseFloat(document.getElementById('modd').value) || 0;
-        
-        // Dados da Surebet
-        const montanteS = parseFloat(document.getElementById('montanteSurebet').value) || 0;
-        const oA = parseFloat(document.getElementById('oddSurebetA').value) || 0;
-        const oB = parseFloat(document.getElementById('oddSurebetB').value) || 0;
-        
-        // Auditoria Surebet (Divide o montante por 2 para as odds A e B)
-        const stakeS = montanteS / 2;
-        document.getElementById('resSurebet').innerHTML = 
-            `<div>Líq A: R$ ${(stakeS * oA - montanteS).toFixed(2)}</div>
-             <div>Líq B: R$ ${(stakeS * oB - montanteS).toFixed(2)}</div>`;
+        const stkDupla = parseFloat(document.getElementById('stkDupla').value) || 0;
+        const oddDupla = parseFloat(document.getElementById('oddDupla').value) || 0;
+        const sA_Sure = parseFloat(document.getElementById('stkA_Sure').value) || 0;
+        const sB_Sure = parseFloat(document.getElementById('stkB_Sure').value) || 0;
+        const oA_Sure = parseFloat(document.getElementById('oddA_Sure').value) || 0;
+        const oB_Sure = parseFloat(document.getElementById('oddB_Sure').value) || 0;
 
-        // Processa cards de recuperação (Cascata)
-        let custoAcumulado = montanteS;
+        let custoAcumulado = mstk + stkDupla + sA_Sure + sB_Sure;
+        
         recuperacoes.forEach(id => {
             const sA = parseFloat(document.getElementById(`stkA_${id}`).value) || 0;
             const sB = parseFloat(document.getElementById(`stkB_${id}`).value) || 0;
@@ -85,15 +68,11 @@
             const oB = parseFloat(document.getElementById(`oddB_${id}`).value) || 1;
 
             custoAcumulado += (sA + sB);
-            const liqA = (sA * oA) - custoAcumulado;
-            const liqB = (sB * oB) - custoAcumulado;
-
-            document.getElementById(`res_${id}`).innerText = `Líq A: ${liqA.toFixed(2)} | Líq B: ${liqB.toFixed(2)}`;
+            document.getElementById(`res_${id}`).innerText = `Líq A: ${(sA * oA - custoAcumulado).toFixed(2)} | Líq B: ${(sB * oB - custoAcumulado).toFixed(2)}`;
         });
 
-        // Auditoria Global
         document.getElementById('mCustoTotal').innerText = `R$ ${custoAcumulado.toFixed(2)}`;
-        document.getElementById('mRetornoPrincipal').innerText = `R$ ${(mstk * modd).toFixed(2)}`;
+        document.getElementById('mRetornoTotal').innerText = `R$ ${(mstk * modd).toFixed(2)}`;
         document.getElementById('mLiquidoFinal').innerText = `R$ ${( (mstk * modd) - custoAcumulado ).toFixed(2)}`;
     }
 
