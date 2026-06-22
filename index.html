@@ -2,70 +2,94 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Painel Executivo Final</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Painel Executivo Dinâmico</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #020617; color: #f1f5f9; font-family: sans-serif; }
-        .input-box { background: #0f172a; border: 1px solid #334155; padding: 8px; border-radius: 6px; width: 100%; text-align: center; }
         .card { background: #0f172a; border: 1px solid #1e293b; padding: 16px; border-radius: 12px; }
+        .input-box { background: #020617; border: 1px solid #334155; padding: 6px; border-radius: 4px; width: 100%; text-align: center; }
     </style>
 </head>
-<body class="p-6">
+<body class="bg-slate-950 text-slate-200 p-6">
     <div class="max-w-6xl mx-auto space-y-6">
-        <h1 class="text-2xl font-black text-white text-center uppercase tracking-widest">⚡ PAINEL EXECUTIVO: AUDITORIA TOTAL</h1>
+        <h1 class="text-2xl font-black text-white text-center uppercase tracking-widest">⚡ PAINEL EXECUTIVO: GESTÃO DINÂMICA</h1>
 
+        <!-- AUDITORIA -->
         <div class="grid grid-cols-3 gap-4 bg-indigo-950 p-4 rounded-xl border border-indigo-800">
             <div><p class="text-[10px] text-indigo-300 uppercase font-bold">Investimento Total</p><div id="mCustoTotal" class="text-lg font-black text-white">R$ 0,00</div></div>
-            <div><p class="text-[10px] text-indigo-300 uppercase font-bold">Retorno Total</p><div id="mRetornoTotal" class="text-lg font-black text-emerald-400">R$ 0,00</div></div>
+            <div><p class="text-[10px] text-indigo-300 uppercase font-bold">Retorno Múltipla</p><div id="mRetornoTotal" class="text-lg font-black text-emerald-400">R$ 0,00</div></div>
             <div><p class="text-[10px] text-indigo-300 uppercase font-bold">Líquido Final</p><div id="mLiquidoFinal" class="text-lg font-black text-white">R$ 0,00</div></div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
+        <!-- MÚLTIPLA E SUREBET -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="card border-l-4 border-l-indigo-500">
                 <h2 class="font-bold text-indigo-400 mb-2">MÚLTIPLA PRINCIPAL</h2>
                 <input type="number" id="mstk" placeholder="Stake" oninput="processar()" class="input-box mb-2">
                 <input type="number" id="modd" placeholder="Odd" oninput="processar()" class="input-box">
             </div>
-            <div class="card border-l-4 border-l-blue-500">
-                <h2 class="font-bold text-blue-400 mb-2">DUPLA (JOGO 1)</h2>
-                <input type="number" id="stkDupla" placeholder="Stake Dupla" oninput="processar()" class="input-box mb-2">
-                <input type="number" id="oddDupla" placeholder="Odd Dupla" oninput="processar()" class="input-box">
+            <div class="card border-l-4 border-l-emerald-500">
+                <h2 class="font-bold text-emerald-400 mb-2">SUREBET (Dupla + Prot A + Prot B)</h2>
+                <input type="number" id="montanteSure" placeholder="Montante Total" oninput="processar()" class="input-box mb-2">
+                <div class="grid grid-cols-3 gap-2">
+                    <input type="number" id="oDupla" placeholder="Odd Dupla" oninput="processar()" class="input-box">
+                    <input type="number" id="oProtA" placeholder="Odd A" oninput="processar()" class="input-box">
+                    <input type="number" id="oProtB" placeholder="Odd B" oninput="processar()" class="input-box">
+                </div>
             </div>
         </div>
 
-        <div class="card border-l-4 border-l-emerald-500">
-            <h2 class="font-bold text-emerald-400 mb-4">SUREBET (PROTEÇÃO JOGO 2)</h2>
-            <div class="grid grid-cols-4 gap-4">
-                <input type="number" id="stkA_Sure" placeholder="Stk Prot A" oninput="processar()" class="input-box">
-                <input type="number" id="oddA_Sure" placeholder="Odd Prot A" oninput="processar()" class="input-box">
-                <input type="number" id="stkB_Sure" placeholder="Stk Prot B" oninput="processar()" class="input-box">
-                <input type="number" id="oddB_Sure" placeholder="Odd Prot B" oninput="processar()" class="input-box">
-            </div>
-        </div>
-
+        <!-- CARDS DE RECUPERAÇÃO -->
         <div id="mGrade" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+        
+        <button onclick="adicionarCard()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 rounded-lg font-bold uppercase tracking-widest text-sm">+ Adicionar Card de Recuperação</button>
     </div>
 
 <script>
-    let recuperacoes = [3, 4, 5, 6, 7];
+    let count = 0;
+
+    function adicionarCard() {
+        count++;
+        const grade = document.getElementById('mGrade');
+        const div = document.createElement('div');
+        div.id = `card_${count}`;
+        div.className = 'card animate-in fade-in';
+        div.innerHTML = `
+            <div class="flex justify-between items-center mb-2">
+                <span class="font-bold text-slate-400">RECUPERAÇÃO #${count}</span>
+                <button onclick="document.getElementById('card_${count}').remove(); processar()" class="text-red-500 text-xs">EXCLUIR</button>
+            </div>
+            <div class="grid grid-cols-2 gap-2 mb-2">
+                <input type="number" id="oA_${count}" placeholder="Odd A" oninput="processar()" class="input-box">
+                <input type="number" id="oB_${count}" placeholder="Odd B" oninput="processar()" class="input-box">
+                <input type="number" id="sA_${count}" placeholder="Stk A" oninput="processar()" class="input-box">
+                <input type="number" id="sB_${count}" placeholder="Stk B" oninput="processar()" class="input-box">
+            </div>
+            <div class="text-[10px] font-bold text-emerald-400" id="res_${count}">Líq A: 0.00 | Líq B: 0.00</div>
+        `;
+        grade.appendChild(div);
+        processar();
+    }
 
     function processar() {
         const mstk = parseFloat(document.getElementById('mstk').value) || 0;
         const modd = parseFloat(document.getElementById('modd').value) || 0;
-        const stkDupla = parseFloat(document.getElementById('stkDupla').value) || 0;
-        const oddDupla = parseFloat(document.getElementById('oddDupla').value) || 0;
-        const sA_Sure = parseFloat(document.getElementById('stkA_Sure').value) || 0;
-        const sB_Sure = parseFloat(document.getElementById('stkB_Sure').value) || 0;
-        const oA_Sure = parseFloat(document.getElementById('oddA_Sure').value) || 0;
-        const oB_Sure = parseFloat(document.getElementById('oddB_Sure').value) || 0;
+        const mSure = parseFloat(document.getElementById('montanteSure').value) || 0;
+        const oDupla = parseFloat(document.getElementById('oDupla').value) || 0;
+        const oA = parseFloat(document.getElementById('oProtA').value) || 0;
+        const oB = parseFloat(document.getElementById('oProtB').value) || 0;
 
-        let custoAcumulado = mstk + stkDupla + sA_Sure + sB_Sure;
-        
-        recuperacoes.forEach(id => {
-            const sA = parseFloat(document.getElementById(`stkA_${id}`).value) || 0;
-            const sB = parseFloat(document.getElementById(`stkB_${id}`).value) || 0;
-            const oA = parseFloat(document.getElementById(`oddA_${id}`).value) || 1;
-            const oB = parseFloat(document.getElementById(`oddB_${id}`).value) || 1;
+        let custoAcumulado = mstk + mSure;
+        const stkPart = mSure / 3;
+
+        let grade = document.getElementById('mGrade');
+        let inputs = grade.querySelectorAll('.card');
+
+        inputs.forEach(c => {
+            const id = c.id.split('_')[1];
+            const oA = parseFloat(document.getElementById(`oA_${id}`).value) || 0;
+            const oB = parseFloat(document.getElementById(`oB_${id}`).value) || 0;
+            const sA = parseFloat(document.getElementById(`sA_${id}`).value) || 0;
+            const sB = parseFloat(document.getElementById(`sB_${id}`).value) || 0;
 
             custoAcumulado += (sA + sB);
             document.getElementById(`res_${id}`).innerText = `Líq A: ${(sA * oA - custoAcumulado).toFixed(2)} | Líq B: ${(sB * oB - custoAcumulado).toFixed(2)}`;
@@ -75,24 +99,6 @@
         document.getElementById('mRetornoTotal').innerText = `R$ ${(mstk * modd).toFixed(2)}`;
         document.getElementById('mLiquidoFinal').innerText = `R$ ${( (mstk * modd) - custoAcumulado ).toFixed(2)}`;
     }
-
-    function renderizar() {
-        const grade = document.getElementById('mGrade');
-        recuperacoes.forEach(id => {
-            grade.innerHTML += `
-            <div class="card">
-                <div class="font-bold mb-2 text-slate-400">RECUPERAÇÃO CARD ${id-2}</div>
-                <div class="grid grid-cols-2 gap-2 mb-2">
-                    <input type="number" id="oddA_${id}" placeholder="Odd A" oninput="processar()" class="input-box">
-                    <input type="number" id="oddB_${id}" placeholder="Odd B" oninput="processar()" class="input-box">
-                    <input type="number" id="stkA_${id}" placeholder="Stk A" oninput="processar()" class="input-box">
-                    <input type="number" id="stkB_${id}" placeholder="Stk B" oninput="processar()" class="input-box">
-                </div>
-                <div class="text-[10px] font-bold text-emerald-400" id="res_${id}">Líq A: 0.00 | Líq B: 0.00</div>
-            </div>`;
-        });
-    }
-    renderizar();
 </script>
 </body>
 </html>
